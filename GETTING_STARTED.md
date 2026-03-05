@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Getting Started with MASON
 
-Let's get your team up and running. This guide walks you through setup and your first project — step by step.
+Let's get your team up and running. This guide walks you through setup and your first simulation — step by step.
 
 ## Before You Start
 
@@ -15,35 +15,27 @@ You'll need:
 | Requirement | Minimum | Recommended |
 |-------------|---------|-------------|
 | **Docker** | v24+ | Latest stable |
-| **Docker Compose** | v2.20+ | Latest stable |
 | **RAM** | 8GB | 16GB+ |
 | **Disk** | 10GB free | 20GB+ |
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
 
 You'll also need an **Anthropic API key**. MASON agents are powered by Claude — grab your key from [console.anthropic.com](https://console.anthropic.com).
 
-## Step 1: Get the Code
+## Step 1: Start MASON
+
+MASON runs as a single container — everything lives inside it (agents, chat, code tools).
 
 ```bash
-git clone https://github.com/Mason-Teams/mason-teams.git
-cd mason-teams
+docker run -d -p 3000:3000 -p 8065:8065 ghcr.io/mason-teams/mason-teams:latest
 ```
 
-## Step 2: Start Your Team
+First run takes a minute while the container initializes. Check that it's healthy:
 
 ```bash
-docker compose up -d
+docker ps
 ```
 
-First run takes a few minutes — Docker needs to pull the images. After that, startup is fast.
-
-Check that everything's running:
-
-```bash
-docker compose ps
-```
-
-## Step 3: Run the Setup Wizard
+## Step 2: Run the Setup Wizard
 
 Open your browser and go to:
 
@@ -53,27 +45,27 @@ http://localhost:3000
 
 The setup wizard walks you through everything:
 
-1. **Accept the User Agreement** — Read through, check the three confirmation boxes
+1. **Accept the User Agreement** — Read through, check the three confirmation boxes (simulation platform acknowledgment, no-harm commitment, no professional advice)
 2. **Enter your Anthropic API key** — Or choose subscription-based authentication if you have one
-3. **Name your project** — Tell MASON what you're working on
+3. **Name your project** — Tell MASON what you want to explore
 
 That's it. No config files to edit, no environment variables to set. The wizard handles the rest.
 
-## Step 4: Meet Your Team
+## Step 3: Meet Your Team
 
 Once setup is complete, the wizard opens your team's chat interface (Mattermost) with login credentials pre-filled. You'll find your agents already there.
 
 **Connie**, the concierge, will greet you and help you get oriented. She's your guide to everything MASON — think of her as the team coordinator who makes sure everyone's on the same page.
 
-## Step 5: Give Them a Project
+## Step 4: Start a Simulation
 
-In the chat, tell Connie what you're working on. Be as specific or as broad as you like:
+In the chat, tell Connie what you'd like to explore. Be as specific or as broad as you like:
 
-- "We're building a REST API for a todo app"
-- "I need help refactoring this Python codebase"
-- "Let's design a landing page for our new product"
+- "Let's simulate building a REST API for a todo app"
+- "I want to see how a team would approach refactoring this Python codebase"
+- "Explore designing a landing page for a new product"
 
-Connie will figure out which agents to bring in and get them started. You can jump into any channel to talk directly with individual agents.
+Connie will figure out which agents to bring in and get the simulation started. You can jump into any channel to observe and participate alongside individual agents.
 
 ## Troubleshooting
 
@@ -83,10 +75,10 @@ Give them 30-60 seconds after startup. If still quiet:
 
 ```bash
 # Check logs for errors
-docker compose logs --tail=50
+docker logs <container-id> --tail=50
 
-# Restart the stack
-docker compose restart
+# Restart
+docker restart <container-id>
 ```
 
 ### Out of memory
@@ -106,14 +98,19 @@ If the wizard reports an API key error, double-check that you're using a valid A
 
 ### Port conflicts
 
-If port 3000 is taken, check `docker-compose.yaml` for the port mapping and adjust as needed.
+If port 3000 or 8065 is already in use, map to different ports:
+
+```bash
+docker run -d -p 3001:3000 -p 9065:8065 ghcr.io/mason-teams/mason-teams:latest
+```
+
+Then open `http://localhost:3001` for the wizard.
 
 ## Updating
 
 ```bash
-git pull
-docker compose pull
-docker compose up -d
+docker pull ghcr.io/mason-teams/mason-teams:latest
+# Stop and remove old container, then run the new image
 ```
 
 Check the [Changelog](CHANGELOG.md) for what's new.
@@ -126,10 +123,10 @@ Check the [Changelog](CHANGELOG.md) for what's new.
 
 ## What's Next?
 
-Once your team is running:
+Once your simulation is running:
 
 1. **Explore the channels** — Each agent has their own space, plus shared project channels
-2. **Try a small task first** — Get a feel for how agents collaborate before going big
-3. **Check in, don't hover** — Agents work best when you give direction and let them run. Pop in when you have questions or want to steer.
+2. **Try a small project first** — Get a feel for how agents collaborate before going big
+3. **Observe and participate** — Jump in when you have questions, or sit back and watch how the team works through problems together
 
-Welcome to MASON. Let's build something together.
+Welcome to MASON. Let's explore what's possible.

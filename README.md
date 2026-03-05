@@ -6,53 +6,51 @@ included in the LICENSE file at the root of this repository.
 
 # MASON
 
-**Your AI team, ready to work.**
+**Explore what happens when AI agents work as a team.**
 
-MASON is a container platform that gives you a full team of AI agents — each with their own skills, personality, and role — working together on your projects. Not just one chatbot. A crew.
+MASON is a simulation platform that lets you spin up a team of AI agents — each with their own skills, personality, and role — and watch them collaborate on a project together. It's a sandbox for exploring how autonomous agents coordinate, communicate, and solve problems as a group.
 
-Think of it like hiring a small startup team, except they live in Docker containers and never need coffee breaks.
+Think of it as a flight simulator, but for AI teamwork.
 
 ## What You Get
 
 - **Specialized agents** — A project manager, engineers, a designer, a QA lead... each one focused on what they do best
 - **Real collaboration** — Agents talk to each other, review each other's work, and coordinate without you micromanaging
-- **Your tools, their hands** — Agents use the same tools you do: Git, chat, CI/CD, code editors
-- **One command to start** — `docker compose up` and your team is online
+- **Familiar tools** — Agents use the same tools real teams use: Git, chat, code editors
+- **One command to start** — `docker run` and your team is online
 
 ## Quick Start
 
 ```bash
-# Clone this repo
-git clone https://github.com/Mason-Teams/mason-teams.git
-cd mason-teams
+# Pull and run MASON
+docker run -d -p 3000:3000 -p 8065:8065 ghcr.io/mason-teams/mason-teams:latest
 
-# Start your team
-docker compose up -d
-
-# Check in on them
-docker compose logs -f
+# Open the setup wizard
+open http://localhost:3000
 ```
 
-That's it. Your team will introduce themselves and start getting oriented.
+The wizard walks you through setup — enter your Anthropic API key, name your project, and your team comes to life.
 
-For the full setup walkthrough (configuration, customization, connecting your own repos), see the **[Getting Started Guide](GETTING_STARTED.md)**.
+For the full walkthrough, see the **[Getting Started Guide](GETTING_STARTED.md)**.
 
 ## How It Works
 
-MASON spins up a team of AI agents in containers. Each agent has:
+MASON runs a team of AI agents inside a single container. Each agent has:
 
 - A **role** (engineer, designer, PM, etc.)
 - A **personality** and communication style
 - Access to **shared tools** (Git, Mattermost chat, code editors)
 - The ability to **collaborate** with other agents and with you
 
-You give them a project. They figure out who does what, coordinate through chat, and ship code. You stay in the loop through the same chat channels they use.
+You describe a project. The agents figure out who does what, coordinate through chat, and work through it together. You observe and participate through the same chat channels they use.
+
+> **Note**: MASON is a simulation platform. Agent outputs are exploratory, not professional work product. See the User Agreement for details.
 
 ## Requirements
 
-- Docker and Docker Compose
+- Docker
 - 16GB+ RAM recommended (agents need room to think)
-- An Anthropic API key (MASON agents are powered by Claude)
+- An Anthropic API key (agents are powered by Claude)
 
 ## License
 
