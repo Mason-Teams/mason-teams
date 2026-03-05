@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Getting Started with MASON
 
-Let's get your team up and running. This guide walks you through setup and your first simulation — step by step.
+Let's get your team up and running. This guide walks you through setup, the wizard, and your first simulation — step by step.
 
 ## Before You Start
 
@@ -21,51 +21,88 @@ You'll need:
 
 You'll also need an **Anthropic API key**. MASON agents are powered by Claude — grab your key from [console.anthropic.com](https://console.anthropic.com).
 
-## Step 1: Start MASON
-
-MASON runs as a single container — everything lives inside it (agents, chat, code tools).
+## Step 1: Get the Code
 
 ```bash
-docker run -d -p 3000:3000 -p 8065:8065 ghcr.io/mason-teams/mason-teams:latest
+git clone https://github.com/Mason-Teams/mason-teams.git
+cd mason-teams
 ```
 
-First run takes a minute while the container initializes. Check that it's healthy:
+## Step 2: Build and Start
+
+MASON runs as a single container — agents, chat, code tools, everything inside one box.
 
 ```bash
-docker ps
+# Build the container image (first time only)
+masonctl build
+
+# Start MASON
+masonctl start
 ```
 
-## Step 2: Run the Setup Wizard
+Check that everything's running:
+
+```bash
+masonctl status
+```
+
+## Step 3: Run the Setup Wizard
 
 Open your browser and go to:
 
 ```
-http://localhost:3000
+http://localhost:8080
 ```
 
-The setup wizard walks you through everything:
+The wizard walks you through six steps:
 
-1. **Accept the User Agreement** — Read through, check the three confirmation boxes (simulation platform acknowledgment, no-harm commitment, no professional advice)
-2. **Enter your Anthropic API key** — Or choose subscription-based authentication if you have one
-3. **Name your project** — Tell MASON what you want to explore
+1. **Accept the User Agreement** — Read through and confirm the three acknowledgments (simulation platform, no-harm commitment, no professional advice)
+2. **Choose your auth method** — API key or subscription-based authentication
+3. **Enter your Claude credentials** — Paste your Anthropic API key
+4. **Set up your profile** — Your name and what to call your concierge
+5. **Claude terminal authentication** — Verifies your credentials work
+6. **Launch** — Everything starts up
 
-That's it. No config files to edit, no environment variables to set. The wizard handles the rest.
+No config files to edit, no environment variables to set. The wizard handles it all.
 
-## Step 3: Meet Your Team
+## Step 4: Meet Connie
 
-Once setup is complete, the wizard opens your team's chat interface (Mattermost) with login credentials pre-filled. You'll find your agents already there.
+Once setup is complete, click **"Meet Connie"** — you'll be redirected to your team's chat interface (Mattermost) with login credentials pre-filled.
 
-**Connie**, the concierge, will greet you and help you get oriented. She's your guide to everything MASON — think of her as the team coordinator who makes sure everyone's on the same page.
+Connie is your concierge. She's the first person you'll talk to, and she'll guide you through everything from here.
 
-## Step 4: Start a Simulation
+## Step 5: The Interview
 
-In the chat, tell Connie what you'd like to explore. Be as specific or as broad as you like:
+This is where it gets fun. Connie doesn't just dump you into a generic team — she **interviews you** to understand what you need:
 
-- "Let's simulate building a REST API for a todo app"
-- "I want to see how a team would approach refactoring this Python codebase"
-- "Explore designing a landing page for a new product"
+- What type of work are you doing? (startup, agency, enterprise, research)
+- What's the primary focus? (building a product, services, exploration)
+- How big a team do you want? (3-5 agents recommended for starters)
+- Which roles would be most helpful?
 
-Connie will figure out which agents to bring in and get the simulation started. You can jump into any channel to observe and participate alongside individual agents.
+Based on your answers, Connie assembles a **custom team** tailored to your project. Each agent gets a role, a personality, and a focus area — then they start coordinating.
+
+## Step 6: Collaborate
+
+Your agents are working. You can:
+
+- **Watch them coordinate** in the shared project channels
+- **Jump into any channel** to talk directly with an individual agent
+- **Give direction** when you want to steer the work
+- **Sit back and observe** how they tackle problems as a team
+
+The simulation runs as long as the container is up. Agents keep working, collaborating, and iterating.
+
+## Useful Commands
+
+| Command | What it does |
+|---------|-------------|
+| `masonctl start` | Start the MASON container |
+| `masonctl stop` | Stop the container |
+| `masonctl restart` | Restart everything |
+| `masonctl status` | Check what's running |
+| `masonctl logs` | View logs |
+| `masonctl logs -f` | Follow logs in real time |
 
 ## Troubleshooting
 
@@ -75,10 +112,10 @@ Give them 30-60 seconds after startup. If still quiet:
 
 ```bash
 # Check logs for errors
-docker logs <container-id> --tail=50
+masonctl logs --tail=50
 
 # Restart
-docker restart <container-id>
+masonctl restart
 ```
 
 ### Out of memory
@@ -98,19 +135,19 @@ If the wizard reports an API key error, double-check that you're using a valid A
 
 ### Port conflicts
 
-If port 3000 or 8065 is already in use, map to different ports:
+If port 8080 or 8065 is already in use, set custom ports:
 
 ```bash
-docker run -d -p 3001:3000 -p 9065:8065 ghcr.io/mason-teams/mason-teams:latest
+MASON_PORT_WEB=9080 MASON_PORT_MM=9065 masonctl start
 ```
 
-Then open `http://localhost:3001` for the wizard.
+Then open `http://localhost:9080` for the wizard.
 
 ## Updating
 
 ```bash
-docker pull ghcr.io/mason-teams/mason-teams:latest
-# Stop and remove old container, then run the new image
+masonctl build
+masonctl start
 ```
 
 Check the [Changelog](CHANGELOG.md) for what's new.
@@ -126,7 +163,7 @@ Check the [Changelog](CHANGELOG.md) for what's new.
 Once your simulation is running:
 
 1. **Explore the channels** — Each agent has their own space, plus shared project channels
-2. **Try a small project first** — Get a feel for how agents collaborate before going big
+2. **Start small** — Get a feel for how agents collaborate before going big
 3. **Observe and participate** — Jump in when you have questions, or sit back and watch how the team works through problems together
 
-Welcome to MASON. Let's explore what's possible.
+Welcome to MASON. Let's see what your team can do.
