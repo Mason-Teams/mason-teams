@@ -146,8 +146,9 @@ Then open `http://localhost:9080` for the wizard.
 ## Updating
 
 ```bash
+git pull
 masonctl build
-masonctl start
+masonctl restart
 ```
 
 Check the [Changelog](CHANGELOG.md) for what's new.
