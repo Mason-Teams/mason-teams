@@ -14,7 +14,7 @@ You'll need:
 
 | Requirement | Minimum | Recommended |
 |-------------|---------|-------------|
-| **Docker** | v24+ | Latest stable |
+| **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** | v24+ | Latest stable |
 | **RAM** | 8GB | 16GB+ |
 | **Disk** | 10GB free | 20GB+ |
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
@@ -28,22 +28,18 @@ git clone https://github.com/Mason-Teams/mason-teams.git
 cd mason-teams
 ```
 
-## Step 2: Build and Start
+## Step 2: Start MASON
 
 MASON runs as a single container — agents, chat, code tools, everything inside one box.
 
 ```bash
-# Build the container image (first time only)
-masonctl build
-
-# Start MASON
-masonctl start
+./scripts/masonctl start
 ```
 
-Check that everything's running:
+The image will be pulled automatically on first run. Check that everything's up:
 
 ```bash
-masonctl status
+./scripts/masonctl status
 ```
 
 ## Step 3: Run the Setup Wizard
@@ -97,12 +93,13 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 
 | Command | What it does |
 |---------|-------------|
-| `masonctl start` | Start the MASON container |
-| `masonctl stop` | Stop the container |
-| `masonctl restart` | Restart everything |
-| `masonctl status` | Check what's running |
-| `masonctl logs` | View logs |
-| `masonctl logs -f` | Follow logs in real time |
+| `./scripts/masonctl start` | Start the MASON container |
+| `./scripts/masonctl stop` | Stop the container |
+| `./scripts/masonctl restart` | Restart everything |
+| `./scripts/masonctl status` | Check what's running |
+| `./scripts/masonctl logs` | View logs |
+| `./scripts/masonctl logs -f` | Follow logs in real time |
+| `./scripts/masonctl update` | Pull latest image and restart |
 
 ## Troubleshooting
 
@@ -112,10 +109,10 @@ Give them 30-60 seconds after startup. If still quiet:
 
 ```bash
 # Check logs for errors
-masonctl logs --tail=50
+./scripts/masonctl logs --tail=50
 
 # Restart
-masonctl restart
+./scripts/masonctl restart
 ```
 
 ### Out of memory
@@ -138,7 +135,7 @@ If the wizard reports an API key error, double-check that you're using a valid A
 If port 8080 or 8065 is already in use, set custom ports:
 
 ```bash
-MASON_PORT_WEB=9080 MASON_PORT_MM=9065 masonctl start
+MASON_PORT_WEB=9080 MASON_PORT_MM=9065 ./scripts/masonctl start
 ```
 
 Then open `http://localhost:9080` for the wizard.
@@ -146,9 +143,7 @@ Then open `http://localhost:9080` for the wizard.
 ## Updating
 
 ```bash
-git pull
-masonctl build
-masonctl restart
+./scripts/masonctl update
 ```
 
 Check the [Changelog](CHANGELOG.md) for what's new.
