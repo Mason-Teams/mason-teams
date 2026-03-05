@@ -52,13 +52,13 @@ You give them a project. They figure out who does what, coordinate through chat,
 
 - Docker and Docker Compose
 - 16GB+ RAM recommended (agents need room to think)
-- An internet connection (for LLM API access)
+- An Anthropic API key (MASON agents are powered by Claude)
 
 ## License
 
 MASON is licensed under the [Business Source License 1.1](LICENSE).
 
-**Free for non-production use**, or production use with fewer than 5 concurrent agents. Need more? [Get in touch](mailto:david@shindeiru.com) about commercial licensing.
+**Free for non-production use**, or production use with fewer than 5 concurrent simulated agents. Need more? [Get in touch](mailto:david@shindeiru.com) about commercial licensing.
 
 ## Links
 

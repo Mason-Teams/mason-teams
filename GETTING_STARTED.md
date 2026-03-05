@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Getting Started with MASON
 
-Let's get your team up and running. This guide walks you through setup, configuration, and your first project — step by step.
+Let's get your team up and running. This guide walks you through setup and your first project — step by step.
 
 ## Before You Start
 
@@ -20,7 +20,7 @@ You'll need:
 | **Disk** | 10GB free | 20GB+ |
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
 
-You'll also need an API key for your preferred LLM provider (OpenAI, Anthropic, etc.). MASON agents need an LLM to think.
+You'll also need an **Anthropic API key**. MASON agents are powered by Claude — grab your key from [console.anthropic.com](https://console.anthropic.com).
 
 ## Step 1: Get the Code
 
@@ -29,30 +29,7 @@ git clone https://github.com/Mason-Teams/mason-teams.git
 cd mason-teams
 ```
 
-## Step 2: Configure Your Environment
-
-Copy the example environment file and fill in your details:
-
-```bash
-cp .env.example .env
-```
-
-Open `.env` in your editor and set:
-
-```bash
-# Your LLM API key (required)
-LLM_API_KEY=your-api-key-here
-
-# Which provider to use
-LLM_PROVIDER=anthropic  # or "openai"
-
-# Your project name (agents will use this)
-PROJECT_NAME=my-project
-```
-
-That's the minimum. The defaults handle everything else.
-
-## Step 3: Start Your Team
+## Step 2: Start Your Team
 
 ```bash
 docker compose up -d
@@ -66,17 +43,27 @@ Check that everything's running:
 docker compose ps
 ```
 
-You should see your agents coming online. Give them a minute to get settled.
+## Step 3: Run the Setup Wizard
 
-## Step 4: Say Hello
-
-MASON includes a built-in chat interface where you and your agents communicate. Open it at:
+Open your browser and go to:
 
 ```
-http://localhost:8065
+http://localhost:3000
 ```
 
-You'll find your team already there. Connie, the concierge, will greet you and help you get oriented.
+The setup wizard walks you through everything:
+
+1. **Accept the User Agreement** — Read through, check the three confirmation boxes
+2. **Enter your Anthropic API key** — Or choose subscription-based authentication if you have one
+3. **Name your project** — Tell MASON what you're working on
+
+That's it. No config files to edit, no environment variables to set. The wizard handles the rest.
+
+## Step 4: Meet Your Team
+
+Once setup is complete, the wizard opens your team's chat interface (Mattermost) with login credentials pre-filled. You'll find your agents already there.
+
+**Connie**, the concierge, will greet you and help you get oriented. She's your guide to everything MASON — think of her as the team coordinator who makes sure everyone's on the same page.
 
 ## Step 5: Give Them a Project
 
@@ -87,49 +74,6 @@ In the chat, tell Connie what you're working on. Be as specific or as broad as y
 - "Let's design a landing page for our new product"
 
 Connie will figure out which agents to bring in and get them started. You can jump into any channel to talk directly with individual agents.
-
-## Configuration
-
-### Team Size
-
-By default, MASON starts with a small team. To adjust:
-
-```yaml
-# In docker-compose.yaml
-services:
-  mason:
-    environment:
-      - MAX_AGENTS=5  # Free tier limit
-```
-
-### Connecting Your Code
-
-Mount your project directory so agents can work on your actual codebase:
-
-```yaml
-# In docker-compose.yaml
-services:
-  mason:
-    volumes:
-      - ./my-project:/workspace
-```
-
-Agents will see your code in `/workspace` and can read, write, and commit.
-
-### Customizing Agent Roles
-
-Want different specialists? Edit the team configuration:
-
-```yaml
-# In docker-compose.yaml (or team-config.yaml)
-team:
-  - role: backend-engineer
-    focus: "Python, FastAPI, PostgreSQL"
-  - role: frontend-engineer
-    focus: "React, TypeScript, Tailwind"
-  - role: qa-engineer
-    focus: "Testing, code review, security"
-```
 
 ## Troubleshooting
 
@@ -154,24 +98,15 @@ Agents need room to think. If things are slow or crashing:
 docker stats
 ```
 
-Try reducing `MAX_AGENTS` or increasing Docker's memory limit in Docker Desktop settings.
+Try increasing Docker's memory limit in Docker Desktop settings.
 
 ### API key errors
 
-Double-check your `.env` file. The key should be the raw key string, no quotes needed:
-
-```bash
-LLM_API_KEY=sk-abc123...
-```
+If the wizard reports an API key error, double-check that you're using a valid Anthropic API key. You can verify your key at [console.anthropic.com](https://console.anthropic.com).
 
 ### Port conflicts
 
-If port 8065 is taken, change it in `docker-compose.yaml`:
-
-```yaml
-ports:
-  - "9065:8065"  # Use port 9065 instead
-```
+If port 3000 is taken, check `docker-compose.yaml` for the port mapping and adjust as needed.
 
 ## Updating
 
