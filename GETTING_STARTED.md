@@ -19,7 +19,7 @@ You'll need:
 | **Disk** | 10GB free | 20GB+ |
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
 
-You'll also need an **Anthropic API key**. MASON agents are powered by Claude — grab your key from [console.anthropic.com](https://console.anthropic.com).
+You'll also need access to **Claude** — either an Anthropic API key or a Claude subscription. MASON agents are powered by Claude.
 
 ## Step 1: Get the Code
 
@@ -54,7 +54,7 @@ The wizard walks you through six steps:
 
 1. **Accept the User Agreement** — Read through and confirm the three acknowledgments (simulation platform, no-harm commitment, no professional advice)
 2. **Choose your auth method** — API key or subscription-based authentication
-3. **Enter your Claude credentials** — Paste your Anthropic API key
+3. **Enter your Claude credentials** — Paste your Anthropic API key or sign in with your Claude subscription
 4. **Set up your profile** — Your name and what to call your concierge
 5. **Claude terminal authentication** — Verifies your credentials work
 6. **Launch** — Everything starts up
@@ -84,6 +84,7 @@ Your agents are working. You can:
 
 - **Watch them coordinate** in the shared project channels
 - **Jump into any channel** to talk directly with an individual agent
+- **Open the terminal** to watch agents think and work in real time — each agent runs in its own tmux session where you can see exactly what they're doing
 - **Give direction** when you want to steer the work
 - **Sit back and observe** how they tackle problems as a team
 
@@ -126,9 +127,9 @@ docker stats
 
 Try increasing Docker's memory limit in Docker Desktop settings.
 
-### API key errors
+### Authentication errors
 
-If the wizard reports an API key error, double-check that you're using a valid Anthropic API key. You can verify your key at [console.anthropic.com](https://console.anthropic.com).
+If the wizard reports a credentials error, double-check your setup. For API keys, verify yours at [console.anthropic.com](https://console.anthropic.com). For Claude subscriptions, make sure you're signed in and your subscription is active.
 
 ### Port conflicts
 
@@ -161,5 +162,6 @@ Once your simulation is running:
 1. **Explore the channels** — Each agent has their own space, plus shared project channels
 2. **Start small** — Get a feel for how agents collaborate before going big
 3. **Observe and participate** — Jump in when you have questions, or sit back and watch how the team works through problems together
+4. **Level up** — Check out the **[Workflows Guide](WORKFLOWS.md)** for tips on running projects, managing your team, and getting the most out of MASON's tools
 
 Welcome to MASON. Let's see what your team can do.
