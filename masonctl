@@ -1,0 +1,335 @@
+#!/bin/bash
+
+# Copyright (c) 2025 Human Loop Ventures, LLC. All rights reserved.
+# Use of this source code is governed by the Business Source License 1.1
+# included in the LICENSE file at the root of this repository.
+
+# masonctl - MASON container management tool
+# Usage: masonctl <command> [options]
+
+set -e
+
+CONTAINER_NAME="${MASON_CONTAINER_NAME:-mason}"
+IMAGE_NAME="${MASON_IMAGE_NAME:-ghcr.io/mason-teams/mason-teams:latest}"
+DATA_VOLUME="${MASON_DATA_VOLUME:-mason-data}"
+
+# Ports
+PORT_WEB="${MASON_PORT_WEB:-8080}"
+PORT_MM="${MASON_PORT_MM:-8065}"
+PORT_FORGEJO="${MASON_PORT_FORGEJO:-3000}"
+PORT_TTYD="${MASON_PORT_TTYD:-7681}"
+PORT_QDRANT="${MASON_PORT_QDRANT:-6333}"
+PORT_DAEMON="${MASON_PORT_DAEMON:-9090}"
+
+# Resources
+MASON_MEMORY="${MASON_MEMORY:-16g}"
+MASON_CPUS="${MASON_CPUS:-8}"
+MASON_SHM_SIZE="${MASON_SHM_SIZE:-2g}"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+print_status() {
+    echo -e "${GREEN}[mason]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[mason]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[mason]${NC} $1" >&2
+}
+
+# Check if Docker is available
+check_docker() {
+    if ! command -v docker &> /dev/null; then
+        print_error "Docker is not installed or not in PATH"
+        exit 1
+    fi
+    if ! docker info &> /dev/null; then
+        print_error "Docker daemon is not running"
+        exit 1
+    fi
+}
+
+# Check if container exists
+container_exists() {
+    docker container inspect "$CONTAINER_NAME" &> /dev/null
+}
+
+# Check if container is running
+container_running() {
+    [ "$(docker container inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null)" = "true" ]
+}
+
+
+# Start the container
+cmd_start() {
+    check_docker
+
+    if container_running; then
+        print_warning "Container '$CONTAINER_NAME' is already running"
+        return 0
+    fi
+
+    if container_exists; then
+        print_status "Starting existing container '$CONTAINER_NAME'..."
+        docker start "$CONTAINER_NAME"
+    else
+        print_status "Creating and starting container '$CONTAINER_NAME'..."
+        docker run -d \
+            --name "$CONTAINER_NAME" \
+            --memory "$MASON_MEMORY" \
+            --cpus "$MASON_CPUS" \
+            --shm-size "$MASON_SHM_SIZE" \
+            -p "${PORT_WEB}:8080" \
+            -p "${PORT_MM}:8065" \
+            -p "${PORT_FORGEJO}:3000" \
+            -p "${PORT_TTYD}:7681" \
+            -p "${PORT_QDRANT}:6333" \
+            -p "${PORT_DAEMON}:9090" \
+            -v "${DATA_VOLUME}:/data" \
+            "$IMAGE_NAME"
+    fi
+
+    # Wait for web server to be ready (container handles service health checks)
+    print_status "Waiting for container to be ready..."
+    for i in $(seq 1 60); do
+        # Use /health endpoint — works on both fresh start (200/503) and restart (200/503)
+        # /setup returns 302 after wizard completion, which would never match 200
+        http_code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:${PORT_WEB}/health" 2>/dev/null || true)
+        if [ "$http_code" = "200" ] || [ "$http_code" = "503" ]; then
+            print_status "Container ready!"
+            echo ""
+            echo "  Web UI:        http://localhost:${PORT_WEB}"
+            echo "  Getting Started: http://localhost:${PORT_WEB}/guide"
+            echo "  Documentation: http://localhost:${PORT_WEB}/docs/"
+            echo ""
+            echo "  (Check container logs for service status: masonctl logs)"
+            return 0
+        fi
+        sleep 1
+    done
+    print_warning "Web server not responding yet - check logs with: masonctl logs"
+}
+
+# Stop the container
+cmd_stop() {
+    check_docker
+
+    if ! container_exists; then
+        print_warning "Container '$CONTAINER_NAME' does not exist"
+        return 0
+    fi
+
+    if ! container_running; then
+        print_warning "Container '$CONTAINER_NAME' is not running"
+        return 0
+    fi
+
+    print_status "Stopping container '$CONTAINER_NAME'..."
+    # Give entrypoint 30s to gracefully stop mason server + PostgreSQL
+    docker stop --timeout 30 "$CONTAINER_NAME"
+    print_status "Container stopped"
+}
+
+# Restart the container
+cmd_restart() {
+    check_docker
+    cmd_stop
+    cmd_start
+}
+
+# Show container status
+cmd_status() {
+    check_docker
+
+    if ! container_exists; then
+        echo "Container: not created"
+        return 0
+    fi
+
+    local state
+    state=$(docker container inspect -f '{{.State.Status}}' "$CONTAINER_NAME" 2>/dev/null)
+
+    echo "Container: $CONTAINER_NAME"
+    echo "State:     $state"
+
+    if container_running; then
+        local started
+        started=$(docker container inspect -f '{{.State.StartedAt}}' "$CONTAINER_NAME" 2>/dev/null)
+        echo "Started:   $started"
+        echo ""
+        echo "Ports:"
+        echo "  Web UI:      http://localhost:${PORT_WEB}"
+        echo "  Mattermost:  http://localhost:${PORT_MM}"
+        echo "  Forgejo:     http://localhost:${PORT_FORGEJO}"
+        echo "  Terminal:    http://localhost:${PORT_TTYD}"
+        echo "  Qdrant:      http://localhost:${PORT_QDRANT}"
+        echo "  Daemon:      http://localhost:${PORT_DAEMON}"
+        echo ""
+        echo "Services:"
+        # Check service health via API
+        if curl -sf "http://localhost:${PORT_WEB}/api/status/json" > /dev/null 2>&1; then
+            curl -sf "http://localhost:${PORT_WEB}/api/status/json" | \
+                python3 -c "import sys,json; d=json.load(sys.stdin); [print(f'  {s[\"name\"]}: {s[\"state\"]}') for s in d.get('services',[])]" 2>/dev/null || \
+                echo "  (API available but could not parse response)"
+        else
+            echo "  (API not responding)"
+        fi
+    fi
+}
+
+# View container logs
+cmd_logs() {
+    check_docker
+
+    if ! container_exists; then
+        print_error "Container '$CONTAINER_NAME' does not exist"
+        exit 1
+    fi
+
+    local follow=""
+    local tail="100"
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -f|--follow) follow="-f"; shift ;;
+            -n|--tail) tail="$2"; shift 2 ;;
+            *) shift ;;
+        esac
+    done
+
+    docker logs $follow --tail "$tail" "$CONTAINER_NAME"
+}
+
+# Execute command inside container
+cmd_exec() {
+    check_docker
+
+    if ! container_running; then
+        print_error "Container '$CONTAINER_NAME' is not running"
+        exit 1
+    fi
+
+    if [ $# -eq 0 ]; then
+        # Interactive shell
+        docker exec -it "$CONTAINER_NAME" /bin/bash
+    else
+        # Run specific command
+        docker exec "$CONTAINER_NAME" "$@"
+    fi
+}
+
+# Pull the latest image
+cmd_pull() {
+    check_docker
+    print_status "Pulling image '$IMAGE_NAME'..."
+    docker pull "$IMAGE_NAME"
+    print_status "Pull complete"
+}
+
+# Update: pull latest image and restart
+cmd_update() {
+    check_docker
+    print_status "Updating MASON..."
+    cmd_pull
+    if container_running; then
+        cmd_restart
+    else
+        print_status "Container not running. Start with: masonctl start"
+    fi
+}
+
+# Remove container (and optionally data)
+cmd_rm() {
+    check_docker
+
+    local remove_data=false
+    if [ "$1" = "--data" ] || [ "$1" = "-d" ]; then
+        remove_data=true
+    fi
+
+    if container_running; then
+        print_status "Stopping container..."
+        docker stop --timeout 30 "$CONTAINER_NAME"
+    fi
+
+    if container_exists; then
+        print_status "Removing container..."
+        docker rm "$CONTAINER_NAME"
+    fi
+
+    if [ "$remove_data" = true ]; then
+        print_warning "Removing data volume '$DATA_VOLUME'..."
+        docker volume rm "$DATA_VOLUME" 2>/dev/null || true
+    fi
+
+    print_status "Cleanup complete"
+}
+
+# Show help
+cmd_help() {
+    cat <<EOF
+masonctl - MASON container management tool
+
+Usage: masonctl <command> [options]
+
+Commands:
+  start                 Start the MASON container
+  stop                  Stop the MASON container
+  restart               Restart the MASON container
+  pull                  Pull the latest image from registry
+  update                Pull latest image and restart
+  status                Show container and service status
+  logs [-f] [-n N]      View container logs (-f to follow, -n for tail lines)
+  exec [cmd...]         Execute command in container (or shell if no cmd)
+  rm [--data]           Remove container (--data also removes volume)
+  help                  Show this help message
+
+Environment Variables:
+  MASON_CONTAINER_NAME  Container name (default: mason)
+  MASON_IMAGE_NAME      Image name (default: mason)
+  MASON_DATA_VOLUME     Data volume name (default: mason-data)
+  MASON_PORT_WEB        Web UI port (default: 8080)
+  MASON_PORT_MM         Mattermost port (default: 8065)
+  MASON_PORT_FORGEJO    Forgejo port (default: 3000)
+  MASON_PORT_TTYD       Terminal port (default: 7681)
+  MASON_PORT_QDRANT     Qdrant port (default: 6333)
+  MASON_PORT_DAEMON     Daemon metrics/SSE port (default: 9090)
+
+Examples:
+  masonctl start                  # Start container
+  masonctl logs -f                # Follow logs
+  masonctl exec                   # Open shell in container
+  masonctl exec mason status      # Run mason CLI inside container
+  masonctl pull                   # Pull latest image from registry
+  masonctl update                 # Pull latest and restart
+  masonctl rm --data              # Remove container and all data
+
+EOF
+}
+
+# Main command dispatch
+case "${1:-help}" in
+    start)   shift; cmd_start "$@" ;;
+    stop)    shift; cmd_stop "$@" ;;
+    restart) shift; cmd_restart "$@" ;;
+    pull)    shift; cmd_pull "$@" ;;
+    update)  shift; cmd_update "$@" ;;
+    status)  shift; cmd_status "$@" ;;
+    logs)    shift; cmd_logs "$@" ;;
+    exec)    shift; cmd_exec "$@" ;;
+    rm)      shift; cmd_rm "$@" ;;
+    help|--help|-h) cmd_help ;;
+    *)
+        print_error "Unknown command: $1"
+        echo ""
+        cmd_help
+        exit 1
+        ;;
+esac

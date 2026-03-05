@@ -1,0 +1,33 @@
+# Copyright (c) 2025 Human Loop Ventures, LLC. All rights reserved.
+# Use of this source code is governed by the Business Source License 1.1
+# included in the LICENSE file at the root of this repository.
+
+# MASON Docker Compose — alternative to masonctl
+# See ../GETTING_STARTED.md for the recommended setup using masonctl.
+
+services:
+  mason:
+    image: ${MASON_IMAGE_NAME:-ghcr.io/mason-teams/mason-teams:latest}
+    container_name: ${MASON_CONTAINER_NAME:-mason}
+    restart: unless-stopped
+    mem_limit: ${MASON_MEMORY:-16g}
+    cpus: ${MASON_CPUS:-8}
+    shm_size: ${MASON_SHM_SIZE:-2g}
+    ports:
+      - "${MASON_PORT_WEB:-8080}:8080"       # Web UI
+      - "${MASON_PORT_MM:-8065}:8065"         # Mattermost
+      - "${MASON_PORT_FORGEJO:-3000}:3000"    # Forgejo
+      - "${MASON_PORT_TTYD:-7681}:7681"       # Terminal
+      - "${MASON_PORT_QDRANT:-6333}:6333"     # Qdrant
+      - "${MASON_PORT_DAEMON:-9090}:9090"     # Daemon
+    volumes:
+      - ${MASON_DATA_VOLUME:-mason-data}:/data
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  mason-data:
