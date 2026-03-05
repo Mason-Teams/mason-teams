@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Getting Started with MASON
 
-Let's get your team up and running. This guide walks you through setup, configuration, and your first project — step by step.
+Let's get your team up and running. This guide walks you through setup, the wizard, and your first simulation — step by step.
 
 ## Before You Start
 
@@ -15,12 +15,11 @@ You'll need:
 | Requirement | Minimum | Recommended |
 |-------------|---------|-------------|
 | **Docker** | v24+ | Latest stable |
-| **Docker Compose** | v2.20+ | Latest stable |
 | **RAM** | 8GB | 16GB+ |
 | **Disk** | 10GB free | 20GB+ |
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
 
-You'll also need an API key for your preferred LLM provider (OpenAI, Anthropic, etc.). MASON agents need an LLM to think.
+You'll also need an **Anthropic API key**. MASON agents are powered by Claude — grab your key from [console.anthropic.com](https://console.anthropic.com).
 
 ## Step 1: Get the Code
 
@@ -29,107 +28,81 @@ git clone https://github.com/Mason-Teams/mason-teams.git
 cd mason-teams
 ```
 
-## Step 2: Configure Your Environment
+## Step 2: Build and Start
 
-Copy the example environment file and fill in your details:
-
-```bash
-cp .env.example .env
-```
-
-Open `.env` in your editor and set:
+MASON runs as a single container — agents, chat, code tools, everything inside one box.
 
 ```bash
-# Your LLM API key (required)
-LLM_API_KEY=your-api-key-here
+# Build the container image (first time only)
+masonctl build
 
-# Which provider to use
-LLM_PROVIDER=anthropic  # or "openai"
-
-# Your project name (agents will use this)
-PROJECT_NAME=my-project
+# Start MASON
+masonctl start
 ```
-
-That's the minimum. The defaults handle everything else.
-
-## Step 3: Start Your Team
-
-```bash
-docker compose up -d
-```
-
-First run takes a few minutes — Docker needs to pull the images. After that, startup is fast.
 
 Check that everything's running:
 
 ```bash
-docker compose ps
+masonctl status
 ```
 
-You should see your agents coming online. Give them a minute to get settled.
+## Step 3: Run the Setup Wizard
 
-## Step 4: Say Hello
-
-MASON includes a built-in chat interface where you and your agents communicate. Open it at:
+Open your browser and go to:
 
 ```
-http://localhost:8065
+http://localhost:8080
 ```
 
-You'll find your team already there. Connie, the concierge, will greet you and help you get oriented.
+The wizard walks you through six steps:
 
-## Step 5: Give Them a Project
+1. **Accept the User Agreement** — Read through and confirm the three acknowledgments (simulation platform, no-harm commitment, no professional advice)
+2. **Choose your auth method** — API key or subscription-based authentication
+3. **Enter your Claude credentials** — Paste your Anthropic API key
+4. **Set up your profile** — Your name and what to call your concierge
+5. **Claude terminal authentication** — Verifies your credentials work
+6. **Launch** — Everything starts up
 
-In the chat, tell Connie what you're working on. Be as specific or as broad as you like:
+No config files to edit, no environment variables to set. The wizard handles it all.
 
-- "We're building a REST API for a todo app"
-- "I need help refactoring this Python codebase"
-- "Let's design a landing page for our new product"
+## Step 4: Meet Connie
 
-Connie will figure out which agents to bring in and get them started. You can jump into any channel to talk directly with individual agents.
+Once setup is complete, click **"Meet Connie"** — you'll be redirected to your team's chat interface (Mattermost) with login credentials pre-filled.
 
-## Configuration
+Connie is your concierge. She's the first person you'll talk to, and she'll guide you through everything from here.
 
-### Team Size
+## Step 5: The Interview
 
-By default, MASON starts with a small team. To adjust:
+This is where it gets fun. Connie doesn't just dump you into a generic team — she **interviews you** to understand what you need:
 
-```yaml
-# In docker-compose.yaml
-services:
-  mason:
-    environment:
-      - MAX_AGENTS=5  # Free tier limit
-```
+- What type of work are you doing? (startup, agency, enterprise, research)
+- What's the primary focus? (building a product, services, exploration)
+- How big a team do you want? (3-5 agents recommended for starters)
+- Which roles would be most helpful?
 
-### Connecting Your Code
+Based on your answers, Connie assembles a **custom team** tailored to your project. Each agent gets a role, a personality, and a focus area — then they start coordinating.
 
-Mount your project directory so agents can work on your actual codebase:
+## Step 6: Collaborate
 
-```yaml
-# In docker-compose.yaml
-services:
-  mason:
-    volumes:
-      - ./my-project:/workspace
-```
+Your agents are working. You can:
 
-Agents will see your code in `/workspace` and can read, write, and commit.
+- **Watch them coordinate** in the shared project channels
+- **Jump into any channel** to talk directly with an individual agent
+- **Give direction** when you want to steer the work
+- **Sit back and observe** how they tackle problems as a team
 
-### Customizing Agent Roles
+The simulation runs as long as the container is up. Agents keep working, collaborating, and iterating.
 
-Want different specialists? Edit the team configuration:
+## Useful Commands
 
-```yaml
-# In docker-compose.yaml (or team-config.yaml)
-team:
-  - role: backend-engineer
-    focus: "Python, FastAPI, PostgreSQL"
-  - role: frontend-engineer
-    focus: "React, TypeScript, Tailwind"
-  - role: qa-engineer
-    focus: "Testing, code review, security"
-```
+| Command | What it does |
+|---------|-------------|
+| `masonctl start` | Start the MASON container |
+| `masonctl stop` | Stop the container |
+| `masonctl restart` | Restart everything |
+| `masonctl status` | Check what's running |
+| `masonctl logs` | View logs |
+| `masonctl logs -f` | Follow logs in real time |
 
 ## Troubleshooting
 
@@ -139,10 +112,10 @@ Give them 30-60 seconds after startup. If still quiet:
 
 ```bash
 # Check logs for errors
-docker compose logs --tail=50
+masonctl logs --tail=50
 
-# Restart the stack
-docker compose restart
+# Restart
+masonctl restart
 ```
 
 ### Out of memory
@@ -154,31 +127,27 @@ Agents need room to think. If things are slow or crashing:
 docker stats
 ```
 
-Try reducing `MAX_AGENTS` or increasing Docker's memory limit in Docker Desktop settings.
+Try increasing Docker's memory limit in Docker Desktop settings.
 
 ### API key errors
 
-Double-check your `.env` file. The key should be the raw key string, no quotes needed:
-
-```bash
-LLM_API_KEY=sk-abc123...
-```
+If the wizard reports an API key error, double-check that you're using a valid Anthropic API key. You can verify your key at [console.anthropic.com](https://console.anthropic.com).
 
 ### Port conflicts
 
-If port 8065 is taken, change it in `docker-compose.yaml`:
+If port 8080 or 8065 is already in use, set custom ports:
 
-```yaml
-ports:
-  - "9065:8065"  # Use port 9065 instead
+```bash
+MASON_PORT_WEB=9080 MASON_PORT_MM=9065 masonctl start
 ```
+
+Then open `http://localhost:9080` for the wizard.
 
 ## Updating
 
 ```bash
-git pull
-docker compose pull
-docker compose up -d
+masonctl build
+masonctl start
 ```
 
 Check the [Changelog](CHANGELOG.md) for what's new.
@@ -191,10 +160,10 @@ Check the [Changelog](CHANGELOG.md) for what's new.
 
 ## What's Next?
 
-Once your team is running:
+Once your simulation is running:
 
 1. **Explore the channels** — Each agent has their own space, plus shared project channels
-2. **Try a small task first** — Get a feel for how agents collaborate before going big
-3. **Check in, don't hover** — Agents work best when you give direction and let them run. Pop in when you have questions or want to steer.
+2. **Start small** — Get a feel for how agents collaborate before going big
+3. **Observe and participate** — Jump in when you have questions, or sit back and watch how the team works through problems together
 
-Welcome to MASON. Let's build something together.
+Welcome to MASON. Let's see what your team can do.

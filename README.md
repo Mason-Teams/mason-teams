@@ -6,59 +6,60 @@ included in the LICENSE file at the root of this repository.
 
 # MASON
 
-**Your AI team, ready to work.**
+**Your AI team, ready to simulate.**
 
-MASON is a container platform that gives you a full team of AI agents — each with their own skills, personality, and role — working together on your projects. Not just one chatbot. A crew.
+MASON is a simulation platform that lets you spin up a team of AI agents — each with their own skills, personality, and role — and put them to work on a project together. Describe what you're building, and a concierge named Connie interviews you, assembles a custom team, and kicks things off.
 
-Think of it like hiring a small startup team, except they live in Docker containers and never need coffee breaks.
+Think of it as spinning up a simulated startup team that coordinates, communicates, and solves problems together — all inside a single container.
 
 ## What You Get
 
-- **Specialized agents** — A project manager, engineers, a designer, a QA lead... each one focused on what they do best
+- **A concierge who gets it** — Connie interviews you about your project, then assembles the right team for the job
+- **Specialized agents** — Engineers, a designer, a PM, a QA lead... each one focused on what they do best
 - **Real collaboration** — Agents talk to each other, review each other's work, and coordinate without you micromanaging
-- **Your tools, their hands** — Agents use the same tools you do: Git, chat, CI/CD, code editors
-- **One command to start** — `docker compose up` and your team is online
+- **Familiar tools** — Agents use the same tools real teams use: Git, chat, code editors
+- **One command to start** — `masonctl start` and you're up
 
 ## Quick Start
 
 ```bash
-# Clone this repo
+# Clone and build
 git clone https://github.com/Mason-Teams/mason-teams.git
 cd mason-teams
+masonctl build
 
-# Start your team
-docker compose up -d
-
-# Check in on them
-docker compose logs -f
+# Start MASON
+masonctl start
 ```
 
-That's it. Your team will introduce themselves and start getting oriented.
+Then open **http://localhost:8080** to run the setup wizard. Enter your Anthropic API key, configure your profile, and meet Connie — she'll take it from there.
 
-For the full setup walkthrough (configuration, customization, connecting your own repos), see the **[Getting Started Guide](GETTING_STARTED.md)**.
+For the full walkthrough, see the **[Getting Started Guide](GETTING_STARTED.md)**.
 
 ## How It Works
 
-MASON spins up a team of AI agents in containers. Each agent has:
+MASON runs everything inside a single container — agents, chat, code tools, the works. Each agent has:
 
 - A **role** (engineer, designer, PM, etc.)
 - A **personality** and communication style
 - Access to **shared tools** (Git, Mattermost chat, code editors)
 - The ability to **collaborate** with other agents and with you
 
-You give them a project. They figure out who does what, coordinate through chat, and ship code. You stay in the loop through the same chat channels they use.
+You describe a project. Connie figures out what kind of team you need, spins them up, and they get to work. You observe and participate through the same chat channels they use.
+
+> **Note**: MASON is a simulation platform. Agent outputs are exploratory, not professional work product. See the User Agreement for details.
 
 ## Requirements
 
-- Docker and Docker Compose
+- Docker
 - 16GB+ RAM recommended (agents need room to think)
-- An internet connection (for LLM API access)
+- An Anthropic API key (agents are powered by Claude)
 
 ## License
 
 MASON is licensed under the [Business Source License 1.1](LICENSE).
 
-**Free for non-production use**, or production use with fewer than 5 concurrent agents. Need more? [Get in touch](mailto:david@shindeiru.com) about commercial licensing.
+**Free for non-production use**, or production use with fewer than 5 concurrent simulated agents. Need more? [Get in touch](mailto:david@shindeiru.com) about commercial licensing.
 
 ## Links
 
