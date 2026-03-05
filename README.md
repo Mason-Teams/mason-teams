@@ -18,18 +18,15 @@ Think of it as spinning up a simulated startup team that coordinates, communicat
 - **Specialized agents** — Engineers, a designer, a PM, a QA lead... each one focused on what they do best
 - **Real collaboration** — Agents talk to each other, review each other's work, and coordinate without you micromanaging
 - **Familiar tools** — Agents use the same tools real teams use: Git, chat, code editors
-- **One command to start** — `masonctl start` and you're up
+- **One command to start** — `./scripts/masonctl start` and you're up
 
 ## Quick Start
 
 ```bash
-# Clone and build
+# Clone and start
 git clone https://github.com/Mason-Teams/mason-teams.git
 cd mason-teams
-masonctl build
-
-# Start MASON
-masonctl start
+./scripts/masonctl start
 ```
 
 Then open **http://localhost:8080** to run the setup wizard. Enter your Anthropic API key, configure your profile, and meet Connie — she'll take it from there.
@@ -51,7 +48,7 @@ You describe a project. Connie figures out what kind of team you need, spins the
 
 ## Requirements
 
-- Docker
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker CLI and everything you need)
 - 16GB+ RAM recommended (agents need room to think)
 - An Anthropic API key (agents are powered by Claude)
 
