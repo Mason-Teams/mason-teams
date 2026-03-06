@@ -115,7 +115,56 @@ Where does this info belong?
 
 ---
 
-## 4. Beyond — The Full Toolkit
+## 4. The Container and You
+
+*MASON runs in a single container. Here's how to customize it, connect it to your environment, and get things in and out.*
+
+### Exposing Ports
+
+- How to expose additional ports when agents spin up services inside the container
+- Default ports (8080, 8065, 3000, 7681) and what they're for
+- Adding custom port mappings for agent-built services (web apps, APIs, dev servers)
+- When to use `masonctl` flags vs Docker port arguments
+
+### Volume Mounts
+
+- Mounting local directories into the container (sharing code, data, configs)
+- The default data volume and what it persists
+- Injecting files agents need (SSH keys, config files, datasets)
+- Patterns for sharing a local project directory so agents can work on your code
+
+### Networking
+
+- How the container talks to your host machine
+- Connecting MASON to local services (databases, APIs running on your machine)
+- Connecting MASON to external services (cloud APIs, remote servers)
+- DNS and hostname considerations
+
+### Persistence
+
+- What survives a container restart vs what doesn't
+- Backing up your simulation state
+- Moving a simulation between machines
+
+### Resource Tuning
+
+- Adjusting memory and CPU limits for larger teams
+- Signs your container needs more resources
+- Performance tips for running many agents simultaneously
+
+### Common Recipes
+
+<!-- Practical examples people can copy-paste -->
+
+- Recipe: Mount a local project so agents can edit your code
+- Recipe: Expose an agent's dev server to your browser
+- Recipe: Connect MASON to a local database
+- Recipe: Run MASON with custom resource limits
+- Recipe: Persist simulation data across container rebuilds
+
+---
+
+## 5. Beyond — The Full Toolkit
 
 *How an experienced operator uses MASON's tools together to work on real tasks and ideas.*
 
