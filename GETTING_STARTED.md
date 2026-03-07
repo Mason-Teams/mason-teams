@@ -50,14 +50,15 @@ Open your browser and go to:
 http://localhost:8080
 ```
 
-The wizard walks you through six steps:
+The wizard walks you through seven steps:
 
 1. **Accept the User Agreement** — Read through and confirm the three acknowledgments (simulation platform, no-harm commitment, no professional advice)
 2. **Choose your auth method** — API key or subscription-based authentication
-3. **Enter your Claude credentials** — Paste your Anthropic API key or sign in with your Claude subscription
-4. **Set up your profile** — Your name and what to call your concierge
-5. **Claude terminal authentication** — Verifies your credentials work
-6. **Launch** — Everything starts up
+3. **Install Claude Code** — MASON agents are powered by Claude Code. The wizard installs it for you — review and accept Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) to proceed.
+4. **Enter your Claude credentials** — Paste your Anthropic API key or sign in with your Claude subscription
+5. **Set up your profile** — Your name and what to call your concierge
+6. **Claude terminal authentication** — Verifies your credentials work
+7. **Launch** — Everything starts up
 
 No config files to edit, no environment variables to set. The wizard handles it all.
 
