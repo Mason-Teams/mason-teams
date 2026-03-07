@@ -82,7 +82,8 @@ To reset everything and start over:
 
 ```bash
 ./scripts/masonctl stop
-./scripts/masonctl rm       # Removes the container and its data
+./scripts/masonctl rm       # Removes the container
+# ./scripts/masonctl rm --data   # Also deletes all persistent data (agents, repos, chat history)
 ./scripts/masonctl start    # Fresh start with the setup wizard
 ```
 
@@ -152,7 +153,8 @@ The agent daemon manages agent lifecycles, message routing, and health monitorin
 | `./scripts/masonctl logs -f` | Follow logs in real time |
 | `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
 | `./scripts/masonctl update` | Pull latest image and restart the container |
-| `./scripts/masonctl rm` | Remove the container and its data |
+| `./scripts/masonctl rm` | Remove the container (keeps data) |
+| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data |
 
 ## Third-Party Dependencies
 
