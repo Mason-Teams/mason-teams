@@ -50,17 +50,66 @@ Open your browser and go to:
 http://localhost:8080
 ```
 
-The wizard walks you through seven steps:
+The wizard walks you through seven steps. Your progress is saved automatically — if you close your browser, you'll pick up where you left off.
 
-1. **Accept the User Agreement** — Read through and confirm the three acknowledgments (simulation platform, no-harm commitment, no professional advice)
-2. **Choose your auth method** — API key or subscription-based authentication
-3. **Install Claude Code** — MASON agents are powered by Claude Code. The wizard installs it for you — review and accept Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) to proceed.
-4. **Enter your Claude credentials** — Paste your Anthropic API key or sign in with your Claude subscription
-5. **Set up your profile** — Your name and what to call your concierge
-6. **Claude terminal authentication** — Verifies your credentials work
-7. **Launch** — Everything starts up
+### Step 3a: Accept the User Agreement
 
-No config files to edit, no environment variables to set. The wizard handles it all.
+You'll be asked to confirm three acknowledgments:
+
+- **Simulation platform** — MASON is a simulation environment. Agent outputs are exploratory, not professional work product.
+- **No-harm commitment** — You agree not to use MASON for harmful, deceptive, or malicious purposes.
+- **No professional advice** — Agent outputs are not legal, financial, medical, or other professional advice.
+
+All three must be confirmed to continue. This step cannot be skipped.
+
+### Step 3b: Choose Your Auth Method
+
+Pick how you'll authenticate with Claude:
+
+- **API key** — You have an Anthropic API key from [console.anthropic.com](https://console.anthropic.com)
+- **Claude subscription** — You have an active Claude Pro, Team, or Enterprise subscription
+
+Your choice determines what you'll enter in the next step. You can go back and change this later.
+
+### Step 3c: Install Claude Code
+
+MASON agents are powered by [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code). It is **not bundled** in the container — the wizard installs it at your direction.
+
+You'll be asked to review and accept Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) before installation proceeds.
+
+**If you decline:** The container's core services (Mattermost, Forgejo, PostgreSQL) will start normally, but agents won't run. The dashboard will show a "Setup Incomplete" banner with an install button so you can complete this step later.
+
+### Step 3d: Enter Your Claude Credentials
+
+Depending on your auth method:
+
+- **API key** — Paste your Anthropic API key. The wizard validates the key format before continuing.
+- **Subscription** — Sign in with your Claude account credentials.
+
+**If your key is invalid or expired:** The wizard will tell you and let you try again. You won't be able to proceed until credentials are verified.
+
+### Step 3e: Set Up Your Profile
+
+Two quick settings:
+
+- **Your name** — How agents will address you (e.g., "David", "Dr. Chen")
+- **Concierge name** — What to call your concierge (default: "Connie"). This is purely cosmetic — pick whatever you like.
+
+### Step 3f: Claude Terminal Authentication
+
+The wizard verifies that your credentials actually work by running a test authentication against Claude's API. This confirms everything is wired up correctly before launching.
+
+**If authentication fails:** Double-check your credentials. For API keys, make sure the key is active at [console.anthropic.com](https://console.anthropic.com). For subscriptions, verify your account is in good standing.
+
+### Step 3g: Launch
+
+Everything starts up — Mattermost, Forgejo, the agent daemon, and your concierge. This takes 30–60 seconds.
+
+Once complete, you'll see a **"Meet Connie"** button. Click it to continue.
+
+### After the Wizard
+
+The wizard saves everything to the container's data volume. You won't need to re-enter any of this unless you run `./scripts/masonctl rm --data` to fully reset. See the [Configuration Guide](CONFIGURATION.md) for details on what's stored and where.
 
 ## Step 4: Meet Connie
 
