@@ -52,6 +52,8 @@ You describe a project. Connie figures out what kind of team you need, spins the
 - 16GB+ RAM recommended (agents need room to think)
 - An Anthropic API key or Claude subscription (agents are powered by Claude)
 
+MASON also requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed during the setup wizard. Claude Code is not bundled in the container — you install it at your direction, subject to Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
+
 ## License
 
 MASON is licensed under the [Business Source License 1.1](LICENSE).
@@ -62,6 +64,9 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 
 - **Website**: [masonteams.com](https://masonteams.com)
 - **Getting Started**: [GETTING_STARTED.md](GETTING_STARTED.md)
+- **Configuration**: [CONFIGURATION.md](CONFIGURATION.md)
+- **Skills and Commands**: [SKILLSANDCOMMANDS.md](SKILLSANDCOMMANDS.md)
+- **Workflows**: [WORKFLOWS.md](WORKFLOWS.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
 - **Contact**: [info@masonteams.com](mailto:info@masonteams.com)
