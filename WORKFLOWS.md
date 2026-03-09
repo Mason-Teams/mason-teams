@@ -112,7 +112,130 @@ Where does this info belong?
 
 ---
 
-## 3. Advanced — Mixed Control
+## 3. The Container and You
+
+*MASON runs in a single container. Here's how to customize it, connect it to your environment, and get things in and out.*
+
+### Default Ports
+
+MASON exposes several ports out of the box:
+
+| Port | Service | Purpose |
+|------|---------|---------|
+| 8080 | Setup Wizard | Initial configuration and onboarding |
+| 8065 | Mattermost | Team chat — where you talk to your agents |
+| 3000 | Forgejo | Git forge — repos, issues, pull requests |
+| 7681 | ttyd | Web terminal — browser-based access to the container |
+
+If your agents spin up additional services inside the container (a dev server, an API, etc.), you'll need to expose those ports. You can do this when starting the container:
+
+```bash
+# Expose an additional port for an agent's dev server
+./scripts/masonctl start --port 3001:3001
+```
+
+Or pass port mappings directly to Docker:
+
+```bash
+docker run -p 8080:8080 -p 8065:8065 -p 3000:3000 -p 3001:3001 ...
+```
+
+### Volume Mounts
+
+By default, MASON uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory into the container:
+
+```bash
+# Mount a local project directory
+./scripts/masonctl start --volume /path/to/your/project:/workspace/project
+```
+
+Or with Docker directly:
+
+```bash
+docker run -v /path/to/your/project:/workspace/project ...
+```
+
+Common things to mount:
+- **Your project code** — so agents can read and edit your files directly
+- **SSH keys** — if agents need to push to external Git repos
+- **Config files** — custom settings or environment files your project needs
+
+### Networking
+
+The container has full outbound internet access — agents can clone repos, call APIs, and download packages. For connecting to services on your host machine:
+
+- **macOS/Windows**: Use `host.docker.internal` to reach services running on your host
+- **Linux**: Use `--network host` or the host's IP address
+
+```bash
+# Example: agent connecting to a database on your machine
+# Inside the container, use:
+postgres://host.docker.internal:5432/mydb
+```
+
+For external services (cloud APIs, remote servers), agents can reach them directly — no special configuration needed.
+
+### Persistence
+
+**What survives a container restart:**
+- All data in the Docker volume (agent workspaces, Mattermost messages, Forgejo repos, memory)
+- Anything mounted from your host machine
+
+**What doesn't survive `docker-compose down -v`:**
+- The `-v` flag deletes volumes — this wipes everything
+- Use `docker-compose down` (without `-v`) to stop while keeping data
+
+**Backing up:** Your simulation state lives in the Docker volume. To back it up:
+
+```bash
+# Find your volume
+docker volume ls | grep mason
+
+# Back it up
+docker run --rm -v mason_data:/data -v $(pwd):/backup alpine tar czf /backup/mason-backup.tar.gz /data
+```
+
+### Resource Tuning
+
+MASON recommends 16GB+ RAM. Each agent runs a Claude Code session, and they add up. Signs you need more resources:
+
+- Agents responding slowly or timing out
+- Mattermost or Forgejo becoming unresponsive
+- Container OOM kills (check `docker logs`)
+
+To adjust limits:
+
+```bash
+# Give MASON more memory and CPU
+docker run --memory=24g --cpus=8 ...
+```
+
+**Tips for larger teams:**
+- Start with 3–5 agents and scale up as needed
+- Monitor with `docker stats` to see resource usage per container
+- If running many agents, consider giving the container at least 4GB per agent
+
+### Common Recipes
+
+**Mount a local project so agents can edit your code:**
+```bash
+./scripts/masonctl start --volume ~/my-project:/workspace/my-project
+```
+
+**Expose an agent's dev server to your browser:**
+```bash
+./scripts/masonctl start --port 3001:3001
+# Then open http://localhost:3001 in your browser
+```
+
+**Run MASON with custom resource limits:**
+```bash
+docker run --memory=32g --cpus=12 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
+```
+
+---
+
+## 4. Advanced — Mixed Control
 
 *Terminal commands and Mattermost messages — two ways to talk to your team, each with strengths.*
 
@@ -143,92 +266,6 @@ Where does this info belong?
 - Sending commands to specific agents
 - Monitoring multiple agents at once
 - When to kill and respawn vs reload
-
----
-
-## 4. The Container and You
-
-*MASON runs in a single container. Here's how to customize it, connect it to your environment, and get things in and out.*
-
-### Exposing Ports
-
-- How to expose additional ports when agents spin up services inside the container
-- Default ports (8080, 8065, 3000, 7681) and what they're for
-- Adding custom port mappings for agent-built services (web apps, APIs, dev servers)
-- When to use `masonctl` flags vs Docker port arguments
-
-### Volume Mounts
-
-- Mounting local directories into the container (sharing code, data, configs)
-- The default data volume and what it persists
-- Injecting files agents need (SSH keys, config files, datasets)
-- Patterns for sharing a local project directory so agents can work on your code
-
-### Networking
-
-- How the container talks to your host machine
-- Connecting MASON to local services (databases, APIs running on your machine)
-- Connecting MASON to external services (cloud APIs, remote servers)
-- DNS and hostname considerations
-
-### Persistence
-
-- What survives a container restart vs what doesn't
-- Backing up your simulation state
-- Moving a simulation between machines
-
-### Resource Tuning
-
-- Adjusting memory and CPU limits for larger teams
-- Signs your container needs more resources
-- Performance tips for running many agents simultaneously
-
-### Common Recipes
-
-<!-- Practical examples people can copy-paste -->
-
-- Recipe: Mount a local project so agents can edit your code
-- Recipe: Expose an agent's dev server to your browser
-- Recipe: Connect MASON to a local database
-- Recipe: Run MASON with custom resource limits
-- Recipe: Persist simulation data across container rebuilds
-
----
-
-## 5. Beyond — The Full Toolkit
-
-*How an experienced operator uses MASON's tools together to work on real tasks and ideas.*
-
-### The Operator's Workflow
-
-<!-- dpark: this section is your voice — how YOU actually work with agents -->
-
-- How I think about tasks before assigning them
-- My process for going from idea → spec → implementation
-- How I use agents differently for exploration vs execution
-- When I do it myself vs when I delegate to agents
-
-### Tools in Concert
-
-- **Speckit workflow** — constprep → specify → clarify → plan → tasks → implement
-- **Autopilot** — When to let agents run the full workflow autonomously
-- **Code review loops** — How agents review each other's work before merging
-- **Cross-agent collaboration** — Memchat, beepme, shared channels
-
-### Patterns I've Found Useful
-
-<!-- dpark: real examples from your experience -->
-
-- Pattern: "Scout then build" — use one agent to explore, another to implement
-- Pattern: "Terminal for precision, MM for direction"
-- Pattern: "Let them argue" — when agent disagreement produces better results
-- Pattern: [more to come]
-
-### Anti-Patterns
-
-- What doesn't work well
-- Common mistakes when starting out
-- When to pull the plug and redirect
 
 ---
 
