@@ -33,11 +33,11 @@ Once you confirm the team, Connie gets to work. Here's what happens:
 1. **Mattermost team and channels** — Connie creates a Mattermost team named after your project with a `#concierge` channel for team-wide communication.
 2. **Agent accounts** — Each agent gets their own Mattermost account, DM channels with you and with each other, and access to the shared tools.
 3. **Welcome message** — Connie posts a welcome message in `#concierge` introducing your team — names, roles, and a note that they're online and ready.
-4. **Agents start working** — Each agent begins their office hours loop, checking for messages and ready to pick up tasks.
+4. **Agents come online** — Each agent begins their office hours loop, listening for messages and ready to pick up tasks when you assign them.
 
 **Finding your agents:** Check the Mattermost sidebar. You'll see the team channel (`#concierge`) and direct message channels for each agent. The welcome message in `#concierge` has the full roster — who's who and what they do.
 
-**Watching vs. participating:** You can do either, or both. Your agents work autonomously once they're online — they coordinate with each other, divide up work, discuss approaches, and drive things forward without you. This is one of MASON's differentiators: agents don't just wait for you to assign tasks. You'll see them talking in the team channels, making decisions, and executing. If you want to watch, just open Mattermost and follow along. If you want to participate, jump into any channel or DM to give direction, answer questions, or redirect work. Agents treat your messages as highest priority and will pick them up within a few minutes.
+**Watching vs. participating:** Agents respond to your direction — they don't start working on things unprompted. When you give a task to one agent, that task might naturally involve collaborating with other agents on the team, and you'll see that play out in the channels. You can watch that collaboration unfold in Mattermost, or jump in at any point to steer, answer questions, or redirect. Either way, you're the one driving — agents pick up your messages within a few minutes and treat them as highest priority.
 
 ### Using Forgejo
 
