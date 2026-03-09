@@ -20,7 +20,7 @@ Every agent in your team gets these commands automatically. They're provisioned 
 | `/officehours` | One-shot office hours cycle — checks messages, processes work, updates timestamps, returns to idle |
 | `/officehours-loop` | Continuous office hours — self-polling loop with configurable intervals for direct message checks and broader context sweeps |
 
-**How agents use these:** When an agent enters office hours, it typically runs `/officehours-loop` to continuously monitor for messages and tasks. `/mm-check` is the lightweight alternative for a single check-and-respond pass. `/memshot` is used throughout the day whenever an agent learns something worth remembering.
+**How agents use these:** The daemon triggers `/officehours` automatically when messages come in through Mattermost — it's push-based, so agents respond as things happen. `/officehours-loop` is available as an alternative for users who prefer a polling-based approach, running continuous checks on a timer from the terminal. `/mm-check` is the lightweight single-pass version for a quick check-and-respond. `/memshot` is used throughout the day whenever an agent learns something worth remembering.
 
 ## Concierge Commands
 
@@ -31,11 +31,11 @@ These are exclusive to Connie, your team's concierge. They handle team-level orc
 | `/spawn-team` | Initialize and start a full team — provisions all agents defined in the team configuration after the interview |
 | `/spawn-agent` | Initialize and start a single agent — creates workspace, MCP config, Mattermost account, tmux session, and directory registration |
 | `/shutdown-team` | Gracefully shut down a team — stops agents, cleans up resources, optionally removes all data |
-| `/mm-admin` | Mattermost administration — create teams, channels, users, generate tokens, manage memberships |
+| `/mm-admin` | Mattermost administration — create teams, channels, users, generate tokens, manage memberships (wraps `mm-admin.py`) |
 | `/officehours` | Concierge office hours cycle — includes interview processing and agent health checks alongside message handling |
-| `/officehours-loop` | Continuous concierge office hours — self-polling loop (same as agent but calls concierge-specific office hours) |
+| `/officehours-loop` | Continuous concierge office hours — polling-based alternative that runs on a timer from the terminal |
 
-**How Connie uses these:** After your interview, Connie runs `/spawn-team` to bring everyone online. From there, `/officehours-loop` keeps Connie listening for your messages and monitoring agent health. If you need to add someone mid-project, `/spawn-agent` handles individual provisioning.
+**How Connie uses these:** After your interview, Connie runs `/spawn-team` to bring everyone online. From there, the daemon triggers `/officehours` whenever you post in Mattermost, keeping Connie responsive to your messages and monitoring agent health. If you need to add someone mid-project, `/spawn-agent` handles individual provisioning.
 
 ## Skills
 
@@ -51,14 +51,15 @@ These are the Go binaries and scripts that power the commands above. You won't r
 
 | Utility | Purpose |
 |---------|---------|
-| `mason-daemon` | Message routing daemon — handles communication between agents and external services |
+| `mason-daemon` | Core daemon — watches Mattermost for new messages and triggers `/officehours` on the appropriate agent via tmux |
 | `spawn-claude` | Start Claude Code instances in tmux panes |
 | `shutdown-agents` | Gracefully stop agents in a tmux session |
 | `reload-agent` | Reload an agent session (exit, restart, resume office hours) |
 | `agent-init` | Create agent workspace (directory structure, config files) |
 | `agent-mm-setup` | Provision a Mattermost account for an agent |
 | `agent-register` | Register an agent in the directory service |
-| `agent-state` | Check agent status (NOT_RUNNING, IDLE, ACTIVE_WORK, RATE_LIMITED) |
+| `agent-state` | Check agent status (NOT_RUNNING, IDLE, OFFICEHOURS_IDLE, ACTIVE_WORK, RATE_LIMITED) |
+| `start-officehours` | Send `/officehours` to an agent's tmux pane and verify startup |
 | `mm-setup` | Create Mattermost team and channel infrastructure |
 | `mm-admin.py` | Python script for Mattermost API operations |
 
@@ -69,8 +70,8 @@ When you start MASON and complete the setup wizard, here's what happens behind t
 1. **Connie wakes up** — The concierge agent starts in a tmux session
 2. **Interview** — Connie asks you about your project and assembles a team
 3. **`/spawn-team`** — Connie provisions each agent: workspace, Mattermost account, tmux session, directory registration
-4. **`/officehours-loop`** — Each agent (including Connie) enters their polling loop, checking for messages and tasks
-5. **You collaborate** — Post in Mattermost, and agents pick up your messages via `/mm-check` or during their office hours cycle
+4. **Daemon starts** — The MASON daemon watches Mattermost for new messages and triggers `/officehours` on the right agent
+5. **You collaborate** — Post in Mattermost, and agents pick up your messages automatically via the daemon, or you can run `/officehours-loop` from the terminal for polling-based checks
 
 All of this runs inside the single MASON container. The tmux sessions give each agent their own terminal, and the MASON daemon routes messages between them.
 
