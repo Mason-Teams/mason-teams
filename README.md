@@ -65,6 +65,7 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 - **Website**: [masonteams.com](https://masonteams.com)
 - **Getting Started**: [GETTING_STARTED.md](GETTING_STARTED.md)
 - **Configuration**: [CONFIGURATION.md](CONFIGURATION.md)
+- **Skills and Commands**: [SKILLSANDCOMMANDS.md](SKILLSANDCOMMANDS.md)
 - **Workflows**: [WORKFLOWS.md](WORKFLOWS.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
