@@ -58,7 +58,7 @@ MASON also requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/cl
 
 MASON is licensed under the [Business Source License 1.1](LICENSE).
 
-**Free for non-production use**, or production use with fewer than 5 MASON-orchestrated agent teams. For production deployments exceeding 5 agent teams, [contact us about a commercial license](mailto:info@masonteams.ai).
+**Free for non-production use**, or production use with fewer than 5 MASON-orchestrated agents. For production deployments exceeding 5 agents, [contact us about a commercial license](mailto:info@masonteams.ai).
 
 **Note:** MASON requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed separately at your direction during setup. Your use of Claude Code is governed by [Anthropic's Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms). MASON's license covers the orchestration platform only — not third-party dependencies.
 
