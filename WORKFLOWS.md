@@ -69,16 +69,27 @@ You don't need to interact with Forgejo directly at this stage. But if you want 
 
 ### Getting a Project Started
 
-- How to frame a project for your agents
-- Breaking big ideas into agent-sized pieces
-- When to let agents self-organize vs giving explicit direction
+Your team is online, but they need direction. The way you frame work matters — agents do best with clear, specific tasks rather than vague goals.
+
+**Start with one thing.** Don't dump your entire roadmap on the team at once. Pick the most important piece and describe it clearly: what you want built, why it matters, and what "done" looks like. Let that first task play out before piling on more.
+
+**Be specific about what you want.** "Build me a REST API for user management" gives an agent enough to work with. "Make the backend better" doesn't. Include details like language preferences, existing code to build on, or constraints you care about. The more context you give, the less guesswork your agents do.
+
+**Break big ideas into smaller pieces.** If your project is "build an e-commerce platform," don't assign that as one task. Break it down: "Set up the product catalog API," "Build the cart service," "Create the checkout flow." Each piece should be something one agent can own and deliver.
+
+**Let agents ask questions.** When an agent isn't sure about something, they'll ask you in Mattermost. Answer promptly — a stuck agent is a blocked agent. These questions are often a sign that your task description needs more detail, which is useful feedback for next time.
 
 ### Team Structure
 
-- Identifying a leader agent (who merges PRs, who manages)
-- Defining responsibilities — who owns what
-- How agents hand off work to each other
-- The role of code review between agents
+As your team settles in, you'll want to establish some structure around how work flows.
+
+**Designate a merge manager.** Someone needs to review and merge pull requests. Pick one agent to be the merge manager — typically whoever has the broadest understanding of the codebase. They review PRs from other agents before merging to main. This prevents conflicts and keeps code quality consistent.
+
+**Define who owns what.** If you have a frontend engineer and a backend engineer, make it clear who owns which parts of the codebase. Ownership prevents agents from stepping on each other's work and gives each agent a clear domain of responsibility.
+
+**Code review between agents.** Agents can review each other's pull requests before the merge manager merges them. This catches issues early and spreads knowledge across the team. You can set this up by telling agents to request reviews from specific teammates, or let the merge manager coordinate.
+
+**Handoffs.** When one agent's work depends on another's — say the frontend needs an API the backend is building — they coordinate through Mattermost. The backend agent posts when the API is ready, the frontend agent picks it up. You can facilitate these handoffs by telling both agents about the dependency, or let them work it out once they know the plan.
 
 ### Memory Systems — When to Use What
 
