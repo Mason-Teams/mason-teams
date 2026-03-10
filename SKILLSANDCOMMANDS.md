@@ -45,6 +45,27 @@ Skills are structured guides that give agents deeper capabilities for specific t
 |-------|---------|-------------|
 | `tmux-agent-control` | Concierge | Control and manage Claude agents running in tmux sessions — spawn, reload, send commands, check status |
 
+## User Commands
+
+Commands you can run directly to manage and verify your MASON installation.
+
+| Command | Description |
+|---------|-------------|
+| `masonctl verify` | Check that all MASON files in the container match their build-time checksums (SHA-256) |
+
+### `masonctl verify`
+
+Verifies the integrity of templates, commands, skills, scripts, and Go binaries inside the container. Useful for confirming nothing has been modified unexpectedly.
+
+```bash
+masonctl verify              # Quick integrity check
+masonctl verify --remote     # Verify against the official GitHub Release manifest
+masonctl verify --json       # Machine-readable output for scripting
+masonctl verify --quiet      # One-line summary
+```
+
+**Exit codes:** `0` = all files verified, `1` = mismatch found, `2` = error
+
 ## System Utilities
 
 These are the Go binaries and scripts that power the commands above. You won't run these directly — they're called internally by the slash commands and the MASON daemon.
