@@ -28,6 +28,7 @@ These are exclusive to Connie, your team's concierge. They handle team-level orc
 
 | Command | Description |
 |---------|-------------|
+| `/change-password` | Change your Mattermost and Forgejo passwords — handles secure credential exchange via DM |
 | `/spawn-team` | Initialize and start a full team — provisions all agents defined in the team configuration after the interview |
 | `/spawn-agent` | Initialize and start a single agent — creates workspace, MCP config, Mattermost account, tmux session, and directory registration |
 | `/shutdown-team` | Gracefully shut down a team — stops agents, cleans up resources, optionally removes all data |

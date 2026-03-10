@@ -84,7 +84,9 @@ You'll be asked to review and accept Anthropic's [Commercial Terms of Service](h
 Depending on your auth method:
 
 - **API key** — Paste your Anthropic API key. The wizard validates the key format before continuing.
-- **Subscription** — Sign in with your Claude account credentials.
+- **Subscription** — Sign in with your Claude account credentials. The wizard opens an OAuth URL in the terminal for you to authenticate in your browser.
+
+> **Tip:** The terminal can mangle the OAuth URL with line breaks and copy/paste issues. If clicking the URL doesn't work, carefully select and copy the full URL, paste it into a text editor to verify it's intact, then paste the cleaned-up URL into your browser.
 
 **If your key is invalid or expired:** The wizard will tell you and let you try again. You won't be able to proceed until credentials are verified.
 
@@ -105,11 +107,15 @@ The wizard verifies that your credentials actually work by running a test authen
 
 Everything starts up — Mattermost, Forgejo, the agent daemon, and your concierge. This takes 30–60 seconds.
 
+> **Note:** After first launch, it may take 2–3 minutes for Mattermost to fully initialize (database migrations, team and channel provisioning, etc.). You may see loading screens or incomplete data during this time — this is normal.
+
 Once complete, you'll see a **"Meet Connie"** button. Click it to continue.
 
 ### After the Wizard
 
 The wizard saves everything to the container's data volume. You won't need to re-enter any of this unless you run `./scripts/masonctl rm --data` to fully reset. See the [Configuration Guide](CONFIGURATION.md) for details on what's stored and where.
+
+**Changing your password:** The passwords generated during setup aren't permanent. You can change your Mattermost and Forgejo passwords at any time — either ask Connie to do it for you in chat, or change them yourself from inside the container.
 
 ## Step 4: Meet Connie
 
