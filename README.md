@@ -66,6 +66,31 @@ For the full security model, including token management, network details, and re
 
 MASON also requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed during the setup wizard. Claude Code is not bundled in the container — you install it at your direction, subject to Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
 
+## A Note on Quality and Compatibility
+
+MASON is built and maintained by a single developer, with AI agents doing much of the heavy lifting — writing code, reviewing each other's work, and shipping features. It's a small operation building something ambitious, and I want to set honest expectations.
+
+**What's been tested:**
+
+- macOS on Apple Silicon (M4 Max MacBook Pro) with Docker Desktop
+- That's the environment MASON was built in, and it's the only one I can confirm works
+
+**What hasn't been tested:**
+
+- Intel Macs, Windows, or Linux hosts
+- Other container runtimes (Podman, Rancher Desktop, OrbStack, etc.)
+- Cloud or remote Docker environments
+
+It may work on other setups — the container itself is standard — but I haven't verified it and can't promise a smooth experience outside the tested environment.
+
+**On bugs:**
+
+There will be bugs. Both manual and automated testing have been done, but a project this size built by one person and a team of agents is going to have rough edges. If you hit something, please [open an issue](https://github.com/Mason-Teams/mason-teams/issues) — I'll do my best to address bugs in a reasonable timeframe. Clear reproduction steps help a lot.
+
+**On scope:**
+
+This is an early release. Features may change, APIs may shift, and some things might not work the way you expect yet. Your patience and feedback are genuinely appreciated — they make MASON better for everyone.
+
 ## License
 
 MASON is licensed under the [Business Source License 1.1](LICENSE).
