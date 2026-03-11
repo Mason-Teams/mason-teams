@@ -46,6 +46,18 @@ You describe a project. Connie figures out what kind of team you need, spins the
 
 > **Note**: MASON is a simulation platform. Agent outputs are exploratory, not professional work product. See the User Agreement for details.
 
+## Security
+
+MASON takes a secure-by-default approach to localhost development:
+
+- **Token authentication** — Dashboard access requires a 32-character token generated on first start (`masonctl token` to retrieve)
+- **TLS encrypted** — Dashboard serves HTTPS with an auto-generated certificate
+- **Minimal exposure** — Only 3 ports are mapped to the host; all internal services are localhost-only inside the container
+- **Read-only credentials** — Host credentials are mounted read-only into the container
+- **Locked-down permissions** — Token and TLS key files are mode 0600
+
+For the full security model, including token management, network details, and recommendations for networked environments, see **[SECURITY.md](SECURITY.md)**.
+
 ## Requirements
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker CLI and everything you need)
@@ -69,6 +81,7 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 - **Configuration**: [CONFIGURATION.md](CONFIGURATION.md)
 - **Skills and Commands**: [SKILLSANDCOMMANDS.md](SKILLSANDCOMMANDS.md)
 - **Workflows**: [WORKFLOWS.md](WORKFLOWS.md)
+- **Security**: [SECURITY.md](SECURITY.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
 - **Contact**: [info@masonteams.com](mailto:info@masonteams.com)
