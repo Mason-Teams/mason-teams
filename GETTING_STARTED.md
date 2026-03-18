@@ -183,6 +183,12 @@ docker stats
 
 Try increasing Docker's memory limit in Docker Desktop settings.
 
+### Browser certificate warning
+
+When you first open the MASON dashboard, your browser will show a security warning about an untrusted or self-signed certificate. This is normal — MASON generates a self-signed TLS certificate on first start to encrypt traffic between your browser and the local dashboard. Since the certificate isn't issued by a public certificate authority, your browser flags it.
+
+**To proceed:** Click "Advanced" (or "Show Details" in Safari) and accept the certificate. You only need to do this once per browser. For full details on MASON's TLS setup and how to use your own certificate, see [SECURITY.md](SECURITY.md#tls).
+
 ### Authentication errors
 
 If the wizard reports a credentials error, double-check your setup. For API keys, verify yours at [console.anthropic.com](https://console.anthropic.com). For Claude subscriptions, make sure you're signed in and your subscription is active.
