@@ -114,9 +114,10 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 - **Workflows**: [WORKFLOWS.md](WORKFLOWS.md)
 - **Security**: [SECURITY.md](SECURITY.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
 - **Contact**: [info@masonteams.com](mailto:info@masonteams.com)
 
 ---
 
-Built by [Human Loop Ventures](https://masonteams.com). The future of work is collaborative.
+Built by [Human Loop Ventures](https://humanloopventures.com). The future is together, not apart.
