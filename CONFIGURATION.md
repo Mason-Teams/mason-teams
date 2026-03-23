@@ -25,7 +25,7 @@ Set these before running `./scripts/masonctl start` to override defaults.
 MASON_PORT_WEB=9080 MASON_PORT_MM=9065 ./scripts/masonctl start
 ```
 
-Then open `http://localhost:9080` for the setup wizard.
+Then open `https://localhost:9080` for the setup wizard.
 
 ## Ports
 
@@ -33,7 +33,7 @@ MASON exposes these ports from the container:
 
 | Port | Service | What it's for |
 |------|---------|---------------|
-| `8080` | Web UI | Setup wizard and dashboard |
+| `8080` | Web UI | Setup wizard and dashboard (HTTPS, token auth) |
 | `8065` | Mattermost | Team chat — where you talk to agents |
 | `3000` | Forgejo | Git repositories and code collaboration |
 

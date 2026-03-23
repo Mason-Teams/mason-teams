@@ -122,7 +122,7 @@ MASON exposes several ports out of the box:
 
 | Port | Service | Purpose |
 |------|---------|---------|
-| 8080 | Setup Wizard | Initial configuration and onboarding |
+| 8080 | Setup Wizard | Initial configuration and onboarding (HTTPS, token auth) |
 | 8065 | Mattermost | Team chat — where you talk to your agents |
 | 3000 | Forgejo | Git forge — repos, issues, pull requests |
 | 7681 | ttyd | Web terminal — browser-based access to the container |
