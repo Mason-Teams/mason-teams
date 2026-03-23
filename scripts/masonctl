@@ -10,16 +10,14 @@
 set -e
 
 CONTAINER_NAME="${MASON_CONTAINER_NAME:-mason}"
-IMAGE_NAME="${MASON_IMAGE_NAME:-ghcr.io/mason-teams/mason-teams:latest}"
+IMAGE_NAME="${MASON_IMAGE_NAME:-masonteams/mason-teams:stable}"
 DATA_VOLUME="${MASON_DATA_VOLUME:-mason-data}"
+MASON_DIR="${MASON_DIR:-$HOME/.mason}"
 
 # Ports
 PORT_WEB="${MASON_PORT_WEB:-8080}"
 PORT_MM="${MASON_PORT_MM:-8065}"
 PORT_FORGEJO="${MASON_PORT_FORGEJO:-3000}"
-PORT_TTYD="${MASON_PORT_TTYD:-7681}"
-PORT_QDRANT="${MASON_PORT_QDRANT:-6333}"
-PORT_DAEMON="${MASON_PORT_DAEMON:-9090}"
 
 # Resources
 MASON_MEMORY="${MASON_MEMORY:-16g}"
@@ -67,9 +65,121 @@ container_running() {
 }
 
 
+# Initialize security: generate token and TLS certificates on first run
+init_security() {
+    # Create MASON_DIR if needed
+    if [ ! -d "$MASON_DIR" ]; then
+        print_status "Creating $MASON_DIR..."
+        mkdir -p "$MASON_DIR"
+    fi
+
+    # Generate API token if it doesn't exist
+    if [ ! -f "$MASON_DIR/token" ]; then
+        print_status "Generating API token..."
+        openssl rand -hex 16 > "$MASON_DIR/token"
+        chmod 0600 "$MASON_DIR/token"
+    fi
+
+    # Generate self-signed TLS certificate if it doesn't exist
+    if [ ! -d "$MASON_DIR/tls" ]; then
+        mkdir -p "$MASON_DIR/tls"
+    fi
+
+    if [ ! -f "$MASON_DIR/tls/mason.crt" ] || [ ! -f "$MASON_DIR/tls/mason.key" ]; then
+        print_status "Generating self-signed TLS certificate..."
+        openssl req -x509 -newkey rsa:2048 -keyout "$MASON_DIR/tls/mason.key" \
+            -out "$MASON_DIR/tls/mason.crt" -days 365 -nodes \
+            -subj "/CN=localhost/O=MASON" \
+            -addext "subjectAltName=DNS:localhost,IP:127.0.0.1" 2>/dev/null
+        chmod 0600 "$MASON_DIR/tls/mason.key"
+        chmod 0644 "$MASON_DIR/tls/mason.crt"
+    fi
+}
+
+# Print the current API token
+cmd_token() {
+    local token_path="${MASON_DIR}/token"
+    if [ ! -f "$token_path" ]; then
+        print_error "No token found. Run 'masonctl start' to generate one."
+        exit 1
+    fi
+    cat "$token_path"
+}
+
+# Open browser to login page with helpful guidance
+cmd_login() {
+    local token_path="${MASON_DIR}/token"
+    local login_url="https://localhost:${PORT_WEB}/login"
+
+    echo ""
+    echo -e "  ${GREEN}MASON Login${NC}"
+    echo -e "  ──────────────────────────────────────────"
+    echo ""
+
+    # Check if token exists
+    if [ ! -f "$token_path" ]; then
+        print_error "No token found."
+        echo ""
+        echo "  It looks like MASON hasn't been started yet."
+        echo "  Run 'masonctl start' first, then try 'masonctl login' again."
+        echo ""
+        exit 1
+    fi
+
+    # Check if container is running
+    check_docker
+    if ! container_running; then
+        print_warning "The MASON container isn't running."
+        echo ""
+        echo "  Start it first with:"
+        echo -e "    ${GREEN}masonctl start${NC}"
+        echo ""
+        echo "  Then try 'masonctl login' again."
+        echo ""
+        exit 1
+    fi
+
+    local token
+    token=$(cat "$token_path")
+
+    echo "  Your browser session has expired or needs to be refreshed."
+    echo "  This is normal — it happens when cookies expire or you"
+    echo "  switch browsers."
+    echo ""
+    echo "  Here's what to do:"
+    echo ""
+    echo -e "  ${GREEN}1.${NC} A browser window will open to the MASON login page."
+    echo -e "  ${GREEN}2.${NC} Copy the token below and paste it into the login form."
+    echo -e "  ${GREEN}3.${NC} Click 'Log In' and you're back in."
+    echo ""
+    echo -e "  Your token:"
+    echo ""
+    echo -e "    ${YELLOW}${token}${NC}"
+    echo ""
+    echo -e "  ──────────────────────────────────────────"
+    echo ""
+    echo -e "  ${GREEN}Tip:${NC} Your token is stored at ~/.mason/token"
+    echo "  You can also run 'masonctl token' to print it anytime."
+    echo ""
+
+    # Open browser (macOS: open, Linux: xdg-open)
+    if command -v open &> /dev/null; then
+        open "$login_url" 2>/dev/null
+        print_status "Opening $login_url in your browser..."
+    elif command -v xdg-open &> /dev/null; then
+        xdg-open "$login_url" 2>/dev/null
+        print_status "Opening $login_url in your browser..."
+    else
+        echo "  Open this URL in your browser:"
+        echo -e "    ${GREEN}${login_url}${NC}"
+    fi
+    echo ""
+}
+
 # Start the container
 cmd_start() {
     check_docker
+    init_security
 
     if container_running; then
         print_warning "Container '$CONTAINER_NAME' is already running"
@@ -89,10 +199,8 @@ cmd_start() {
             -p "${PORT_WEB}:8080" \
             -p "${PORT_MM}:8065" \
             -p "${PORT_FORGEJO}:3000" \
-            -p "${PORT_TTYD}:7681" \
-            -p "${PORT_QDRANT}:6333" \
-            -p "${PORT_DAEMON}:9090" \
             -v "${DATA_VOLUME}:/data" \
+            -v "${MASON_DIR}:/home/mason/.mason:ro" \
             "$IMAGE_NAME"
     fi
 
@@ -101,13 +209,14 @@ cmd_start() {
     for i in $(seq 1 60); do
         # Use /health endpoint — works on both fresh start (200/503) and restart (200/503)
         # /setup returns 302 after wizard completion, which would never match 200
-        http_code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:${PORT_WEB}/health" 2>/dev/null || true)
+        http_code=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${PORT_WEB}/health" 2>/dev/null || \
+                    curl -s -o /dev/null -w '%{http_code}' "http://localhost:${PORT_WEB}/health" 2>/dev/null || true)
         if [ "$http_code" = "200" ] || [ "$http_code" = "503" ]; then
             print_status "Container ready!"
             echo ""
-            echo "  Web UI:        http://localhost:${PORT_WEB}"
-            echo "  Getting Started: http://localhost:${PORT_WEB}/guide"
-            echo "  Documentation: http://localhost:${PORT_WEB}/docs/"
+            echo "  Web UI:          https://localhost:${PORT_WEB}"
+            echo "  Getting Started: https://localhost:${PORT_WEB}/guide"
+            echo "  Documentation:   https://localhost:${PORT_WEB}/docs/"
             echo ""
             echo "  (Check container logs for service status: masonctl logs)"
             return 0
@@ -165,17 +274,16 @@ cmd_status() {
         echo "Started:   $started"
         echo ""
         echo "Ports:"
-        echo "  Web UI:      http://localhost:${PORT_WEB}"
+        echo "  Web UI:      https://localhost:${PORT_WEB}"
         echo "  Mattermost:  http://localhost:${PORT_MM}"
         echo "  Forgejo:     http://localhost:${PORT_FORGEJO}"
-        echo "  Terminal:    http://localhost:${PORT_TTYD}"
-        echo "  Qdrant:      http://localhost:${PORT_QDRANT}"
-        echo "  Daemon:      http://localhost:${PORT_DAEMON}"
         echo ""
         echo "Services:"
         # Check service health via API
-        if curl -sf "http://localhost:${PORT_WEB}/api/status/json" > /dev/null 2>&1; then
-            curl -sf "http://localhost:${PORT_WEB}/api/status/json" | \
+        if curl -skf "https://localhost:${PORT_WEB}/api/status/json" > /dev/null 2>&1 || \
+           curl -sf "http://localhost:${PORT_WEB}/api/status/json" > /dev/null 2>&1; then
+            (curl -skf "https://localhost:${PORT_WEB}/api/status/json" 2>/dev/null || \
+             curl -sf "http://localhost:${PORT_WEB}/api/status/json" 2>/dev/null) | \
                 python3 -c "import sys,json; d=json.load(sys.stdin); [print(f'  {s[\"name\"]}: {s[\"state\"]}') for s in d.get('services',[])]" 2>/dev/null || \
                 echo "  (API available but could not parse response)"
         else
@@ -272,6 +380,18 @@ cmd_rm() {
     print_status "Cleanup complete"
 }
 
+# Verify integrity of MASON files in the container
+cmd_verify() {
+    check_docker
+
+    if ! container_running; then
+        print_error "Container '$CONTAINER_NAME' is not running"
+        exit 1
+    fi
+
+    docker exec "$CONTAINER_NAME" mason-verify "$@"
+}
+
 # Show help
 cmd_help() {
     cat <<EOF
@@ -288,6 +408,9 @@ Commands:
   status                Show container and service status
   logs [-f] [-n N]      View container logs (-f to follow, -n for tail lines)
   exec [cmd...]         Execute command in container (or shell if no cmd)
+  token                 Print the current API token
+  login                 Open browser to login page (with token instructions)
+  verify [flags...]     Verify integrity of MASON files in the container
   rm [--data]           Remove container (--data also removes volume)
   help                  Show this help message
 
@@ -295,12 +418,10 @@ Environment Variables:
   MASON_CONTAINER_NAME  Container name (default: mason)
   MASON_IMAGE_NAME      Image name (default: mason)
   MASON_DATA_VOLUME     Data volume name (default: mason-data)
+  MASON_DIR             Security directory (default: ~/.mason)
   MASON_PORT_WEB        Web UI port (default: 8080)
   MASON_PORT_MM         Mattermost port (default: 8065)
   MASON_PORT_FORGEJO    Forgejo port (default: 3000)
-  MASON_PORT_TTYD       Terminal port (default: 7681)
-  MASON_PORT_QDRANT     Qdrant port (default: 6333)
-  MASON_PORT_DAEMON     Daemon metrics/SSE port (default: 9090)
 
 Examples:
   masonctl start                  # Start container
@@ -309,6 +430,10 @@ Examples:
   masonctl exec mason status      # Run mason CLI inside container
   masonctl pull                   # Pull latest image from registry
   masonctl update                 # Pull latest and restart
+  masonctl token                  # Print the API token
+  masonctl login                  # Open login page in browser
+  masonctl verify                 # Verify integrity of MASON files
+  masonctl verify --remote        # Verify with remote checks
   masonctl rm --data              # Remove container and all data
 
 EOF
@@ -324,6 +449,9 @@ case "${1:-help}" in
     status)  shift; cmd_status "$@" ;;
     logs)    shift; cmd_logs "$@" ;;
     exec)    shift; cmd_exec "$@" ;;
+    token)   shift; cmd_token "$@" ;;
+    login)   shift; cmd_login "$@" ;;
+    verify)  shift; cmd_verify "$@" ;;
     rm)      shift; cmd_rm "$@" ;;
     help|--help|-h) cmd_help ;;
     *)

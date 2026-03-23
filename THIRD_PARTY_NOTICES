@@ -4,8 +4,8 @@ This project uses the following third-party software. Each component is listed
 with its license type and a reference URL. Full license texts are available in
 the respective module's repository or in the Go module cache.
 
-Generated: 2026-03-02
-Source: go list -m all
+Generated: 2026-03-06
+Source: go list -m all, Dockerfile analysis
 
 ================================================================================
 github.com/alecthomas/kingpin/v2 v2.4.0
@@ -3558,3 +3558,156 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+================================================================================
+BUNDLED SERVICE BINARIES
+================================================================================
+
+The following third-party binaries are downloaded and bundled in the container
+image at build time.
+
+================================================================================
+Mattermost Team Edition 9.11.0
+License: MIT (with NOTICE file attributions)
+URL: https://github.com/mattermost/mattermost
+================================================================================
+Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+
+Mattermost Team Edition is licensed under the MIT license. See
+https://github.com/mattermost/mattermost/blob/master/LICENSE.txt
+
+================================================================================
+Forgejo 9.0.0
+License: MIT
+URL: https://codeberg.org/forgejo/forgejo
+================================================================================
+Copyright (c) 2022 The Forgejo Authors
+Copyright (c) 2016 The Gitea Authors
+Copyright (c) 2014 The Gogs Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+================================================================================
+ttyd 1.7.7
+License: MIT
+URL: https://github.com/tsl0922/ttyd
+================================================================================
+Copyright (c) 2016 Shuanglei Tao
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+================================================================================
+Qdrant 1.13.0
+License: Apache License 2.0
+URL: https://github.com/qdrant/qdrant
+================================================================================
+Copyright (c) 2021 Qdrant Solutions GmbH
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+================================================================================
+forgejo-mcp v2.5.0
+License: MIT
+URL: https://codeberg.org/goern/forgejo-mcp
+================================================================================
+Copyright (c) 2024 Christoph Görn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+================================================================================
+BASE IMAGE
+================================================================================
+
+debian:bookworm-slim
+License: Various (Debian Free Software Guidelines compliant)
+URL: https://www.debian.org/legal/licenses/
+
+The base image and all Debian packages installed via apt-get are distributed
+under DFSG-compliant licenses including GPL, LGPL, MIT, BSD, and others. See
+each package's copyright file in /usr/share/doc/<package>/copyright within the
+container for individual license terms.
+
+Notable packages installed:
+- PostgreSQL (PostgreSQL License - permissive)
+- Node.js 22 LTS (MIT)
+- Git (GPL-2.0)
+- tmux (ISC)
+- ripgrep (MIT/Unlicense)
+- Python 3 (PSF License)
+- curl (MIT/X derivate)
+
+================================================================================
+RUNTIME-INSTALLED SOFTWARE (User-Directed)
+================================================================================
+
+The following software is NOT bundled in the container image. It is installed at
+the user's direction during the setup wizard.
+
+================================================================================
+Claude Code (@anthropic-ai/claude-code)
+License: Proprietary — All rights reserved, (c) Anthropic PBC
+URL: https://www.npmjs.com/package/@anthropic-ai/claude-code
+Terms: https://www.anthropic.com/legal/commercial-terms
+================================================================================
+Claude Code is proprietary software by Anthropic PBC. It is not distributed as
+part of MASON. During the setup wizard, the user is informed that MASON requires
+Claude Code and is given the option to install it via npm. Installation is
+performed by the user at their own direction and is subject to Anthropic's
+Commercial Terms of Service.
+
+MASON does not grant any license to Claude Code. Use of Claude Code is governed
+solely by Anthropic's terms.
