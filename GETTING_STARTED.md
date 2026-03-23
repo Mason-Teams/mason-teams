@@ -36,18 +36,41 @@ MASON runs as a single container — agents, chat, code tools, everything inside
 ./scripts/masonctl start
 ```
 
-The image will be pulled automatically on first run. Check that everything's up:
+On first run, `masonctl` will:
+- Pull the MASON container image
+- Generate a self-signed TLS certificate for the dashboard
+- Create an authentication token for secure access
+
+Check that everything's up:
 
 ```bash
 ./scripts/masonctl status
 ```
 
+### Log in to the Dashboard
+
+The dashboard runs over HTTPS with token-based authentication. To get your login token:
+
+```bash
+./scripts/masonctl token
+```
+
+Or open the login page directly:
+
+```bash
+./scripts/masonctl login
+```
+
+This prints the token and opens the dashboard in your browser.
+
+> **Note:** Your browser will show a certificate warning on first visit because the TLS certificate is self-signed. This is expected — see [Browser certificate warning](#browser-certificate-warning) below.
+
 ## Step 3: Run the Setup Wizard
 
-Open your browser and go to:
+Once logged in, the dashboard opens to:
 
 ```
-http://localhost:8080
+https://localhost:8080
 ```
 
 The wizard walks you through seven steps. Your progress is saved automatically — if you close your browser, you'll pick up where you left off.
@@ -154,6 +177,8 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 | `./scripts/masonctl stop` | Stop the container |
 | `./scripts/masonctl restart` | Restart everything |
 | `./scripts/masonctl status` | Check what's running |
+| `./scripts/masonctl token` | Print your dashboard auth token |
+| `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
 | `./scripts/masonctl update` | Pull latest image and restart |
@@ -201,7 +226,7 @@ If port 8080 or 8065 is already in use, set custom ports:
 MASON_PORT_WEB=9080 MASON_PORT_MM=9065 ./scripts/masonctl start
 ```
 
-Then open `http://localhost:9080` for the wizard.
+Then open `https://localhost:9080` for the wizard.
 
 ## Updating
 
