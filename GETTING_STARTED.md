@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2025 Human Loop Ventures, LLC. All rights reserved.
+Copyright (c) 2025-2026 Human Loop Ventures, LLC. All rights reserved.
 Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
@@ -64,6 +64,16 @@ Or open the login page directly:
 This prints the token and opens the dashboard in your browser.
 
 > **Note:** Your browser will show a certificate warning on first visit because the TLS certificate is self-signed. This is expected — see [Browser certificate warning](#browser-certificate-warning) below.
+
+### Alternative: Plain Docker (No TLS/Auth)
+
+If you prefer to run MASON directly with `docker run` instead of `masonctl`, the dashboard runs in HTTP mode with no authentication:
+
+```bash
+docker run -p 8080:8080 -p 8065:8065 -p 3000:3000 mason-teams
+```
+
+Then open `http://localhost:8080` — no token needed. This is fine for local development and testing, but `masonctl` is recommended for regular use since it adds TLS encryption and token-based access control.
 
 ## Step 3: Run the Setup Wizard
 

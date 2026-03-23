@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2025 Human Loop Ventures, LLC. All rights reserved.
+Copyright (c) 2025-2026 Human Loop Ventures, LLC. All rights reserved.
 Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
@@ -114,6 +114,7 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 - **Workflows**: [WORKFLOWS.md](WORKFLOWS.md)
 - **Security**: [SECURITY.md](SECURITY.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Wiki**: [Guides, tips, and community knowledge](https://github.com/Mason-Teams/mason-teams/wiki)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
 - **Contact**: [info@masonteams.com](mailto:info@masonteams.com)

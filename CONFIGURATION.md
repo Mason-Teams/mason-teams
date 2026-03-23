@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2025 Human Loop Ventures, LLC. All rights reserved.
+Copyright (c) 2025-2026 Human Loop Ventures, LLC. All rights reserved.
 Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
