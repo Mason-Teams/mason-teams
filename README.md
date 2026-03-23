@@ -121,4 +121,4 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 
 ---
 
-Built by [Human Loop Ventures](https://humanloopventures.com). The future is together, not apart.
+Built by [Human Loop Ventures](https://humanloopventures.ai). The future is together, not apart.
