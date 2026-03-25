@@ -57,7 +57,7 @@ You describe a project. Connie figures out what kind of team you need, spins the
 MASON takes a secure-by-default approach to localhost development:
 
 - **Token authentication** — Dashboard access requires a 32-character token generated on first start (`masonctl token` to retrieve)
-- **TLS encrypted** — Dashboard serves HTTPS with an auto-generated certificate
+- **TLS encrypted** — All services (Dashboard, Mattermost, Forgejo) serve HTTPS with a shared auto-generated certificate
 - **Minimal exposure** — Only 3 ports are mapped to the host; all internal services are localhost-only inside the container
 - **Read-only credentials** — Host credentials are mounted read-only into the container
 - **Locked-down permissions** — Token and TLS key files are mode 0600

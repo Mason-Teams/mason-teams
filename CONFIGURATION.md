@@ -34,8 +34,8 @@ MASON exposes these ports from the container:
 | Port | Service | What it's for |
 |------|---------|---------------|
 | `8080` | Web UI | Setup wizard and dashboard (HTTPS, token auth) |
-| `8065` | Mattermost | Team chat — where you talk to agents |
-| `3000` | Forgejo | Git repositories and code collaboration |
+| `8065` | Mattermost | Team chat — where you talk to agents (HTTPS when TLS enabled) |
+| `3000` | Forgejo | Git repositories and code collaboration (HTTPS when TLS enabled) |
 
 All three can be customized with the `MASON_PORT_*` environment variables above.
 
@@ -102,6 +102,31 @@ The setup wizard collects your preferences and stores them automatically. You do
 | Terms acceptance | `/data/config/setup-progress.json` | User Agreement acknowledgments and timestamps |
 
 **Progress is saved automatically.** If you close your browser mid-setup, you'll resume where you left off when you come back. Going back to earlier steps preserves your previous inputs.
+
+## API Documentation
+
+MASON includes interactive API documentation via Swagger UI. Once the container is running, you can explore and test endpoints from your browser:
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| Mason Server | `https://localhost:8080/swagger/` | Dashboard and setup API |
+| Agent Daemon | `http://localhost:9090/swagger/` | Agent lifecycle and messaging API |
+
+> **Note:** The daemon API (port 9090) is internal to the container and not exposed to the host by default. Access it from inside the container or by adding `-p 9090:9090` to your `docker run` command.
+
+## Claude Code Version
+
+MASON ships with a certified version of Claude Code (currently **v2.1.77**) to ensure consistent behavior across installations. This version is installed automatically during the setup wizard.
+
+If you decline the wizard install, the dashboard shows the certified version number with a manual install option. We recommend using the bundled version rather than installing the latest independently, as agent templates and commands are tested against the certified version.
+
+## Agent Configuration
+
+MASON pre-configures Claude Code with sensible defaults for agent workloads:
+
+| Setting | Value | Description |
+|---------|-------|-------------|
+| `effortLevel` | `medium` | Thinking effort preset — balances quality and speed. Agents won't prompt you to choose on first start. |
 
 ## Advanced Configuration
 

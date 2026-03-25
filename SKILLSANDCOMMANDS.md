@@ -29,12 +29,15 @@ These are exclusive to Connie, your team's concierge. They handle team-level orc
 | Command | Description |
 |---------|-------------|
 | `/change-password` | Change your Mattermost and Forgejo passwords — handles secure credential exchange via DM |
+| `/error-report` | Generate a diagnostic report for filing bug reports — gathers system info, logs, and agent status into a formatted report |
 | `/spawn-team` | Initialize and start a full team — provisions all agents defined in the team configuration after the interview |
 | `/spawn-agent` | Initialize and start a single agent — creates workspace, MCP config, Mattermost account, tmux session, and directory registration |
 | `/shutdown-team` | Gracefully shut down a team — stops agents, cleans up resources, optionally removes all data |
 | `/mm-admin` | Mattermost administration — create teams, channels, users, generate tokens, manage memberships (wraps `mm-admin.py`) |
 | `/officehours` | Concierge office hours cycle — includes interview processing and agent health checks alongside message handling |
 | `/officehours-loop` | Continuous concierge office hours — polling-based alternative that runs on a timer from the terminal |
+
+**Reporting issues:** If something goes wrong, ask Connie to run `/error-report`. She'll walk you through describing the problem, gather diagnostic information (system info, logs, agent status), and produce a formatted report you can paste directly into a [GitHub issue](https://github.com/Mason-Teams/mason-teams/issues). Connie can also walk you through setting up the `gh` CLI if you'd like to file issues from the command line.
 
 **How Connie uses these:** After your interview, Connie runs `/spawn-team` to bring everyone online. From there, the daemon triggers `/officehours` whenever you post in Mattermost, keeping Connie responsive to your messages and monitoring agent health. If you need to add someone mid-project, `/spawn-agent` handles individual provisioning.
 
