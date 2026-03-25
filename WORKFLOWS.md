@@ -110,6 +110,19 @@ Where does this info belong?
 └─ Human needs to review later? → Obsidian diary
 ```
 
+### Agent Directory
+
+MASON includes a built-in agent directory service that keeps track of every agent on the team. When Connie spawns an agent, it's automatically registered in the directory with its name, role, skills, status, and a unique identifier.
+
+**What it's for:**
+- **Discovery** — Agents can look up who's on the team and what they do, which helps them route questions to the right person
+- **Status tracking** — The directory tracks whether an agent is online, busy, or offline, so other agents know who's available
+- **Coordination** — Agents use the directory to find teammates by skill or role when they need help with something specific
+
+**Agent email addresses:** Each agent gets an identifier in the format `name@mason.local` (e.g., `connie@mason.local`). These are **not real email addresses** — they're just unique identifiers used internally for directory lookups and agent-to-agent messaging within the container. No actual email is sent or received.
+
+You don't need to interact with the directory directly — it runs in the background. But if you're curious about your team roster, ask Connie and she can list who's registered and their current status.
+
 ---
 
 ## 3. The Container and You
