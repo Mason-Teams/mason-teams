@@ -248,6 +248,8 @@ Check the [Changelog](CHANGELOG.md) for what's new.
 
 ## Getting Help
 
+**Something not working?** Ask Connie to run `/error-report` — she'll gather diagnostics and help you create a bug report you can file on GitHub.
+
 - **Issues**: [github.com/Mason-Teams/mason-teams/issues](https://github.com/Mason-Teams/mason-teams/issues)
 - **Email**: [info@masonteams.com](mailto:info@masonteams.com)
 - **Website**: [masonteams.com](https://masonteams.com)

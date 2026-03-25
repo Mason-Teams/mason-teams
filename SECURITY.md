@@ -73,18 +73,14 @@ Only three ports are mapped from the container to the host:
 | Port | Service | Protocol | Auth |
 |------|---------|----------|------|
 | 8080 | Dashboard | HTTPS (TLS) | Token required |
-| 8065 | Mattermost | HTTP | MM login required |
-| 3000 | Forgejo | HTTP | Forgejo login required |
+| 8065 | Mattermost | HTTPS (TLS) | MM login required |
+| 3000 | Forgejo | HTTPS (TLS) | Forgejo login required |
+
+All three services share the same self-signed TLS certificate. When TLS certificates are present (`~/.mason/tls/`), all services run HTTPS automatically. Without certificates (e.g., plain `docker run`), all services fall back to HTTP.
 
 All other internal services bind to `127.0.0.1` inside the container and are **not accessible from the host**.
 
-### Adding TLS to Mattermost & Forgejo
-
-Mattermost and Forgejo serve HTTP by default. For HTTPS:
-
-- Use a reverse proxy (nginx, caddy, traefik) on the host
-- Or configure their native TLS settings via their admin UIs
-- For localhost-only use, HTTP is acceptable
+> **Note:** If you're using `curl` against any MASON service with self-signed certs, add the `-k` flag to skip certificate verification: `curl -k https://localhost:8080/...`
 
 ## File Permissions
 
