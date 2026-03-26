@@ -91,24 +91,15 @@ As your team settles in, you'll want to establish some structure around how work
 
 **Handoffs.** When one agent's work depends on another's — say the frontend needs an API the backend is building — they coordinate through Mattermost. The backend agent posts when the API is ready, the frontend agent picks it up. You can facilitate these handoffs by telling both agents about the dependency, or let them work it out once they know the plan.
 
-### Memory Systems — When to Use What
+### How Agents Remember
 
-- **User memory** (`~/.claude/`) — Your preferences, global settings, things that apply everywhere
-- **Project memory** (`.claude/CLAUDE.md`) — Architecture, conventions, team norms for this project
-- **Memshot** (`/memshot`) — Quick snapshots of current state, for crash recovery or handoffs
-- **Agent memory** (`memory_store`) — Learnings and gotchas that other agents should know
-- **Obsidian diary** — Session logs for human review
+MASON agents have a layered memory system that works behind the scenes. You don't need to manage it — but understanding it helps you get more from your team:
 
-### Decision Tree
+- **Project memory** — Each agent keeps notes about your project's architecture, conventions, and decisions. This persists across sessions.
+- **Shared memory** — When one agent learns something useful (a gotcha, a workaround, a decision), it stores it where other agents can find it. Knowledge spreads across the team automatically.
+- **Quick snapshots** — Agents periodically save their current state so they can recover if interrupted.
 
-```
-Where does this info belong?
-├─ Only this project? → Project CLAUDE.md
-├─ All my sessions? → User CLAUDE.md
-├─ Another agent needs it? → memory_store
-├─ I need to recover from a crash? → memshot
-└─ Human needs to review later? → Obsidian diary
-```
+The practical effect: your agents get better at working on your project over time. They remember past decisions, avoid repeating mistakes, and share context without you having to repeat yourself.
 
 ### Agent Directory
 
@@ -135,10 +126,11 @@ MASON exposes several ports out of the box:
 
 | Port | Service | Purpose |
 |------|---------|---------|
-| 8080 | Setup Wizard | Initial configuration and onboarding (HTTPS, token auth) |
-| 8065 | Mattermost | Team chat — where you talk to your agents (HTTPS when TLS enabled) |
-| 3000 | Forgejo | Git forge — repos, issues, pull requests (HTTPS when TLS enabled) |
-| 7681 | ttyd | Web terminal — browser-based access to the container |
+| 8080 | Web UI | Setup wizard and dashboard (HTTPS, token auth) |
+| 8065 | Mattermost | Team chat — where you talk to your agents (HTTPS via `masonctl`, HTTP via plain `docker run`) |
+| 3000 | Forgejo | Git forge — repos, issues, pull requests (HTTPS via `masonctl`, HTTP via plain `docker run`) |
+
+Additional ports are available for advanced use — see [CONFIGURATION.md](CONFIGURATION.md#advanced-ports) for details.
 
 If your agents spin up additional services inside the container (a dev server, an API, etc.), you'll need to expose those ports. You can do this when starting the container:
 
@@ -194,9 +186,9 @@ For external services (cloud APIs, remote servers), agents can reach them direct
 - All data in the Docker volume (agent workspaces, Mattermost messages, Forgejo repos, memory)
 - Anything mounted from your host machine
 
-**What doesn't survive `docker-compose down -v`:**
-- The `-v` flag deletes volumes — this wipes everything
-- Use `docker-compose down` (without `-v`) to stop while keeping data
+**What doesn't survive `./scripts/masonctl rm --data`:**
+- The `--data` flag deletes the Docker volume — this wipes everything
+- Use `./scripts/masonctl rm` (without `--data`) to remove the container while keeping data
 
 **Backing up:** Your simulation state lives in the Docker volume. To back it up:
 
@@ -255,29 +247,22 @@ docker run --memory=32g --cpus=12 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
 ### Terminal vs Mattermost — When to Use Which
 
 - **Terminal** (direct Claude session) — Precise instructions, code-heavy work, debugging, when you need control
-- **Mattermost** (chat) — Broad direction, team-wide announcements, async work, when you want agents to self-organize
+- **Mattermost** (chat) — Broad direction, team-wide announcements, async work, when you want to coordinate across agents
 - **Mixing both** — Using terminal for the agent you're paired with, MM for the rest of the team
 
-### My Preference
+### When to Use Which
 
-<!-- dpark: fill in your actual workflow preferences here -->
+A general rule of thumb:
 
-- When I reach for terminal vs when I use MM
-- How I switch between them during a session
-- Why I prefer [X] for [Y] situations
-
-### Agent Lifecycle Management
-
-- Starting and stopping individual agents
-- Reloading an agent when context gets stale
-- Office hours mode — polling, monitoring, autonomous work
-- Beepme — getting an agent's attention when you need them in a channel
+- **Terminal** when you want precision — debugging a specific issue, reviewing code, walking through a complex task step by step
+- **Mattermost** when you want breadth — giving the team a direction, checking in on progress, letting agents coordinate on their own
+- **Both** when you're actively working — terminal for your focus agent, Mattermost for the rest of the team
 
 ### Watching Agents Work
 
 Every agent runs in its own tmux session inside the container. You can drop in at any time to watch them think, code, and collaborate in real time.
 
-**Get into the container:**
+**Get into the container** (`masonctl` names the container `mason`):
 
 ```bash
 docker exec -it mason bash
@@ -327,4 +312,4 @@ exit
 
 ---
 
-*This guide is a work in progress. It'll grow as we learn more about what works.*
+*More workflows and tips will be added in future releases.*

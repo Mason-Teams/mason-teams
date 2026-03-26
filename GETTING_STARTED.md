@@ -191,7 +191,13 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
+| `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
 | `./scripts/masonctl update` | Pull latest image and restart |
+| `./scripts/masonctl rm` | Remove the container (keeps data) |
+| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data |
+| `./scripts/masonctl verify` | Check file integrity inside the container |
+
+For the full command reference, see [CONFIGURATION.md](CONFIGURATION.md#useful-commands).
 
 ## Troubleshooting
 
@@ -230,13 +236,13 @@ If the wizard reports a credentials error, double-check your setup. For API keys
 
 ### Port conflicts
 
-If port 8080 or 8065 is already in use, set custom ports:
+If port 8080, 8065, or 3000 is already in use, set custom ports:
 
 ```bash
-MASON_PORT_WEB=9080 MASON_PORT_MM=9065 ./scripts/masonctl start
+MASON_PORT_WEB=9080 MASON_PORT_MM=9065 MASON_PORT_FORGEJO=4000 ./scripts/masonctl start
 ```
 
-Then open `https://localhost:9080` for the wizard.
+Then open `https://localhost:9080` for the wizard. See [CONFIGURATION.md](CONFIGURATION.md#environment-variables) for all available port options.
 
 ## Updating
 

@@ -10,7 +10,7 @@ MASON is designed to work out of the box — the setup wizard handles most confi
 
 ## Environment Variables
 
-Set these before running `./scripts/masonctl start` to override defaults.
+Set these before running `./scripts/masonctl start` to override defaults. For a complete reference, see [examples/.env.example](examples/.env.example).
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -34,8 +34,8 @@ MASON exposes these ports from the container:
 | Port | Service | What it's for |
 |------|---------|---------------|
 | `8080` | Web UI | Setup wizard and dashboard (HTTPS, token auth) |
-| `8065` | Mattermost | Team chat — where you talk to agents (HTTPS when TLS enabled) |
-| `3000` | Forgejo | Git repositories and code collaboration (HTTPS when TLS enabled) |
+| `8065` | Mattermost | Team chat — where you talk to agents (HTTPS via `masonctl`, HTTP via plain `docker run`) |
+| `3000` | Forgejo | Git repositories and code collaboration (HTTPS via `masonctl`, HTTP via plain `docker run`) |
 
 All three can be customized with the `MASON_PORT_*` environment variables above.
 
@@ -174,12 +174,15 @@ The agent daemon manages agent lifecycles, message routing, and health monitorin
 | `./scripts/masonctl stop` | Stop MASON |
 | `./scripts/masonctl restart` | Restart everything |
 | `./scripts/masonctl status` | Check what's running |
+| `./scripts/masonctl token` | Print your dashboard auth token |
+| `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
 | `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
 | `./scripts/masonctl update` | Pull latest image and restart the container |
 | `./scripts/masonctl rm` | Remove the container (keeps data) |
 | `./scripts/masonctl rm --data` | Remove the container **and** all persistent data |
+| `./scripts/masonctl verify` | Check file integrity inside the container |
 
 ## Third-Party Dependencies
 
