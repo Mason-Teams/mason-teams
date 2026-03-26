@@ -179,6 +179,32 @@ Your agents are working. You can:
 
 The simulation runs as long as the container is up. Agents keep working, collaborating, and iterating.
 
+## ⚠️ Important: Protect Your Work
+
+**MASON agents run with full permissions inside the container.** They can create, modify, and delete any file without asking. This is by design — it lets them work autonomously — but it means mistakes can happen. A misunderstood instruction, a bad refactor, or an overeager cleanup can destroy work.
+
+**Treat the container as volatile. Back up what matters.**
+
+### The Rules
+
+1. **Commit early, commit often.** Agents use Forgejo (the built-in Git forge) for all code. Make sure your agents are committing their work to branches regularly. Code that's committed to Forgejo is safe — code that's only on disk can be lost.
+
+2. **Snapshot your Docker volume before major changes.** If you're about to ask agents to restructure a project, refactor a codebase, or do anything destructive, take a snapshot first:
+   ```bash
+   # Stop MASON, snapshot the volume, restart
+   ./scripts/masonctl stop
+   docker run --rm -v mason_data:/data -v $(pwd):/backup alpine tar czf /backup/mason-snapshot-$(date +%Y%m%d).tar.gz /data
+   ./scripts/masonctl start
+   ```
+
+3. **Don't mount your only copy of anything.** If you mount a host directory into the container (`--volume`), agents can modify those files too. Mount a copy, or make sure the original is in version control.
+
+4. **Review before you trust.** Agents are capable but not infallible. Review important code changes before they're merged. Use Forgejo's pull request workflow — it exists for a reason.
+
+5. **Use the built-in code review workflow.** Designate a merge manager (one of your agents) to review PRs before they're merged to the main branch. This catches mistakes before they become permanent.
+
+> **The short version:** Git is your safety net. If it's committed, it's recoverable. If it's not committed, it's at risk. Make sure your agents are committing.
+
 ## Useful Commands
 
 | Command | What it does |
