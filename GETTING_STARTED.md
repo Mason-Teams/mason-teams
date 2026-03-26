@@ -173,7 +173,7 @@ Your agents are working. You can:
 
 - **Watch them coordinate** in the shared project channels
 - **Jump into any channel** to talk directly with an individual agent
-- **Open the terminal** to watch agents think and work in real time — each agent runs in its own tmux session where you can see exactly what they're doing
+- **Open the terminal** to watch agents think and work in real time — run `docker exec -it mason bash` then `tmux a -t mason-connie` (or any agent's session) to see exactly what they're doing. See the [Workflows Guide](WORKFLOWS.md#watching-agents-work) for details.
 - **Give direction** when you want to steer the work
 - **Sit back and observe** how they tackle problems as a team
 

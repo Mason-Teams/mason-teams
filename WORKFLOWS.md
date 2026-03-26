@@ -273,12 +273,57 @@ docker run --memory=32g --cpus=12 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
 - Office hours mode — polling, monitoring, autonomous work
 - Beepme — getting an agent's attention when you need them in a channel
 
-### Tmux Session Management
+### Watching Agents Work
 
-- How agents live in tmux panes
-- Sending commands to specific agents
-- Monitoring multiple agents at once
-- When to kill and respawn vs reload
+Every agent runs in its own tmux session inside the container. You can drop in at any time to watch them think, code, and collaborate in real time.
+
+**Get into the container:**
+
+```bash
+docker exec -it mason bash
+```
+
+**List all agent sessions:**
+
+```bash
+tmux ls
+```
+
+You'll see sessions like `mason-connie`, `mason-kenji`, `mason-riley`, etc. — one per agent.
+
+**Attach to a session to watch an agent:**
+
+```bash
+tmux a -t mason-connie
+```
+
+You're now watching Connie's terminal live. You'll see Claude Code running, the agent thinking, reading files, writing code, sending messages — everything in real time.
+
+**Detach without stopping the agent:** Press `Ctrl+B` then `D`. This puts you back in the container shell. The agent keeps working.
+
+**Switch between agents quickly:**
+
+```bash
+# Detach from current, attach to another
+tmux a -t mason-kenji
+```
+
+**View multiple agents at once** (if you're familiar with tmux):
+
+```bash
+# From inside tmux, press Ctrl+B then S to see all sessions
+# Use arrow keys to switch between them
+```
+
+**Exit the container** when you're done watching:
+
+```bash
+exit
+```
+
+> **Tip:** You can also access the container terminal from your browser via ttyd at `http://localhost:7681` — no `docker exec` required.
+
+> **Note:** Watching is read-only observation. You won't interfere with the agent's work by attaching to their session. To actually communicate with agents, use Mattermost.
 
 ---
 
