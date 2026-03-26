@@ -189,13 +189,12 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 
 1. **Commit early, commit often.** Agents use Forgejo (the built-in Git forge) for all code. Make sure your agents are committing their work to branches regularly. Code that's committed to Forgejo is safe — code that's only on disk can be lost.
 
-2. **Snapshot your Docker volume before major changes.** If you're about to ask agents to restructure a project, refactor a codebase, or do anything destructive, take a snapshot first:
+2. **Snapshot before major changes.** If you're about to ask agents to restructure a project, refactor a codebase, or do anything destructive, take a snapshot first. No downtime required:
    ```bash
-   # Stop MASON, snapshot the volume, restart
-   ./scripts/masonctl stop
-   docker run --rm -v mason_data:/data -v $(pwd):/backup alpine tar czf /backup/mason-snapshot-$(date +%Y%m%d).tar.gz /data
-   ./scripts/masonctl start
+   # Snapshot the running container (no need to stop it)
+   docker commit mason mason-snapshot-$(date +%Y%m%d)
    ```
+   This saves the entire container state as a local image. To restore from a snapshot, stop the current container and start from the snapshot image instead.
 
 3. **Don't mount your only copy of anything.** If you mount a host directory into the container (`--volume`), agents can modify those files too. Mount a copy, or make sure the original is in version control.
 
