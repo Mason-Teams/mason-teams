@@ -219,7 +219,7 @@ Agents need room to think. If things are slow or crashing:
 
 ```bash
 # Check resource usage
-docker stats
+docker stats mason
 ```
 
 Try increasing Docker's memory limit in Docker Desktop settings.
