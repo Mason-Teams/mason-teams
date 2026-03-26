@@ -312,4 +312,4 @@ exit
 
 ---
 
-*This guide is a work in progress. It'll grow as we learn more about what works.*
+*More workflows and tips will be added in future releases.*

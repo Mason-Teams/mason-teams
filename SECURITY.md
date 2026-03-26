@@ -116,9 +116,8 @@ The `~/.mason/` directory is mounted **read-only** into the container, preventin
 
 MASON is designed for local development. If deploying in a shared or networked environment:
 
-1. Replace self-signed certs with CA-signed certificates
-2. Replace self-signed TLS certificates on Mattermost and Forgejo with CA-signed ones
-3. Use a firewall to restrict port access
+1. Replace the self-signed certificate with CA-signed certificates for all services
+2. Use a firewall to restrict port access
 4. Rotate tokens regularly
 5. Consider adding RBAC if multiple users need access
 6. Enable Mattermost/Forgejo audit logging

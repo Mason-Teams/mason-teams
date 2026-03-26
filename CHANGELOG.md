@@ -10,9 +10,23 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2026-03-26
 
-Initial release in progress. Stay tuned.
+### Added
+- Single-container simulation platform with AI agent teams
+- Concierge (Connie) — interviews you and assembles a custom team
+- Setup wizard — guided onboarding with Claude Code installation
+- TLS encryption and token authentication for all services
+- Mattermost for team chat and collaboration
+- Forgejo for Git repositories and code review
+- Agent memory system with shared knowledge and context
+- Agent directory service for team discovery and coordination
+- tmux-based agent terminals with live observation
+- `masonctl` CLI for container management
+- `masonctl verify` for file integrity checks
+- `/error-report` command for diagnostic report generation
+- Interactive API documentation via Swagger UI
+- Docker Compose support as an alternative to masonctl
 
 ---
 

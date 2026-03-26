@@ -191,8 +191,8 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
-| `./scripts/masonctl update` | Pull latest image and restart |
 | `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
+| `./scripts/masonctl update` | Pull latest image and restart |
 | `./scripts/masonctl rm` | Remove the container (keeps data) |
 | `./scripts/masonctl rm --data` | Remove the container **and** all persistent data |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
