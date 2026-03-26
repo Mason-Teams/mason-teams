@@ -29,15 +29,11 @@ cd mason-teams
 ./scripts/masonctl start
 ```
 
-Then log in to the dashboard:
-
-```bash
-./scripts/masonctl login
-```
-
-This prints your auth token and opens **https://localhost:8080** in your browser. Bring your own Anthropic API key or use your Claude subscription — the wizard lets you choose. Configure your profile, and meet Connie — she'll take it from there.
+On first run, the setup wizard opens at **https://localhost:8080**. Bring your own Anthropic API key or use your Claude subscription — the wizard lets you choose. Configure your profile, and meet Connie — she'll take it from there.
 
 For the full walkthrough, see the **[Getting Started Guide](GETTING_STARTED.md)**.
+
+> **Returning after setup?** Run `./scripts/masonctl login` to get your auth token and open the dashboard. See [Logging In](GETTING_STARTED.md#log-in-to-the-dashboard) for details.
 
 ## How It Works
 
