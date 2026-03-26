@@ -60,6 +60,8 @@ MASON takes a secure-by-default approach to localhost development:
 
 For the full security model, including token management, network details, and recommendations for networked environments, see **[SECURITY.md](SECURITY.md)**.
 
+> **⚠️ Agents run with full permissions inside the container.** They can create, modify, and delete files without asking. Commit work to Forgejo (the built-in Git forge) frequently, and snapshot your Docker volume before major changes. See [Protect Your Work](GETTING_STARTED.md#%EF%B8%8F-important-protect-your-work) for details.
+
 ## Requirements
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker CLI and everything you need)
