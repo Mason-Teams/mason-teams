@@ -209,8 +209,8 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 | Command | What it does |
 |---------|-------------|
 | `./scripts/masonctl start` | Start the MASON container |
-| `./scripts/masonctl stop` | Stop the container |
-| `./scripts/masonctl restart` | Restart everything |
+| `./scripts/masonctl stop` | Stop the container (agents will need to be brought back — see [Restarting](#restarting-mason)) |
+| `./scripts/masonctl restart` | Restart everything (only Connie auto-resumes — tell her to bring the team back) |
 | `./scripts/masonctl status` | Check what's running |
 | `./scripts/masonctl token` | Print your dashboard auth token |
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
@@ -224,11 +224,25 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 
 For the full command reference, see [CONFIGURATION.md](CONFIGURATION.md#useful-commands).
 
+## Restarting MASON
+
+**After a stop/start or restart, only Connie (your concierge) comes back online automatically.** Your other agents don't auto-resume — you need to tell Connie to bring them back.
+
+Open Mattermost and message Connie:
+
+> "Hey Connie, bring the team back online"
+
+Connie will restart your existing team from where they left off. All agent workspaces, memory, and project state are preserved in the Docker volume — only the running sessions need to be restarted.
+
+> **Why doesn't the team auto-resume?** MASON preserves your data but doesn't automatically restart agent sessions. This gives you the choice to bring back the full team, a subset, or start fresh with a different team composition.
+
 ## Troubleshooting
 
 ### Agents aren't responding
 
-Give them 30-60 seconds after startup. If still quiet:
+**If you just started or restarted MASON**, remember that only Connie comes back automatically. Tell Connie to bring your team back online (see [Restarting MASON](#restarting-mason) above).
+
+If Connie is online but agents aren't responding, give them 30-60 seconds. If still quiet:
 
 ```bash
 # Check logs for errors
