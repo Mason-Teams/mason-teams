@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # MASON
 
-**Your AI team, ready to simulate.**
+**Your AI team, ready to collaborate.**
 
 MASON is a simulation platform that lets you spin up a team of AI agents — each with their own skills, personality, and role — and put them to work on a project together. Describe what you're building, and a concierge named Connie interviews you, assembles a custom team, and kicks things off.
 
