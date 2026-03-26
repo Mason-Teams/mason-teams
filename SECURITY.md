@@ -14,7 +14,7 @@ MASON is designed as a **single-user, localhost-only** development environment. 
 
 The dashboard requires token-based authentication.
 
-- A 32-character hex token is generated on first `masonctl start` and stored at `~/.mason/token` (mode 0600)
+- A 32-character hex token is generated on first `./scripts/masonctl start` and stored at `~/.mason/token` (mode 0600)
 - The token is mounted read-only into the container
 - Authenticate via the login page or programmatically with `POST /api/auth/login`
 - Sessions use an HTTP-only cookie (`mason_token`) with 30-day expiry, SameSite=Lax
@@ -22,7 +22,7 @@ The dashboard requires token-based authentication.
 **Retrieving your token:**
 
 ```bash
-masonctl token
+./scripts/masonctl token
 # or directly:
 cat ~/.mason/token
 ```
@@ -62,17 +62,17 @@ Browsers will show a self-signed certificate warning on first visit — this is 
 
 **Replacing with a custom certificate:** Place your own `mason.crt` and `mason.key` in `~/.mason/tls/` before starting the container.
 
-**Renewal:** Delete `~/.mason/tls/` and restart — `masonctl start` regenerates automatically.
+**Renewal:** Delete `~/.mason/tls/` and restart — `./scripts/masonctl start` regenerates automatically.
 
 ## Network Exposure
 
 ### Exposed Ports
 
-Only three ports are mapped from the container to the host:
+Three primary ports are mapped from the container to the host by default:
 
 | Port | Service | Protocol | Auth |
 |------|---------|----------|------|
-| 8080 | Dashboard | HTTPS (TLS) | Token required |
+| 8080 | Web UI | HTTPS (TLS) | Token required |
 | 8065 | Mattermost | HTTPS (TLS) | MM login required |
 | 3000 | Forgejo | HTTPS (TLS) | Forgejo login required |
 
@@ -100,7 +100,7 @@ The `~/.mason/` directory is mounted **read-only** into the container, preventin
 | Subsequent starts | Existing token reused |
 | Token rotation | Delete `~/.mason/token`, restart container |
 | Container rebuild | Token persists (lives on host, not in image) |
-| `masonctl rm --data` | Token persists (not in data volume) |
+| `./scripts/masonctl rm --data` | Token persists (not in data volume) |
 | Full reset | Delete `~/.mason/` directory |
 
 ## Trust Model
@@ -117,7 +117,7 @@ The `~/.mason/` directory is mounted **read-only** into the container, preventin
 MASON is designed for local development. If deploying in a shared or networked environment:
 
 1. Replace self-signed certs with CA-signed certificates
-2. Configure TLS for Mattermost and Forgejo
+2. Replace self-signed TLS certificates on Mattermost and Forgejo with CA-signed ones
 3. Use a firewall to restrict port access
 4. Rotate tokens regularly
 5. Consider adding RBAC if multiple users need access

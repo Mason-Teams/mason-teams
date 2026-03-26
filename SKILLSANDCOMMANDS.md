@@ -55,17 +55,17 @@ Commands you can run directly to manage and verify your MASON installation.
 
 | Command | Description |
 |---------|-------------|
-| `masonctl verify` | Check that all MASON files in the container match their build-time checksums (SHA-256) |
+| `./scripts/masonctl verify` | Check that all MASON files in the container match their build-time checksums (SHA-256) |
 
-### `masonctl verify`
+### `./scripts/masonctl verify`
 
 Verifies the integrity of templates, commands, skills, scripts, and Go binaries inside the container. Useful for confirming nothing has been modified unexpectedly.
 
 ```bash
-masonctl verify              # Quick integrity check
-masonctl verify --remote     # Verify against the official GitHub Release manifest
-masonctl verify --json       # Machine-readable output for scripting
-masonctl verify --quiet      # One-line summary
+./scripts/masonctl verify              # Quick integrity check
+./scripts/masonctl verify --remote     # Verify against the official GitHub Release manifest
+./scripts/masonctl verify --json       # Machine-readable output for scripting
+./scripts/masonctl verify --quiet      # One-line summary
 ```
 
 **Exit codes:** `0` = all files verified, `1` = mismatch found, `2` = error
@@ -104,4 +104,4 @@ All of this runs inside the single MASON container. The tmux sessions give each 
 
 Commands and skills live in each agent's `.claude/commands/` and `.claude/skills/` directories inside the container. They're provisioned from templates during `/spawn-agent`, so every agent of the same type starts with the same toolset.
 
-> **Note:** Modifying these files directly is possible but not recommended — changes won't survive a container rebuild. If you want to customize agent behavior, see [WORKFLOWS.md](WORKFLOWS.md) for the recommended approach.
+> **Note:** Modifying these files directly is possible but not recommended — changes won't survive a container rebuild. If you want to customize agent behavior, see [WORKFLOWS.md](WORKFLOWS.md) for tips on working with your team.

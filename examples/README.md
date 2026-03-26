@@ -23,7 +23,7 @@ If you prefer `docker compose up` over `masonctl`:
 
 ```bash
 cd examples
-cp .env.example .env    # optional — edit to customize
+cp .env.example .env    # optional — edit to customize (note: .env.example is a dotfile, use `ls -a` to see it)
 docker compose up -d
 ```
 

@@ -56,9 +56,9 @@ You describe a project. Connie figures out what kind of team you need, spins the
 
 MASON takes a secure-by-default approach to localhost development:
 
-- **Token authentication** — Dashboard access requires a 32-character token generated on first start (`masonctl token` to retrieve)
-- **TLS encrypted** — All services (Dashboard, Mattermost, Forgejo) serve HTTPS with a shared auto-generated certificate
-- **Minimal exposure** — Only 3 ports are mapped to the host; all internal services are localhost-only inside the container
+- **Token authentication** — Dashboard access requires a 32-character token generated on first start (`./scripts/masonctl token` to retrieve)
+- **TLS encrypted** — All services (Dashboard, Mattermost, Forgejo) serve HTTPS with a shared auto-generated certificate when started via `masonctl`
+- **Minimal exposure** — Three primary ports are mapped to the host (8080, 8065, 3000); all internal services are localhost-only inside the container
 - **Read-only credentials** — Host credentials are mounted read-only into the container
 - **Locked-down permissions** — Token and TLS key files are mode 0600
 
@@ -67,7 +67,7 @@ For the full security model, including token management, network details, and re
 ## Requirements
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker CLI and everything you need)
-- 16GB+ RAM recommended (agents need room to think)
+- 8GB RAM minimum, 16GB+ recommended (agents need room to think)
 - An Anthropic API key or Claude subscription (agents are powered by Claude)
 
 MASON also requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed during the setup wizard. Claude Code is not bundled in the container — you install it at your direction, subject to Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
@@ -114,6 +114,7 @@ MASON is licensed under the [Business Source License 1.1](LICENSE).
 - **Workflows**: [WORKFLOWS.md](WORKFLOWS.md)
 - **Security**: [SECURITY.md](SECURITY.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Third-Party Notices**: [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES)
 - **Wiki**: [Guides, tips, and community knowledge](https://github.com/Mason-Teams/mason-teams/wiki)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
