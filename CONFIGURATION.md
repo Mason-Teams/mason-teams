@@ -72,7 +72,7 @@ To back up your MASON data:
 # Stop the container first
 ./scripts/masonctl stop
 
-# Copy the volume data
+# Copy the volume data (docker cp is needed — masonctl doesn't have a backup command)
 docker cp mason:/data ./mason-backup
 ```
 

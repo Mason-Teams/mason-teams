@@ -206,13 +206,13 @@ MASON recommends 16GB+ RAM. Each agent runs a Claude Code session, and they add 
 
 - Agents responding slowly or timing out
 - Mattermost or Forgejo becoming unresponsive
-- Container OOM kills (check `docker logs`)
+- Container OOM kills (check `./scripts/masonctl logs`)
 
-To adjust limits:
+To adjust resource limits, you'll need to use Docker directly (masonctl doesn't expose resource flags):
 
 ```bash
 # Give MASON more memory and CPU
-docker run --memory=24g --cpus=8 ...
+docker run --memory=24g --cpus=8 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
 ```
 
 **Tips for larger teams:**
@@ -233,7 +233,7 @@ docker run --memory=24g --cpus=8 ...
 # Then open http://localhost:3001 in your browser
 ```
 
-**Run MASON with custom resource limits:**
+**Run MASON with custom resource limits** (requires Docker directly — `masonctl` doesn't expose resource flags):
 ```bash
 docker run --memory=32g --cpus=12 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
 ```
