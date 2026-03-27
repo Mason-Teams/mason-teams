@@ -291,23 +291,28 @@ Then open `https://localhost:9080` for the wizard. See [CONFIGURATION.md](CONFIG
 ./scripts/masonctl update
 ```
 
-This pulls the latest MASON image and restarts the container. Your data volume (agent workspaces, Mattermost messages, Forgejo repos, memory) is preserved — it's stored separately from the image.
+Check the [Changelog](CHANGELOG.md) for what's new before updating.
 
-Check the [Changelog](CHANGELOG.md) for what's new.
+### What `masonctl update` Actually Does
+
+1. **Pulls the latest MASON image** from the registry (same as `masonctl pull`)
+2. **Restarts the container** with the new image (if it's running)
+
+The new image replaces MASON's internal components — the daemon, server, web UI, templates, Go binaries, and bundled tools. Your **data volume is preserved** — agent workspaces, Mattermost messages, Forgejo repos, and memory all carry forward untouched.
+
+**The gap:** If a new version changes how MASON's components interact with the data (database schema, config formats, service versions), there's no automated migration step. The new code starts up against the old data. Within the v1.x line this should be fine. Between major versions, it may not be.
 
 ### A Note on Upgrades
 
 **This is an early release, and we're being upfront: a formal upgrade path between major versions doesn't exist yet.**
 
-`masonctl update` works for pulling the latest image within the current release line. But for future major versions that include database schema changes, service version bumps, or configuration format changes, there's no automated migration tooling in place. We haven't gotten there yet.
-
 **What this means for you:**
 
-- **Your tools inside the container**: You're free to install or upgrade anything inside the container — npm packages, pip installs, CLI tools, whatever your agents need. That's your environment to customize.
-- **MASON's own components** (daemon, server, templates, masonctl internals): There's no upgrade path between versions right now. `masonctl update` pulls the latest image, but if MASON's internal components change significantly between releases, your existing data may not be compatible.
-- **Best practice now**: Snapshot before updating (`docker commit mason mason-pre-update`). If something breaks, you can roll back to the snapshot.
+- **Your tools inside the container**: You're free to install or upgrade anything — npm packages, pip installs, CLI tools, whatever your agents need. That's your environment to customize.
+- **MASON's own components** (daemon, server, templates, masonctl internals): No migration tooling exists between versions. `masonctl update` replaces the image but can't migrate data if the new version expects a different format.
+- **Best practice**: Always snapshot before updating (`docker commit mason mason-pre-update`). Check the changelog for breaking changes. If something breaks, roll back to your snapshot.
 
-We know this isn't ideal, and building a proper upgrade path is on the roadmap. For now, the honest answer is: snapshot first, and check the changelog before updating.
+We know this isn't ideal, and building a proper upgrade path is on the roadmap. For now: snapshot first, changelog second, update third.
 
 ## Getting Help
 
