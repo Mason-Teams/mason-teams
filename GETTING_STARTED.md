@@ -303,8 +303,8 @@ Check the [Changelog](CHANGELOG.md) for what's new.
 
 **What this means for you:**
 
-- **Within v1.x**: `masonctl update` should work. Your data volume carries forward.
-- **Between major versions (v1 → v2, when that happens)**: We don't know yet. It may require starting fresh, or we may build migration tooling. We'll document the path when we get there.
+- **Your tools inside the container**: You're free to install or upgrade anything inside the container — npm packages, pip installs, CLI tools, whatever your agents need. That's your environment to customize.
+- **MASON's own components** (daemon, server, templates, masonctl internals): There's no upgrade path between versions right now. `masonctl update` pulls the latest image, but if MASON's internal components change significantly between releases, your existing data may not be compatible.
 - **Best practice now**: Snapshot before updating (`docker commit mason mason-pre-update`). If something breaks, you can roll back to the snapshot.
 
 We know this isn't ideal, and building a proper upgrade path is on the roadmap. For now, the honest answer is: snapshot first, and check the changelog before updating.
