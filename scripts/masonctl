@@ -42,6 +42,23 @@ print_error() {
     echo -e "${RED}[mason]${NC} $1" >&2
 }
 
+# Confirmation prompt for destructive actions
+# Usage: confirm_action "description" || return 0
+# Skipped when --yes or -y flag is set
+SKIP_CONFIRM=false
+confirm_action() {
+    if [ "$SKIP_CONFIRM" = true ]; then
+        return 0
+    fi
+    echo -e "${YELLOW}Warning:${NC} $1"
+    printf "Continue? [y/N] "
+    read -r response
+    case "$response" in
+        [yY]|[yY][eE][sS]) return 0 ;;
+        *) print_status "Cancelled."; return 1 ;;
+    esac
+}
+
 # Check if Docker is available
 check_docker() {
     if ! command -v docker &> /dev/null; then
@@ -212,13 +229,24 @@ cmd_start() {
         http_code=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${PORT_WEB}/health" 2>/dev/null || \
                     curl -s -o /dev/null -w '%{http_code}' "http://localhost:${PORT_WEB}/health" 2>/dev/null || true)
         if [ "$http_code" = "200" ] || [ "$http_code" = "503" ]; then
-            print_status "Container ready!"
             echo ""
-            echo "  Web UI:          https://localhost:${PORT_WEB}"
-            echo "  Getting Started: https://localhost:${PORT_WEB}/guide"
-            echo "  Documentation:   https://localhost:${PORT_WEB}/docs/"
+            echo -e "  ${GREEN}MASON is ready!${NC}"
             echo ""
-            echo "  (Check container logs for service status: masonctl logs)"
+            echo "  Open your browser to get started:"
+            echo ""
+            echo -e "    → ${GREEN}https://localhost:${PORT_WEB}${NC}"
+            echo ""
+            echo "  The setup wizard will walk you through everything."
+            echo ""
+            echo "  Links:"
+            echo "    Getting Started: https://localhost:${PORT_WEB}/guide"
+            echo "    Documentation:   https://localhost:${PORT_WEB}/docs/"
+            echo ""
+            echo "  Other commands:"
+            echo "    masonctl status    Check service health"
+            echo "    masonctl logs -f   Follow container logs"
+            echo "    masonctl login     Re-authenticate if session expires"
+            echo ""
             return 0
         fi
         sleep 1
@@ -228,6 +256,9 @@ cmd_start() {
 
 # Stop the container
 cmd_stop() {
+    while [ $# -gt 0 ]; do
+        case "$1" in --yes|-y) SKIP_CONFIRM=true; shift ;; *) shift ;; esac
+    done
     check_docker
 
     if ! container_exists; then
@@ -240,6 +271,8 @@ cmd_stop() {
         return 0
     fi
 
+    confirm_action "This will stop all running services and agent sessions." || return 0
+
     print_status "Stopping container '$CONTAINER_NAME'..."
     # Give entrypoint 30s to gracefully stop mason server + PostgreSQL
     docker stop --timeout 30 "$CONTAINER_NAME"
@@ -248,8 +281,13 @@ cmd_stop() {
 
 # Restart the container
 cmd_restart() {
+    while [ $# -gt 0 ]; do
+        case "$1" in --yes|-y) SKIP_CONFIRM=true; shift ;; *) shift ;; esac
+    done
     check_docker
-    cmd_stop
+    confirm_action "This will restart the container, interrupting all running services and agent sessions." || return 0
+    # Skip nested confirm in cmd_stop since we already confirmed
+    SKIP_CONFIRM=true cmd_stop
     cmd_start
 }
 
@@ -343,11 +381,15 @@ cmd_pull() {
 
 # Update: pull latest image and restart
 cmd_update() {
+    while [ $# -gt 0 ]; do
+        case "$1" in --yes|-y) SKIP_CONFIRM=true; shift ;; *) shift ;; esac
+    done
     check_docker
+    confirm_action "This will pull the latest image and restart the container." || return 0
     print_status "Updating MASON..."
-    cmd_pull
+    SKIP_CONFIRM=true cmd_pull
     if container_running; then
-        cmd_restart
+        SKIP_CONFIRM=true cmd_restart
     else
         print_status "Container not running. Start with: masonctl start"
     fi
@@ -358,8 +400,18 @@ cmd_rm() {
     check_docker
 
     local remove_data=false
-    if [ "$1" = "--data" ] || [ "$1" = "-d" ]; then
-        remove_data=true
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --data|-d) remove_data=true; shift ;;
+            --yes|-y) SKIP_CONFIRM=true; shift ;;
+            *) shift ;;
+        esac
+    done
+
+    if [ "$remove_data" = true ]; then
+        confirm_action "This will remove the container AND delete all data (agents, chat history, repos). This cannot be undone." || return 0
+    else
+        confirm_action "This will remove the container. Data volume will be preserved." || return 0
     fi
 
     if container_running; then
@@ -378,6 +430,39 @@ cmd_rm() {
     fi
 
     print_status "Cleanup complete"
+}
+
+# Toggle daemon debug logging
+cmd_debug() {
+    check_docker
+
+    if ! container_running; then
+        print_error "Container '$CONTAINER_NAME' is not running"
+        exit 1
+    fi
+
+    local action="${1:-on}"
+
+    case "$action" in
+        on|off)
+            print_status "Toggling daemon debug logging..."
+            docker exec "$CONTAINER_NAME" bash -c '
+                DAEMON_PID=$(pgrep -x mason-daemon 2>/dev/null | head -1 || true)
+                if [ -z "$DAEMON_PID" ]; then
+                    echo "ERROR: mason-daemon is not running. Complete the setup wizard first."
+                    exit 1
+                fi
+                # SIGUSR1 toggles between INFO and DEBUG without restart
+                kill -USR1 "$DAEMON_PID"
+                echo "Sent SIGUSR1 to mason-daemon (PID: $DAEMON_PID)"
+            '
+            print_status "Log level toggled. View with: masonctl logs -f 2>&1 | grep detectCombined"
+            ;;
+        *)
+            echo "Usage: masonctl debug [on|off]"
+            exit 1
+            ;;
+    esac
 }
 
 # Verify integrity of MASON files in the container
@@ -400,6 +485,7 @@ masonctl - MASON container management tool
 Usage: masonctl <command> [options]
 
 Commands:
+                        --no-cache: rebuild without Docker cache
   start                 Start the MASON container
   stop                  Stop the MASON container
   restart               Restart the MASON container
@@ -410,9 +496,13 @@ Commands:
   exec [cmd...]         Execute command in container (or shell if no cmd)
   token                 Print the current API token
   login                 Open browser to login page (with token instructions)
+  debug                 Toggle daemon debug logging (SIGUSR1, no restart)
   verify [flags...]     Verify integrity of MASON files in the container
   rm [--data]           Remove container (--data also removes volume)
   help                  Show this help message
+
+Global Flags:
+  --yes, -y             Skip confirmation prompts (for scripting)
 
 Environment Variables:
   MASON_CONTAINER_NAME  Container name (default: mason)
@@ -432,12 +522,21 @@ Examples:
   masonctl update                 # Pull latest and restart
   masonctl token                  # Print the API token
   masonctl login                  # Open login page in browser
+  masonctl debug                   # Toggle daemon debug logging
   masonctl verify                 # Verify integrity of MASON files
   masonctl verify --remote        # Verify with remote checks
   masonctl rm --data              # Remove container and all data
 
 EOF
 }
+
+# Parse global flags
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --yes|-y) SKIP_CONFIRM=true; shift ;;
+        *) break ;;
+    esac
+done
 
 # Main command dispatch
 case "${1:-help}" in
@@ -451,6 +550,7 @@ case "${1:-help}" in
     exec)    shift; cmd_exec "$@" ;;
     token)   shift; cmd_token "$@" ;;
     login)   shift; cmd_login "$@" ;;
+    debug)   shift; cmd_debug "$@" ;;
     verify)  shift; cmd_verify "$@" ;;
     rm)      shift; cmd_rm "$@" ;;
     help|--help|-h) cmd_help ;;
