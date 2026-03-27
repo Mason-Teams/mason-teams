@@ -211,18 +211,20 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 | Command | What it does |
 |---------|-------------|
 | `./scripts/masonctl start` | Start the MASON container |
-| `./scripts/masonctl stop` | Stop the container (agents will need to be brought back — see [Restarting](#restarting-mason)) |
-| `./scripts/masonctl restart` | Restart everything (only Connie auto-resumes — tell her to bring the team back) |
+| `./scripts/masonctl stop` | Stop the container — prompts for confirmation (agents will need to be brought back — see [Restarting](#restarting-mason)) |
+| `./scripts/masonctl restart` | Restart everything — prompts for confirmation (only Connie auto-resumes — tell her to bring the team back) |
 | `./scripts/masonctl status` | Check what's running |
 | `./scripts/masonctl token` | Print your dashboard auth token |
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
 | `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
-| `./scripts/masonctl update` | Pull latest image and restart |
-| `./scripts/masonctl rm` | Remove the container (keeps data) |
-| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data |
+| `./scripts/masonctl update` | Pull latest image and restart — prompts for confirmation |
+| `./scripts/masonctl rm` | Remove the container (keeps data) — prompts for confirmation |
+| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data — prompts for confirmation |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
+
+> **Scripting tip:** Destructive commands (stop, restart, update, rm) prompt for y/N confirmation. Pass `--yes` or `-y` to skip the prompt: `./scripts/masonctl stop --yes`
 
 For the full command reference, see [CONFIGURATION.md](CONFIGURATION.md#useful-commands).
 
