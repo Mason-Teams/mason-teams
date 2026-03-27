@@ -17,6 +17,8 @@ You'll need:
 | **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** | v24+ | Latest stable |
 | **RAM** | 8GB | 16GB+ |
 | **Disk** | 10GB free | 20GB+ |
+
+> **Disk breakdown:** The MASON container image is ~3GB. Additional space is needed for agent workspaces, Git repos, chat history, and memory — this grows over time as your team works.
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
 
 You'll also need access to **Claude** — either an Anthropic API key or a Claude subscription. MASON agents are powered by Claude.
