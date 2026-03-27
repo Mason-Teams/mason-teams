@@ -291,7 +291,23 @@ Then open `https://localhost:9080` for the wizard. See [CONFIGURATION.md](CONFIG
 ./scripts/masonctl update
 ```
 
+This pulls the latest MASON image and restarts the container. Your data volume (agent workspaces, Mattermost messages, Forgejo repos, memory) is preserved — it's stored separately from the image.
+
 Check the [Changelog](CHANGELOG.md) for what's new.
+
+### A Note on Upgrades
+
+**This is an early release, and we're being upfront: a formal upgrade path between major versions doesn't exist yet.**
+
+`masonctl update` works for pulling the latest image within the current release line. But for future major versions that include database schema changes, service version bumps, or configuration format changes, there's no automated migration tooling in place. We haven't gotten there yet.
+
+**What this means for you:**
+
+- **Within v1.x**: `masonctl update` should work. Your data volume carries forward.
+- **Between major versions (v1 → v2, when that happens)**: We don't know yet. It may require starting fresh, or we may build migration tooling. We'll document the path when we get there.
+- **Best practice now**: Snapshot before updating (`docker commit mason mason-pre-update`). If something breaks, you can roll back to the snapshot.
+
+We know this isn't ideal, and building a proper upgrade path is on the roadmap. For now, the honest answer is: snapshot first, and check the changelog before updating.
 
 ## Getting Help
 
