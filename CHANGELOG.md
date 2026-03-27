@@ -10,6 +10,13 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-27
+
+### Changed
+- **masonctl safety prompts** — All destructive commands (stop, restart, rebuild, update, rm) now prompt for y/N confirmation before executing. Pass `--yes` or `-y` to skip for scripting.
+- **Mattermost upgraded to 11.5.1** (was 9.11.0)
+- **Forgejo upgraded to 14.0.3** (was 9.0.0)
+
 ## [1.1.0] - 2026-03-27
 
 ### Added

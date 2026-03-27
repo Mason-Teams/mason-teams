@@ -171,18 +171,20 @@ The agent daemon manages agent lifecycles, message routing, and health monitorin
 | Command | What it does |
 |---------|-------------|
 | `./scripts/masonctl start` | Start MASON |
-| `./scripts/masonctl stop` | Stop MASON |
-| `./scripts/masonctl restart` | Restart everything |
+| `./scripts/masonctl stop` | Stop MASON (prompts for confirmation) |
+| `./scripts/masonctl restart` | Restart everything (prompts for confirmation) |
 | `./scripts/masonctl status` | Check what's running |
 | `./scripts/masonctl token` | Print your dashboard auth token |
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
 | `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
-| `./scripts/masonctl update` | Pull latest image and restart the container |
-| `./scripts/masonctl rm` | Remove the container (keeps data) |
-| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data |
+| `./scripts/masonctl update` | Pull latest image and restart (prompts for confirmation) |
+| `./scripts/masonctl rm` | Remove the container, keeps data (prompts for confirmation) |
+| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data (prompts for confirmation) |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
+
+> **Scripting tip:** Pass `--yes` or `-y` to skip confirmation prompts: `./scripts/masonctl stop --yes`
 
 ## Third-Party Dependencies
 
