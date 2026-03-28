@@ -217,7 +217,7 @@ cmd_start() {
             -p "${PORT_MM}:8065" \
             -p "${PORT_FORGEJO}:3000" \
             -v "${DATA_VOLUME}:/data" \
-            -v "${MASON_DIR}:/home/mason/.mason:ro" \
+            -v "${MASON_DIR}:/data/credentials/mason-security:ro" \
             "$IMAGE_NAME"
     fi
 
