@@ -10,6 +10,17 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-03-28
+
+### Fixed
+- **Agent restart reliability** — Agents now resume existing sessions (`-c` flag) instead of starting fresh on container restart
+- **Home directory persistence** — `/home/mason` data (credentials, settings) survives container restarts
+- **Permission handling** — Claude bypass permissions written to correct settings file
+- **Daemon stability** — Fixed false-positive busy detection and stale notification state
+
+### Changed
+- **Pinned ditops-memory dependency** to `<=0.2.6` for compatibility
+
 ## [1.2.0] - 2026-03-27
 
 ### Changed
