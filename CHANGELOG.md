@@ -10,6 +10,13 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-03-30
+
+### Fixed
+- **`untrust-cert` reliability** — Now scans keychain for Mason certificates instead of assuming a fixed name
+- **`rm --data` cleanup** — Removes trusted certificates when deleting Mason data
+- **Help text formatting** — Aligned help output for trust-cert commands
+
 ## [1.3.0] - 2026-03-30
 
 ### Added

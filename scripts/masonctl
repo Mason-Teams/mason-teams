@@ -436,6 +436,17 @@ cmd_rm() {
     if [ "$remove_data" = true ]; then
         print_warning "Removing data volume '$DATA_VOLUME'..."
         docker volume rm "$DATA_VOLUME" 2>/dev/null || true
+
+        # Check for orphaned trusted certificates in the system trust store
+        if remove_trusted_certs "prompt" 2>/dev/null; then
+            true  # certs removed (or user declined)
+        fi
+
+        # Remove local security directory (~/.mason)
+        if [ -d "$MASON_DIR" ]; then
+            print_warning "Removing security directory '$MASON_DIR'..."
+            rm -rf "$MASON_DIR"
+        fi
     fi
 
     print_status "Cleanup complete"
@@ -523,17 +534,8 @@ cmd_trust_cert() {
     confirm_action "Add MASON's certificate to your system trust store?" || return 0
 
     if [ "$(uname)" = "Darwin" ]; then
-        # macOS: remove any existing MASON certs first (add-trusted-cert creates duplicates)
-        local existing_hashes
-        existing_hashes=$(security find-certificate -a -c "MASON Local" -Z \
-            /Library/Keychains/System.keychain 2>/dev/null | grep "SHA-256" | sed 's/.*: //')
-        if [ -n "$existing_hashes" ]; then
-            print_status "Removing previous MASON certificate(s) from keychain..."
-            for hash in $existing_hashes; do
-                sudo security delete-certificate -Z "$hash" -t \
-                    /Library/Keychains/System.keychain 2>/dev/null || true
-            done
-        fi
+        # Remove any existing MASON certs first (add-trusted-cert creates duplicates)
+        remove_trusted_certs "silent" 2>/dev/null || true
 
         # Add to system keychain, scoped to SSL only
         print_status "Adding certificate to macOS Keychain..."
@@ -586,46 +588,78 @@ cmd_trust_cert() {
     fi
 }
 
-# Remove MASON's certificate from the system trust store
-cmd_untrust_cert() {
-    local cert_path="${MASON_DIR}/tls/mason.crt"
-
-    echo ""
-    echo -e "  ${GREEN}Remove MASON Certificate${NC}"
-    echo -e "  ──────────────────────────────────────────"
-    echo ""
-    echo "  This will remove MASON's certificate from your system trust store."
-    echo ""
-
-    confirm_action "Remove MASON's certificate from your system trust store?" || return 0
+# Remove all MASON certificates from the system trust store.
+# Args: $1 = "prompt" (ask before removing) or "silent" (remove without asking, for rm --data)
+# Returns 0 if certs were found and removed, 1 if none found.
+remove_trusted_certs() {
+    local mode="${1:-prompt}"
 
     if [ "$(uname)" = "Darwin" ]; then
-        print_status "Removing certificate from macOS Keychain..."
-        # Find all MASON certs by CN and delete each by hash (handles duplicates)
         local existing_hashes
         existing_hashes=$(security find-certificate -a -c "MASON Local" -Z \
             /Library/Keychains/System.keychain 2>/dev/null | grep "SHA-256" | sed 's/.*: //')
-        if [ -n "$existing_hashes" ]; then
-            for hash in $existing_hashes; do
-                sudo security delete-certificate -Z "$hash" -t \
-                    /Library/Keychains/System.keychain 2>/dev/null || true
-            done
-            print_status "Certificate removed."
-        else
-            print_warning "Certificate not found in keychain (may already be removed)."
+        if [ -z "$existing_hashes" ]; then
+            return 1
         fi
+
+        local cert_count
+        cert_count=$(echo "$existing_hashes" | wc -l | tr -d ' ')
+
+        if [ "$mode" = "prompt" ]; then
+            echo ""
+            print_status "Found $cert_count MASON certificate(s) in macOS Keychain."
+            echo ""
+            echo "  A system dialog box will appear asking you to authorize"
+            echo "  the keychain change. Enter your password and click"
+            echo "  'Update Settings' (or 'Allow') to proceed."
+            echo ""
+            confirm_action "Remove all $cert_count MASON certificate(s) from keychain?" || return 0
+        fi
+
+        print_status "Removing $cert_count MASON certificate(s) from macOS Keychain..."
+        for hash in $existing_hashes; do
+            sudo security delete-certificate -Z "$hash" -t \
+                /Library/Keychains/System.keychain 2>/dev/null || true
+        done
+        print_status "Certificate(s) removed."
+        return 0
     elif [ -f "/usr/local/share/ca-certificates/mason.crt" ]; then
+        if [ "$mode" = "prompt" ]; then
+            echo ""
+            print_status "Found MASON certificate in system trust store."
+            confirm_action "Remove MASON certificate from trust store?" || return 0
+        fi
         print_status "Removing certificate from system trust store..."
         sudo rm -f /usr/local/share/ca-certificates/mason.crt
         sudo update-ca-certificates
         print_status "Certificate removed."
+        return 0
     elif [ -f "/etc/pki/ca-trust/source/anchors/mason.crt" ]; then
+        if [ "$mode" = "prompt" ]; then
+            echo ""
+            print_status "Found MASON certificate in system trust store."
+            confirm_action "Remove MASON certificate from trust store?" || return 0
+        fi
         print_status "Removing certificate from system trust store..."
         sudo rm -f /etc/pki/ca-trust/source/anchors/mason.crt
         sudo update-ca-trust
         print_status "Certificate removed."
+        return 0
     else
-        print_warning "No trusted MASON certificate found."
+        return 1
+    fi
+}
+
+# Remove MASON's certificate from the system trust store
+cmd_untrust_cert() {
+    echo ""
+    echo -e "  ${GREEN}Remove MASON Certificate${NC}"
+    echo -e "  ──────────────────────────────────────────"
+    echo ""
+    echo "  Checking for MASON certificates in your system trust store..."
+
+    if ! remove_trusted_certs "prompt"; then
+        print_warning "No MASON certificates found in trust store."
     fi
     echo ""
 }
@@ -650,8 +684,8 @@ Commands:
   token                 Print the current API token
   login                 Open browser to login page (with token instructions)
   debug                 Toggle daemon debug logging (SIGUSR1, no restart)
-  trust-cert            Add MASON's TLS certificate to system trust store
-  untrust-cert          Remove MASON's TLS certificate from system trust store
+  trust-cert            Add MASON's TLS cert to system trust store
+  untrust-cert          Remove MASON's TLS cert from system trust store
   verify [flags...]     Verify integrity of MASON files in the container
   rm [--data]           Remove container (--data also removes volume)
   help                  Show this help message
@@ -677,9 +711,9 @@ Examples:
   masonctl update                 # Pull latest and restart
   masonctl token                  # Print the API token
   masonctl login                  # Open login page in browser
-  masonctl debug                   # Toggle daemon debug logging
-  masonctl trust-cert              # Trust MASON's self-signed certificate
-  masonctl untrust-cert            # Remove MASON's certificate from trust store
+  masonctl debug                  # Toggle daemon debug logging
+  masonctl trust-cert             # Trust MASON's self-signed certificate
+  masonctl untrust-cert           # Remove MASON's certificate from trust store
   masonctl verify                 # Verify integrity of MASON files
   masonctl verify --remote        # Verify with remote checks
   masonctl rm --data              # Remove container and all data
