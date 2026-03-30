@@ -10,6 +10,11 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5] - 2026-03-30
+
+### Changed
+- Remove obsolete release.sh — pipeline handles tagging automatically
+
 ## [1.3.4] - 2026-03-30
 
 ### Changed
