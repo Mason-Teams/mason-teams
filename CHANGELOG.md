@@ -20,7 +20,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [1.3.0] - 2026-03-30
 
 ### Added
-- **`trust-cert` / `untrust-cert` commands** — Install or remove Mason's self-signed CA certificate from the host trust store, eliminating browser TLS warnings
+- **`masonctl trust-cert`** — Adds MASON's self-signed TLS certificate to your system trust store, eliminating browser security warnings. Works on macOS (System Keychain) and Linux (Debian/Ubuntu + RHEL/Fedora). Idempotent — safe to re-run after regenerating certificates.
+- **`masonctl untrust-cert`** — Removes MASON's certificate from the system trust store. Clean reversal of `trust-cert`, also idempotent.
+- **TLS cert warning on start** — `masonctl start` now displays a note about the browser certificate warning with instructions to proceed and a pointer to `masonctl trust-cert`.
+
+### Changed
+- **Certificate CN** — Self-signed certificate common name changed from `localhost` to `MASON Local` for precise identification in the system keychain.
 
 ## [1.2.2] - 2026-03-28
 

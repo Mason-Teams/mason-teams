@@ -53,16 +53,34 @@ MASON generates a self-signed TLS certificate on first start:
 |----------|-------|
 | Certificate | `~/.mason/tls/mason.crt` |
 | Private key | `~/.mason/tls/mason.key` (mode 0600) |
-| Subject | `CN=localhost, O=MASON` |
+| Subject | `CN=MASON Local` |
 | SAN | `DNS:localhost, IP:127.0.0.1` |
 | Validity | 365 days |
 | Algorithm | RSA 2048 |
 
 Browsers will show a self-signed certificate warning on first visit — this is expected for localhost development.
 
+**Trusting the certificate:** To eliminate the browser warning permanently, add MASON's certificate to your system trust store:
+
+```bash
+./scripts/masonctl trust-cert
+```
+
+This works on macOS (adds to System Keychain) and Linux (Debian/Ubuntu + RHEL/Fedora system CA stores). You'll be prompted for your system password. Safe to re-run after regenerating certificates — any previous MASON cert is automatically replaced.
+
+To remove the certificate from your trust store:
+
+```bash
+./scripts/masonctl untrust-cert
+```
+
+`untrust-cert` scans your system keychain for all MASON certificates and offers to remove them in one step. It works even if `~/.mason` has already been deleted — it scans the keychain directly rather than depending on the local certificate file.
+
+> **Note:** You don't need to run `untrust-cert` separately before a full uninstall — `./scripts/masonctl rm --data` automatically checks for and removes any trusted MASON certificates from your keychain.
+
 **Replacing with a custom certificate:** Place your own `mason.crt` and `mason.key` in `~/.mason/tls/` before starting the container.
 
-**Renewal:** Delete `~/.mason/tls/` and restart — `./scripts/masonctl start` regenerates automatically.
+**Renewal:** Delete `~/.mason/tls/` and restart — `./scripts/masonctl start` regenerates automatically. If you previously ran `trust-cert`, run it again after renewal to trust the new certificate.
 
 ## Network Exposure
 
@@ -100,8 +118,7 @@ The `~/.mason/` directory is mounted **read-only** into the container, preventin
 | Subsequent starts | Existing token reused |
 | Token rotation | Delete `~/.mason/token`, restart container |
 | Container rebuild | Token persists (lives on host, not in image) |
-| `./scripts/masonctl rm --data` | Token persists (not in data volume) |
-| Full reset | Delete `~/.mason/` directory |
+| `./scripts/masonctl rm --data` | Token removed (cleans up `~/.mason/` and trusted certs) |
 
 ## Trust Model
 
