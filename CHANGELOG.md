@@ -10,6 +10,11 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-03-30
+
+### Added
+- **`trust-cert` / `untrust-cert` commands** — Install or remove Mason's self-signed CA certificate from the host trust store, eliminating browser TLS warnings
+
 ## [1.2.2] - 2026-03-28
 
 ### Fixed

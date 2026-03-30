@@ -106,7 +106,7 @@ init_security() {
         print_status "Generating self-signed TLS certificate..."
         openssl req -x509 -newkey rsa:2048 -keyout "$MASON_DIR/tls/mason.key" \
             -out "$MASON_DIR/tls/mason.crt" -days 365 -nodes \
-            -subj "/CN=localhost/O=MASON" \
+            -subj "/CN=MASON Local/O=MASON" \
             -addext "subjectAltName=DNS:localhost,IP:127.0.0.1" 2>/dev/null
         chmod 0600 "$MASON_DIR/tls/mason.key"
         chmod 0644 "$MASON_DIR/tls/mason.crt"
@@ -237,6 +237,15 @@ cmd_start() {
             echo -e "    → ${GREEN}https://localhost:${PORT_WEB}${NC}"
             echo ""
             echo "  The setup wizard will walk you through everything."
+            echo ""
+            echo -e "  ${YELLOW}Note:${NC} MASON uses a self-signed TLS certificate."
+            echo "  Your browser will show a security warning — this is normal."
+            echo "  Click 'Advanced' → 'Proceed' (or 'Accept the Risk') to continue."
+            echo ""
+            echo "  To remove the warning permanently, you can add MASON's"
+            echo "  certificate to your system trust store:"
+            echo ""
+            echo -e "    ${GREEN}masonctl trust-cert${NC}"
             echo ""
             echo "  Links:"
             echo "    Getting Started: https://localhost:${PORT_WEB}/guide"
@@ -477,6 +486,150 @@ cmd_verify() {
     docker exec "$CONTAINER_NAME" mason-verify "$@"
 }
 
+# Add MASON's self-signed certificate to the system trust store
+cmd_trust_cert() {
+    local cert_path="${MASON_DIR}/tls/mason.crt"
+
+    if [ ! -f "$cert_path" ]; then
+        print_error "No certificate found at $cert_path"
+        echo ""
+        echo "  Run 'masonctl start' first to generate the certificate."
+        echo ""
+        exit 1
+    fi
+
+    echo ""
+    echo -e "  ${GREEN}Trust MASON Certificate${NC}"
+    echo -e "  ──────────────────────────────────────────"
+    echo ""
+    echo "  This will add MASON's self-signed TLS certificate to your"
+    echo "  system trust store so your browser no longer shows security"
+    echo "  warnings when accessing MASON services."
+    echo ""
+    echo "  Certificate: $cert_path"
+    echo ""
+    echo "  What this does:"
+    echo "    • Adds the certificate to your OS keychain/trust store"
+    echo "    • Marks it as trusted for SSL/TLS connections"
+    echo "    • Only affects connections to localhost (MASON services)"
+    echo "    • If a previous MASON certificate exists, it will be"
+    echo "      removed and replaced with the current one"
+    echo ""
+    echo "  A system dialog box will appear on your screen asking you to"
+    echo "  authorize the keychain change. Enter your password and click"
+    echo "  'Update Settings' (or 'Allow') to proceed."
+    echo ""
+
+    confirm_action "Add MASON's certificate to your system trust store?" || return 0
+
+    if [ "$(uname)" = "Darwin" ]; then
+        # macOS: remove any existing MASON certs first (add-trusted-cert creates duplicates)
+        local existing_hashes
+        existing_hashes=$(security find-certificate -a -c "MASON Local" -Z \
+            /Library/Keychains/System.keychain 2>/dev/null | grep "SHA-256" | sed 's/.*: //')
+        if [ -n "$existing_hashes" ]; then
+            print_status "Removing previous MASON certificate(s) from keychain..."
+            for hash in $existing_hashes; do
+                sudo security delete-certificate -Z "$hash" -t \
+                    /Library/Keychains/System.keychain 2>/dev/null || true
+            done
+        fi
+
+        # Add to system keychain, scoped to SSL only
+        print_status "Adding certificate to macOS Keychain..."
+        if sudo security add-trusted-cert -d -r trustRoot -p ssl \
+            -k /Library/Keychains/System.keychain "$cert_path"; then
+            echo ""
+            print_status "Certificate trusted successfully!"
+            echo ""
+            echo "  You may need to restart your browser for the change to take effect."
+            echo ""
+        else
+            print_error "Failed to add certificate. Check your password and try again."
+            exit 1
+        fi
+    elif [ -d "/usr/local/share/ca-certificates" ]; then
+        # Debian/Ubuntu
+        print_status "Adding certificate to system trust store..."
+        if sudo cp "$cert_path" /usr/local/share/ca-certificates/mason.crt && \
+           sudo update-ca-certificates; then
+            echo ""
+            print_status "Certificate trusted successfully!"
+            echo ""
+            echo "  You may need to restart your browser for the change to take effect."
+            echo ""
+        else
+            print_error "Failed to update certificates."
+            exit 1
+        fi
+    elif [ -d "/etc/pki/ca-trust/source/anchors" ]; then
+        # RHEL/Fedora
+        print_status "Adding certificate to system trust store..."
+        if sudo cp "$cert_path" /etc/pki/ca-trust/source/anchors/mason.crt && \
+           sudo update-ca-trust; then
+            echo ""
+            print_status "Certificate trusted successfully!"
+            echo ""
+            echo "  You may need to restart your browser for the change to take effect."
+            echo ""
+        else
+            print_error "Failed to update certificates."
+            exit 1
+        fi
+    else
+        print_error "Could not detect your OS trust store."
+        echo ""
+        echo "  You can manually trust the certificate at:"
+        echo "    $cert_path"
+        echo ""
+        exit 1
+    fi
+}
+
+# Remove MASON's certificate from the system trust store
+cmd_untrust_cert() {
+    local cert_path="${MASON_DIR}/tls/mason.crt"
+
+    echo ""
+    echo -e "  ${GREEN}Remove MASON Certificate${NC}"
+    echo -e "  ──────────────────────────────────────────"
+    echo ""
+    echo "  This will remove MASON's certificate from your system trust store."
+    echo ""
+
+    confirm_action "Remove MASON's certificate from your system trust store?" || return 0
+
+    if [ "$(uname)" = "Darwin" ]; then
+        print_status "Removing certificate from macOS Keychain..."
+        # Find all MASON certs by CN and delete each by hash (handles duplicates)
+        local existing_hashes
+        existing_hashes=$(security find-certificate -a -c "MASON Local" -Z \
+            /Library/Keychains/System.keychain 2>/dev/null | grep "SHA-256" | sed 's/.*: //')
+        if [ -n "$existing_hashes" ]; then
+            for hash in $existing_hashes; do
+                sudo security delete-certificate -Z "$hash" -t \
+                    /Library/Keychains/System.keychain 2>/dev/null || true
+            done
+            print_status "Certificate removed."
+        else
+            print_warning "Certificate not found in keychain (may already be removed)."
+        fi
+    elif [ -f "/usr/local/share/ca-certificates/mason.crt" ]; then
+        print_status "Removing certificate from system trust store..."
+        sudo rm -f /usr/local/share/ca-certificates/mason.crt
+        sudo update-ca-certificates
+        print_status "Certificate removed."
+    elif [ -f "/etc/pki/ca-trust/source/anchors/mason.crt" ]; then
+        print_status "Removing certificate from system trust store..."
+        sudo rm -f /etc/pki/ca-trust/source/anchors/mason.crt
+        sudo update-ca-trust
+        print_status "Certificate removed."
+    else
+        print_warning "No trusted MASON certificate found."
+    fi
+    echo ""
+}
+
 # Show help
 cmd_help() {
     cat <<EOF
@@ -497,6 +650,8 @@ Commands:
   token                 Print the current API token
   login                 Open browser to login page (with token instructions)
   debug                 Toggle daemon debug logging (SIGUSR1, no restart)
+  trust-cert            Add MASON's TLS certificate to system trust store
+  untrust-cert          Remove MASON's TLS certificate from system trust store
   verify [flags...]     Verify integrity of MASON files in the container
   rm [--data]           Remove container (--data also removes volume)
   help                  Show this help message
@@ -523,6 +678,8 @@ Examples:
   masonctl token                  # Print the API token
   masonctl login                  # Open login page in browser
   masonctl debug                   # Toggle daemon debug logging
+  masonctl trust-cert              # Trust MASON's self-signed certificate
+  masonctl untrust-cert            # Remove MASON's certificate from trust store
   masonctl verify                 # Verify integrity of MASON files
   masonctl verify --remote        # Verify with remote checks
   masonctl rm --data              # Remove container and all data
@@ -551,6 +708,8 @@ case "${1:-help}" in
     token)   shift; cmd_token "$@" ;;
     login)   shift; cmd_login "$@" ;;
     debug)   shift; cmd_debug "$@" ;;
+    trust-cert)   shift; cmd_trust_cert "$@" ;;
+    untrust-cert) shift; cmd_untrust_cert "$@" ;;
     verify)  shift; cmd_verify "$@" ;;
     rm)      shift; cmd_rm "$@" ;;
     help|--help|-h) cmd_help ;;
