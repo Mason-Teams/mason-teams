@@ -85,11 +85,11 @@ Once logged in, the dashboard opens to:
 https://localhost:8080
 ```
 
-The wizard walks you through seven steps. Your progress is saved automatically — if you close your browser, you'll pick up where you left off.
+The wizard walks you through five steps. Your progress is saved automatically — if you close your browser, you'll pick up where you left off.
 
-### Step 3a: Accept the User Agreement
+### Step 3a: Welcome
 
-You'll be asked to confirm three acknowledgments:
+A brief introduction to MASON, followed by the User Agreement. You'll be asked to confirm three acknowledgments:
 
 - **Simulation platform** — MASON is a simulation environment. Agent outputs are exploratory, not professional work product.
 - **No-harm commitment** — You agree not to use MASON for harmful, deceptive, or malicious purposes.
@@ -97,50 +97,38 @@ You'll be asked to confirm three acknowledgments:
 
 All three must be confirmed to continue. This step cannot be skipped.
 
-### Step 3b: Choose Your Auth Method
+### Step 3b: Credentials
 
-Pick how you'll authenticate with Claude:
+Pick how you'll authenticate with Claude, then enter your credentials:
 
-- **API key** — You have an Anthropic API key from [console.anthropic.com](https://console.anthropic.com)
-- **Claude subscription** — You have an active Claude Pro, Team, or Enterprise subscription
-
-Your choice determines what you'll enter in the next step. You can go back and change this later.
-
-### Step 3c: Install Claude Code
-
-MASON agents are powered by [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code). It is **not bundled** in the container — the wizard installs it at your direction.
-
-You'll be asked to review and accept Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) before installation proceeds.
-
-**If you decline:** The container's core services (Mattermost, Forgejo, PostgreSQL) will start normally, but agents won't run. The dashboard will show a "Setup Incomplete" banner with an install button so you can complete this step later.
-
-### Step 3d: Enter Your Claude Credentials
-
-Depending on your auth method:
-
-- **API key** — Paste your Anthropic API key. The wizard validates the key format before continuing.
-- **Subscription** — Sign in with your Claude account credentials. The wizard opens an OAuth URL in the terminal for you to authenticate in your browser.
+- **API key** — Paste your Anthropic API key from [console.anthropic.com](https://console.anthropic.com). The wizard validates the key format before continuing.
+- **Claude subscription** — Sign in with your Claude account credentials. The wizard opens an OAuth URL in the terminal for you to authenticate in your browser.
 
 > **Tip:** The terminal can mangle the OAuth URL with line breaks and copy/paste issues. If clicking the URL doesn't work, carefully select and copy the full URL, paste it into a text editor to verify it's intact, then paste the cleaned-up URL into your browser.
 
 **If your key is invalid or expired:** The wizard will tell you and let you try again. You won't be able to proceed until credentials are verified.
 
-### Step 3e: Set Up Your Profile
+### Step 3c: Concierge
 
-Two quick settings:
+Three quick settings:
 
 - **Your name** — How agents will address you (e.g., "David", "Dr. Chen")
+- **Username** — Your login username for Mattermost and Forgejo
 - **Concierge name** — What to call your concierge (default: "Connie"). This is purely cosmetic — pick whatever you like.
 
-### Step 3f: Claude Terminal Authentication
+### Step 3d: Claude
 
-The wizard verifies that your credentials actually work by running a test authentication against Claude's API. This confirms everything is wired up correctly before launching.
+MASON agents are powered by [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code). It is **not bundled** in the container — the wizard installs it at your direction.
+
+You'll be asked to review and accept Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) before installation proceeds. The wizard then installs Claude Code and verifies that your credentials work by running a test authentication against Claude's API.
+
+**If you decline:** The container's core services (Mattermost, Forgejo, PostgreSQL) will start normally, but agents won't run. The dashboard will show a "Setup Incomplete" banner with an install button so you can complete this step later.
 
 **If authentication fails:** Double-check your credentials. For API keys, make sure the key is active at [console.anthropic.com](https://console.anthropic.com). For subscriptions, verify your account is in good standing.
 
-### Step 3g: Launch
+### Step 3e: Launch
 
-Everything starts up — Mattermost, Forgejo, the agent daemon, and your concierge. This takes 30–60 seconds.
+Everything starts up — PostgreSQL, Mattermost, Forgejo, the agent daemon, and your concierge. This takes 30–60 seconds. Your login credentials are displayed on this screen.
 
 > **Note:** After first launch, it may take 2–3 minutes for Mattermost to fully initialize (database migrations, team and channel provisioning, etc.). You may see loading screens or incomplete data during this time — this is normal.
 
