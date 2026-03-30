@@ -182,6 +182,8 @@ The agent daemon manages agent lifecycles, message routing, and health monitorin
 | `./scripts/masonctl update` | Pull latest image and restart (prompts for confirmation) |
 | `./scripts/masonctl rm` | Remove the container, keeps data (prompts for confirmation) |
 | `./scripts/masonctl rm --data` | Remove the container **and** all persistent data (prompts for confirmation) |
+| `./scripts/masonctl trust-cert` | Add MASON's TLS certificate to your system trust store (eliminates browser warnings) |
+| `./scripts/masonctl untrust-cert` | Remove MASON's TLS certificate from your system trust store |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
 
 > **Scripting tip:** Pass `--yes` or `-y` to skip confirmation prompts: `./scripts/masonctl stop --yes`

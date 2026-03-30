@@ -10,6 +10,16 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-03-30
+
+### Added
+- **`masonctl trust-cert`** — Adds MASON's self-signed TLS certificate to your system trust store, eliminating browser security warnings. Works on macOS (System Keychain) and Linux (Debian/Ubuntu + RHEL/Fedora). Idempotent — safe to re-run after regenerating certificates.
+- **`masonctl untrust-cert`** — Removes MASON's certificate from the system trust store. Clean reversal of `trust-cert`, also idempotent.
+- **TLS cert warning on start** — `masonctl start` now displays a note about the browser certificate warning with instructions to proceed and a pointer to `masonctl trust-cert`.
+
+### Changed
+- **Certificate CN** — Self-signed certificate common name changed from `localhost` to `MASON Local` for precise identification in the system keychain.
+
 ## [1.2.2] - 2026-03-28
 
 ### Fixed

@@ -222,6 +222,8 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 | `./scripts/masonctl update` | Pull latest image and restart — prompts for confirmation |
 | `./scripts/masonctl rm` | Remove the container (keeps data) — prompts for confirmation |
 | `./scripts/masonctl rm --data` | Remove the container **and** all persistent data — prompts for confirmation |
+| `./scripts/masonctl trust-cert` | Add MASON's TLS certificate to your system trust store (eliminates browser warnings) |
+| `./scripts/masonctl untrust-cert` | Remove MASON's TLS certificate from your system trust store |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
 
 > **Scripting tip:** Destructive commands (stop, restart, update, rm) prompt for y/N confirmation. Pass `--yes` or `-y` to skip the prompt: `./scripts/masonctl stop --yes`
@@ -271,7 +273,17 @@ Try increasing Docker's memory limit in Docker Desktop settings.
 
 When you first open the MASON dashboard, your browser will show a security warning about an untrusted or self-signed certificate. This is normal — MASON generates a self-signed TLS certificate on first start to encrypt traffic between your browser and the local dashboard. Since the certificate isn't issued by a public certificate authority, your browser flags it.
 
-**To proceed:** Click "Advanced" (or "Show Details" in Safari) and accept the certificate. You only need to do this once per browser. For full details on MASON's TLS setup and how to use your own certificate, see [SECURITY.md](SECURITY.md#tls).
+**To proceed:** Click "Advanced" (or "Show Details" in Safari) and accept the certificate. You'll need to do this once per browser.
+
+**To fix permanently:** Add MASON's certificate to your system trust store so browsers stop showing the warning:
+
+```bash
+./scripts/masonctl trust-cert
+```
+
+This is safe to re-run after regenerating certificates (new container, deleted `~/.mason`, etc.). To undo it later: `./scripts/masonctl untrust-cert`
+
+For full details on MASON's TLS setup and how to use your own certificate, see [SECURITY.md](SECURITY.md#tls).
 
 ### Authentication errors
 

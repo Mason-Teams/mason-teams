@@ -53,16 +53,30 @@ MASON generates a self-signed TLS certificate on first start:
 |----------|-------|
 | Certificate | `~/.mason/tls/mason.crt` |
 | Private key | `~/.mason/tls/mason.key` (mode 0600) |
-| Subject | `CN=localhost, O=MASON` |
+| Subject | `CN=MASON Local` |
 | SAN | `DNS:localhost, IP:127.0.0.1` |
 | Validity | 365 days |
 | Algorithm | RSA 2048 |
 
 Browsers will show a self-signed certificate warning on first visit — this is expected for localhost development.
 
+**Trusting the certificate:** To eliminate the browser warning permanently, add MASON's certificate to your system trust store:
+
+```bash
+./scripts/masonctl trust-cert
+```
+
+This works on macOS (adds to System Keychain) and Linux (Debian/Ubuntu + RHEL/Fedora system CA stores). You'll be prompted for your system password. Safe to re-run after regenerating certificates — any previous MASON cert is automatically replaced.
+
+To remove the certificate from your trust store:
+
+```bash
+./scripts/masonctl untrust-cert
+```
+
 **Replacing with a custom certificate:** Place your own `mason.crt` and `mason.key` in `~/.mason/tls/` before starting the container.
 
-**Renewal:** Delete `~/.mason/tls/` and restart — `./scripts/masonctl start` regenerates automatically.
+**Renewal:** Delete `~/.mason/tls/` and restart — `./scripts/masonctl start` regenerates automatically. If you previously ran `trust-cert`, run it again after renewal to trust the new certificate.
 
 ## Network Exposure
 
