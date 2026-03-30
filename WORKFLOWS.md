@@ -101,6 +101,25 @@ MASON agents have a layered memory system that works behind the scenes. You don'
 
 The practical effect: your agents get better at working on your project over time. They remember past decisions, avoid repeating mistakes, and share context without you having to repeat yourself.
 
+### Scheduled and Recurring Tasks
+
+Agents support a `/loop` command that runs any task on a timed interval. Tell an agent in Mattermost what you want repeated, and they'll set it up:
+
+> "Hey Riley, run `/loop 5m /officehours`" — checks messages every 5 minutes
+>
+> "Run `/loop 30m` and check the deploy status each time" — polls every 30 minutes
+>
+> "Start a `/loop 10m` to run the test suite and report failures" — continuous integration
+
+The default interval is 10 minutes if you don't specify one. The agent keeps running the loop in the background, and the MASON daemon can still deliver new messages to the agent — so you can continue chatting, give new instructions, or redirect the agent without interrupting the loop.
+
+**Common uses:**
+- **Monitoring** — Periodically check a service, deployment, or build pipeline
+- **Polling** — Watch for changes in a repo, API, or external system
+- **Recurring maintenance** — Run tests, lint checks, or health checks on a schedule
+
+To stop a loop, just tell the agent to stop it in Mattermost.
+
 ### Agent Directory
 
 MASON includes a built-in agent directory service that keeps track of every agent on the team. When Connie spawns an agent, it's automatically registered in the directory with its name, role, skills, status, and a unique identifier.
