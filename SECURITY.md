@@ -74,6 +74,10 @@ To remove the certificate from your trust store:
 ./scripts/masonctl untrust-cert
 ```
 
+`untrust-cert` scans your system keychain for all MASON certificates and offers to remove them in one step. It works even if `~/.mason` has already been deleted — it scans the keychain directly rather than depending on the local certificate file.
+
+> **Note:** You don't need to run `untrust-cert` separately before a full uninstall — `./scripts/masonctl rm --data` automatically checks for and removes any trusted MASON certificates from your keychain.
+
 **Replacing with a custom certificate:** Place your own `mason.crt` and `mason.key` in `~/.mason/tls/` before starting the container.
 
 **Renewal:** Delete `~/.mason/tls/` and restart — `./scripts/masonctl start` regenerates automatically. If you previously ran `trust-cert`, run it again after renewal to trust the new certificate.
@@ -114,8 +118,7 @@ The `~/.mason/` directory is mounted **read-only** into the container, preventin
 | Subsequent starts | Existing token reused |
 | Token rotation | Delete `~/.mason/token`, restart container |
 | Container rebuild | Token persists (lives on host, not in image) |
-| `./scripts/masonctl rm --data` | Token persists (not in data volume) |
-| Full reset | Delete `~/.mason/` directory |
+| `./scripts/masonctl rm --data` | Token removed (cleans up `~/.mason/` and trusted certs) |
 
 ## Trust Model
 

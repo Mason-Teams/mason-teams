@@ -81,11 +81,11 @@ docker cp mason:/data ./mason-backup
 To reset everything and start over:
 
 ```bash
-./scripts/masonctl stop
-./scripts/masonctl rm       # Removes the container
-# ./scripts/masonctl rm --data   # Also deletes all persistent data (agents, repos, chat history)
-./scripts/masonctl start    # Fresh start with the setup wizard
+./scripts/masonctl rm --data   # Removes container, data volume, trusted certs, and ~/.mason
+./scripts/masonctl start       # Fresh start with the setup wizard
 ```
+
+This is a full uninstall — it removes the container, the data volume (agent workspaces, repos, chat history), any MASON certificates from your system trust store, and the `~/.mason` directory (token and TLS files). Use `./scripts/masonctl rm` (without `--data`) to remove just the container while keeping everything else.
 
 ## Wizard Configuration
 
@@ -181,7 +181,7 @@ The agent daemon manages agent lifecycles, message routing, and health monitorin
 | `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
 | `./scripts/masonctl update` | Pull latest image and restart (prompts for confirmation) |
 | `./scripts/masonctl rm` | Remove the container, keeps data (prompts for confirmation) |
-| `./scripts/masonctl rm --data` | Remove the container **and** all persistent data (prompts for confirmation) |
+| `./scripts/masonctl rm --data` | Full uninstall — removes container, data volume, trusted certificates, and `~/.mason` directory (prompts for confirmation) |
 | `./scripts/masonctl trust-cert` | Add MASON's TLS certificate to your system trust store (eliminates browser warnings) |
 | `./scripts/masonctl untrust-cert` | Remove MASON's TLS certificate from your system trust store |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
