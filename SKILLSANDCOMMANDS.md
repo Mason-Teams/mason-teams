@@ -105,4 +105,4 @@ All of this runs inside the single MASON container. The tmux sessions give each 
 
 Commands and skills live in each agent's `.claude/commands/` and `.claude/skills/` directories inside the container. They're provisioned from templates during `/spawn-agent`, so every agent of the same type starts with the same toolset.
 
-> **Note:** Modifying these files directly is possible but not recommended — changes won't survive a container rebuild. If you want to customize agent behavior, see [WORKFLOWS.md](WORKFLOWS.md) for tips on working with your team.
+> **Note:** These files live on the persistent data volume, so your changes survive container restarts. However, re-running `/spawn-agent` for the same agent will re-provision from templates and overwrite customizations. If you want to customize agent behavior, see [WORKFLOWS.md](WORKFLOWS.md) for tips on working with your team.
