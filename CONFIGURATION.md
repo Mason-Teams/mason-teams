@@ -56,7 +56,11 @@ These are internal to the container and **not exposed by `masonctl`**. The [Dock
 | `6333` | Qdrant | Vector database API for agent memory |
 | `9090` | Daemon | Agent lifecycle API and Prometheus metrics |
 
-If you use `masonctl`, only the three standard ports (8080, 8065, 3000) are mapped to the host. To access advanced ports, either use the Docker Compose setup or add port flags manually with `docker run`.
+### Custom Ports and Volumes
+
+`masonctl` maps the three standard ports (8080, 8065, 3000) and a single data volume. It does not currently support adding extra port mappings or volume mounts.
+
+If you need to expose additional ports (e.g., an agent's dev server) or mount host directories into the container (e.g., your project code), use the [Docker Compose example](examples/docker-compose.yaml) instead. The compose file includes commented-out examples for both — just uncomment and customize. See [examples/README.md](examples/README.md) for setup instructions.
 
 ## Data & Persistence
 
