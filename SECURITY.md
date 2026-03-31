@@ -135,9 +135,9 @@ MASON is designed for local development. If deploying in a shared or networked e
 
 1. Replace the self-signed certificate with CA-signed certificates for all services
 2. Use a firewall to restrict port access
-4. Rotate tokens regularly
-5. Consider adding RBAC if multiple users need access
-6. Enable Mattermost/Forgejo audit logging
+3. Rotate tokens regularly
+4. Consider adding RBAC if multiple users need access
+5. Enable Mattermost/Forgejo audit logging
 
 ## Reporting Security Issues
 

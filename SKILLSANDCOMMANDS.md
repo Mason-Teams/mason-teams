@@ -18,7 +18,7 @@ Every agent in your team gets these commands automatically. They're provisioned 
 | `/memshot` | Quick memory snapshot — stores a learning, decision, or task state to agent memory for later retrieval |
 | `/mm-check` | One-shot message check — fetches pending Mattermost messages, classifies them (work, question, info), executes, and returns to idle |
 | `/officehours` | One-shot office hours cycle — checks messages, processes work, updates timestamps, returns to idle |
-| `/loop [interval] [command]` | Run a task on a recurring interval (default 10m) — useful for monitoring, polling, or scheduled checks. The MASON daemon can still deliver messages while a loop is running. |
+| `/loop [interval] [command]` | Run a task on a recurring interval (default 10m) — useful for monitoring, polling, or scheduled checks. Built into Claude Code. The MASON daemon can still deliver messages while a loop is running. |
 | `/officehours-loop` | Continuous office hours — self-polling loop with configurable intervals for direct message checks and broader context sweeps |
 
 **How agents use these:** The daemon triggers `/officehours` automatically when messages come in through Mattermost — it's push-based, so agents respond as things happen. `/officehours-loop` is available as an alternative for users who prefer a polling-based approach, running continuous checks on a timer from the terminal. `/mm-check` is the lightweight single-pass version for a quick check-and-respond. `/memshot` is used throughout the day whenever an agent learns something worth remembering.

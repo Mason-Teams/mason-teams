@@ -15,9 +15,16 @@ Set these before running `./scripts/masonctl start` to override defaults. For a 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `ANTHROPIC_API_KEY` | *(none)* | Your Anthropic API key. Can also be entered through the setup wizard. |
+| `MASON_CONTAINER_NAME` | `mason` | Docker container name. |
+| `MASON_IMAGE_NAME` | `masonteams/mason-teams:stable` | Docker image to run. |
+| `MASON_DATA_VOLUME` | `mason-data` | Docker volume name for persistent data. |
+| `MASON_DIR` | `~/.mason` | Host directory for security files (API token and TLS certificates). |
 | `MASON_PORT_WEB` | `8080` | Port for the MASON web UI (wizard and dashboard). |
 | `MASON_PORT_MM` | `8065` | Port for Mattermost (team chat). |
 | `MASON_PORT_FORGEJO` | `3000` | Port for Forgejo (Git forge). |
+| `MASON_MEMORY` | `16g` | Container memory limit. |
+| `MASON_CPUS` | `8` | Container CPU limit. |
+| `MASON_SHM_SIZE` | `2g` | Shared memory size (for browser-based agents). |
 
 **Example — custom ports:**
 
@@ -41,13 +48,15 @@ All three can be customized with the `MASON_PORT_*` environment variables above.
 
 ### Advanced Ports
 
-These are exposed for debugging and advanced use. Most users won't need them.
+These are internal to the container and **not exposed by `masonctl`**. The [Docker Compose example](examples/docker-compose.yaml) does expose them for users who need direct access.
 
 | Port | Service | What it's for |
 |------|---------|---------------|
 | `7681` | Web Terminal | Browser-based terminal access (ttyd) |
 | `6333` | Qdrant | Vector database API for agent memory |
 | `9090` | Daemon | Agent lifecycle API and Prometheus metrics |
+
+If you use `masonctl`, only the three standard ports (8080, 8065, 3000) are mapped to the host. To access advanced ports, either use the Docker Compose setup or add port flags manually with `docker run`.
 
 ## Data & Persistence
 
@@ -112,7 +121,7 @@ MASON includes interactive API documentation via Swagger UI. Once the container 
 | Mason Server | `https://localhost:8080/swagger/` | Dashboard and setup API |
 | Agent Daemon | `http://localhost:9090/swagger/` | Agent lifecycle and messaging API |
 
-> **Note:** The daemon API (port 9090) is internal to the container and not exposed to the host by default. Access it from inside the container or by adding `-p 9090:9090` to your `docker run` command.
+> **Note:** The daemon API (port 9090) is internal to the container and not exposed to the host by `masonctl`. If you use the [Docker Compose example](examples/docker-compose.yaml), port 9090 is exposed by default. Otherwise, access it from inside the container with `masonctl exec` or add `-p 9090:9090` to your `docker run` command.
 
 ## Claude Code Version
 

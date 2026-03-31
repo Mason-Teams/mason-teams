@@ -72,7 +72,7 @@ This prints the token and opens the dashboard in your browser.
 If you prefer to run MASON directly with `docker run` instead of `masonctl`, the dashboard runs in HTTP mode with no authentication:
 
 ```bash
-docker run -p 8080:8080 -p 8065:8065 -p 3000:3000 mason-teams
+docker run -p 8080:8080 -p 8065:8065 -p 3000:3000 masonteams/mason-teams:stable
 ```
 
 Then open `http://localhost:8080` — no token needed. This is fine for local development and testing, but `masonctl` is recommended for regular use since it adds TLS encryption and token-based access control.

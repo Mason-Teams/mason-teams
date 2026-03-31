@@ -672,7 +672,6 @@ masonctl - MASON container management tool
 Usage: masonctl <command> [options]
 
 Commands:
-                        --no-cache: rebuild without Docker cache
   start                 Start the MASON container
   stop                  Stop the MASON container
   restart               Restart the MASON container
@@ -695,7 +694,7 @@ Global Flags:
 
 Environment Variables:
   MASON_CONTAINER_NAME  Container name (default: mason)
-  MASON_IMAGE_NAME      Image name (default: mason)
+  MASON_IMAGE_NAME      Image name (default: masonteams/mason-teams:stable)
   MASON_DATA_VOLUME     Data volume name (default: mason-data)
   MASON_DIR             Security directory (default: ~/.mason)
   MASON_PORT_WEB        Web UI port (default: 8080)

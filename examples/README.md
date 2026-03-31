@@ -27,7 +27,9 @@ cp .env.example .env    # optional — edit to customize (note: .env.example is 
 docker compose up -d
 ```
 
-This starts the same single MASON container with the same defaults as masonctl. The compose file just gives you a declarative way to manage it.
+This starts the same single MASON container with the same defaults as masonctl. The compose file gives you a declarative way to manage it and also exposes the advanced ports (terminal, Qdrant, daemon) that masonctl does not.
+
+> **Note:** The compose file mounts `~/.mason` for token and TLS credentials. Run `masonctl start` once first to generate these files, or create them manually.
 
 ## Environment Variables
 

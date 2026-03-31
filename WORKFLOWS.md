@@ -151,33 +151,25 @@ MASON exposes several ports out of the box:
 
 Additional ports are available for advanced use — see [CONFIGURATION.md](CONFIGURATION.md#advanced-ports) for details.
 
-If your agents spin up additional services inside the container (a dev server, an API, etc.), you'll need to expose those ports. You can do this when starting the container:
+If your agents spin up additional services inside the container (a dev server, an API, etc.), you'll need to expose those ports. The easiest way is to use the [Docker Compose example](examples/docker-compose.yaml) — edit the `ports` section to add your custom mappings:
 
-```bash
-# Expose an additional port for an agent's dev server
-./scripts/masonctl start --port 3001:3001
+```yaml
+# In examples/docker-compose.yaml, add under ports:
+- "3001:3001"   # Agent dev server
 ```
 
-Or pass port mappings directly to Docker:
-
-```bash
-docker run -p 8080:8080 -p 8065:8065 -p 3000:3000 -p 3001:3001 ...
-```
+Then run `docker compose up -d` from the `examples/` directory. See [examples/README.md](examples/README.md) for details.
 
 ### Volume Mounts
 
-By default, MASON uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory into the container:
+By default, MASON uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory into the container. The easiest way is to use the [Docker Compose example](examples/docker-compose.yaml) — add a volume mount under the `volumes` section:
 
-```bash
-# Mount a local project directory
-./scripts/masonctl start --volume /path/to/your/project:/workspace/project
+```yaml
+# In examples/docker-compose.yaml, add under volumes:
+- /path/to/your/project:/workspace/project
 ```
 
-Or with Docker directly:
-
-```bash
-docker run -v /path/to/your/project:/workspace/project ...
-```
+Then run `docker compose up -d` from the `examples/` directory.
 
 Common things to mount:
 - **Your project code** — so agents can read and edit your files directly
@@ -227,11 +219,11 @@ MASON recommends 16GB+ RAM. Each agent runs a Claude Code session, and they add 
 - Mattermost or Forgejo becoming unresponsive
 - Container OOM kills (check `./scripts/masonctl logs`)
 
-To adjust resource limits, you'll need to use Docker directly (masonctl doesn't expose resource flags):
+To adjust resource limits, set environment variables before starting:
 
 ```bash
 # Give MASON more memory and CPU
-docker run --memory=24g --cpus=8 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
+MASON_MEMORY=24g MASON_CPUS=12 ./scripts/masonctl start
 ```
 
 **Tips for larger teams:**
@@ -241,20 +233,22 @@ docker run --memory=24g --cpus=8 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
 
 ### Common Recipes
 
-**Mount a local project so agents can edit your code:**
-```bash
-./scripts/masonctl start --volume ~/my-project:/workspace/my-project
+**Mount a local project so agents can edit your code** (use [Docker Compose](examples/docker-compose.yaml)):
+```yaml
+# Add to the volumes section in examples/docker-compose.yaml:
+- ~/my-project:/workspace/my-project
 ```
 
-**Expose an agent's dev server to your browser:**
-```bash
-./scripts/masonctl start --port 3001:3001
+**Expose an agent's dev server to your browser** (use [Docker Compose](examples/docker-compose.yaml)):
+```yaml
+# Add to the ports section in examples/docker-compose.yaml:
+- "3001:3001"   # Agent dev server
 # Then open http://localhost:3001 in your browser
 ```
 
-**Run MASON with custom resource limits** (requires Docker directly — `masonctl` doesn't expose resource flags):
+**Run MASON with custom resource limits:**
 ```bash
-docker run --memory=32g --cpus=12 -p 8080:8080 -p 8065:8065 -p 3000:3000 ...
+MASON_MEMORY=32g MASON_CPUS=12 ./scripts/masonctl start
 ```
 
 ---

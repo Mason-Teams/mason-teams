@@ -7,7 +7,7 @@
 
 services:
   mason:
-    image: ${MASON_IMAGE_NAME:-ghcr.io/mason-teams/mason-teams:latest}
+    image: ${MASON_IMAGE_NAME:-masonteams/mason-teams:stable}
     container_name: ${MASON_CONTAINER_NAME:-mason}
     restart: unless-stopped
     mem_limit: ${MASON_MEMORY:-16g}
@@ -22,6 +22,10 @@ services:
       - "${MASON_PORT_DAEMON:-9090}:9090"     # Daemon
     volumes:
       - ${MASON_DATA_VOLUME:-mason-data}:/data
+      # Security directory: token + TLS certs (masonctl generates these automatically).
+      # If you use docker-compose, run 'masonctl start' once first to generate
+      # ~/.mason, or create the token/certs manually. Remove this line if not needed.
+      - ${MASON_DIR:-~/.mason}:/data/credentials/mason-security:ro
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
       interval: 30s
