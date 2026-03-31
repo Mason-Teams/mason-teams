@@ -20,12 +20,16 @@ services:
       - "${MASON_PORT_TTYD:-7681}:7681"       # Terminal
       - "${MASON_PORT_QDRANT:-6333}:6333"     # Qdrant
       - "${MASON_PORT_DAEMON:-9090}:9090"     # Daemon
+      # Uncomment to expose additional ports (e.g., an agent's dev server):
+      # - "3001:3001"
     volumes:
       - ${MASON_DATA_VOLUME:-mason-data}:/data
       # Security directory: token + TLS certs (masonctl generates these automatically).
       # If you use docker-compose, run 'masonctl start' once first to generate
       # ~/.mason, or create the token/certs manually. Remove this line if not needed.
       - ${MASON_DIR:-~/.mason}:/data/credentials/mason-security:ro
+      # Uncomment to mount a local project directory for agents to work on:
+      # - ~/my-project:/workspace/my-project
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
       interval: 30s
