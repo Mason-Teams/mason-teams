@@ -56,7 +56,6 @@ MASON takes a secure-by-default approach to localhost development:
 - **TLS encrypted** — All services (Dashboard, Mattermost, Forgejo) serve HTTPS with a shared auto-generated certificate when started via `masonctl`
 - **Minimal exposure** — Three primary ports are mapped to the host (8080, 8065, 3000); all internal services are localhost-only inside the container
 - **Read-only credentials** — Host credentials are mounted read-only into the container
-- **Locked-down permissions** — Token and TLS key files are mode 0600
 
 For the full security model, including token management, network details, and recommendations for networked environments, see **[SECURITY.md](SECURITY.md)**.
 
