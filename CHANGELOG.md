@@ -10,6 +10,36 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-03-30
+
+### Added
+- feat: deferred /officehours injection for subscription OAuth flow
+- feat: persistent OAuth banner for subscription users on dashboard
+
+### Fixed
+- fix: user-triggered /officehours injection via dashboard button
+- fix: add 60s cooldown before deferred /officehours injection
+- fix: use IsReady instead of isAgentBusyLive for deferred injection
+- fix: add OAuth Complete button to dismiss banner after sign-in
+- fix: prevent SSE auto-reload from wiping OAuth instructions
+- fix: guide subscription users through OAuth in dashboard terminal
+- fix: set launched flag in handleSetupLaunch before HTTP response
+- fix: clean code audit low priority — dead code, helpers, deprecated APIs, test cleanup
+- fix: clean code gate — pkg/daemon/ audit fixes (9 findings)
+- fix: clean code audit medium priority — inline clients, stale patterns, hardcoded URLs
+- fix: clean code audit high priority — dead package, panic risk, stale comments
+
+### Changed
+- Fix low priority clean code findings (M10-M13)
+- Fix medium priority clean code findings (M5, M6, M7, M9, M14)
+- Remove dead code and fix pipeline state tracking
+- Remove duplicate copyright headers from 42 files
+- Reset VERSION to 1.3.1 after CI/CD pipeline testing
+- Remove obsolete release.sh — pipeline handles tagging automatically
+- Add auto-generated changelog to release pipeline
+- Fix: rename GITHUB_PAT to GH_PAT in workflow (Forgejo blocks GITHUB_ prefix)
+- Add automated CI/CD release pipeline
+
 ## [1.3.1] - 2026-03-30
 
 ### Fixed

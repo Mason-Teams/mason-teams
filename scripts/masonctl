@@ -322,8 +322,8 @@ cmd_status() {
         echo ""
         echo "Ports:"
         echo "  Web UI:      https://localhost:${PORT_WEB}"
-        echo "  Mattermost:  http://localhost:${PORT_MM}"
-        echo "  Forgejo:     http://localhost:${PORT_FORGEJO}"
+        echo "  Mattermost:  https://localhost:${PORT_MM}"
+        echo "  Forgejo:     https://localhost:${PORT_FORGEJO}"
         echo ""
         echo "Services:"
         # Check service health via API
