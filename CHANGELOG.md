@@ -10,6 +10,22 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-03-31
+
+### Added
+- **Preflight checks on start** — `masonctl start` now validates Docker availability, port conflicts, disk space, and image accessibility before launching the container
+- **Custom ports and volumes documentation** — Docker Compose is the supported path for exposing additional ports or mounting host directories
+- **Commented examples in docker-compose.yaml** — Ready-to-uncomment examples for custom port and volume mappings
+
+### Fixed
+- **Credential file permissions** — `.mcp.json` and `config.json` now use 0600 (was 0644) to match all other credential files
+- **Documentation accuracy audit** — Fixed image name inconsistency across masonctl/docker-compose/.env.example, removed stale help text, corrected nonexistent CLI flags, fixed numbered list gaps
+- **Persistence note corrected** — Agent commands/skills live on the data volume and do survive restarts (previously said they wouldn't)
+
+### Changed
+- **Environment variables documented** — All masonctl env vars now listed in CONFIGURATION.md (container name, image, volume, resources)
+- **Docker Compose security mount** — Added `~/.mason` read-only mount for TLS/auth parity with masonctl
+
 ## [1.4.0] - 2026-03-30
 
 ### Added
