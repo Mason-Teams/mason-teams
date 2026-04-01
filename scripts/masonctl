@@ -71,6 +71,135 @@ check_docker() {
     fi
 }
 
+# Preflight check: verify the host has everything needed to run MASON
+# Returns 0 if all checks pass, exits with 1 if a required check fails.
+# Warnings (non-fatal) are printed but don't block startup.
+preflight_check() {
+    local errors=0
+    local warnings=0
+
+    echo ""
+    echo -e "  ${GREEN}Preflight Check${NC}"
+    echo -e "  ──────────────────────────────────────────"
+    echo ""
+
+    # 1. Docker (required)
+    if ! command -v docker &> /dev/null; then
+        echo -e "  ${RED}✗${NC} Docker is not installed"
+        echo "    Install: https://docs.docker.com/get-docker/"
+        errors=$((errors + 1))
+    elif ! docker info &> /dev/null; then
+        echo -e "  ${RED}✗${NC} Docker daemon is not running"
+        echo "    Start Docker Desktop or run: sudo systemctl start docker"
+        errors=$((errors + 1))
+    else
+        echo -e "  ${GREEN}✓${NC} Docker is running"
+    fi
+
+    # 2. Image exists (required, unless container already exists)
+    if ! container_exists; then
+        if ! docker image inspect "$IMAGE_NAME" &> /dev/null; then
+            echo -e "  ${RED}✗${NC} Docker image '$IMAGE_NAME' not found"
+            echo "    Or pull it with: masonctl pull"
+            errors=$((errors + 1))
+        else
+            echo -e "  ${GREEN}✓${NC} Docker image '$IMAGE_NAME' found"
+        fi
+    else
+        echo -e "  ${GREEN}✓${NC} Container '$CONTAINER_NAME' exists"
+    fi
+
+    # 3. Available memory (warning if < 8 GB)
+    local mem_available_mb=0
+    if [ "$(uname)" = "Darwin" ]; then
+        # macOS: check total physical memory
+        local mem_bytes
+        mem_bytes=$(sysctl -n hw.memsize 2>/dev/null || echo 0)
+        mem_available_mb=$((mem_bytes / 1024 / 1024))
+    elif [ -f /proc/meminfo ]; then
+        # Linux: check available memory
+        mem_available_mb=$(awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)
+    fi
+
+    if [ "$mem_available_mb" -gt 0 ]; then
+        if [ "$mem_available_mb" -lt 8192 ]; then
+            local mem_gb
+            mem_gb=$(echo "scale=1; $mem_available_mb / 1024" | bc 2>/dev/null || echo "${mem_available_mb}MB")
+            echo -e "  ${YELLOW}!${NC} Low memory: ${mem_gb} GB available (8 GB recommended)"
+            warnings=$((warnings + 1))
+        else
+            local mem_gb
+            mem_gb=$(echo "scale=1; $mem_available_mb / 1024" | bc 2>/dev/null || echo "${mem_available_mb}MB")
+            echo -e "  ${GREEN}✓${NC} Memory: ${mem_gb} GB available"
+        fi
+    fi
+
+    # 4. Available disk space (warning if < 10 GB)
+    local disk_available_gb=0
+    if [ "$(uname)" = "Darwin" ]; then
+        disk_available_gb=$(df -g / 2>/dev/null | awk 'NR==2 {print $4}' || echo 0)
+    else
+        disk_available_gb=$(df -BG / 2>/dev/null | awk 'NR==2 {gsub("G",""); print $4}' || echo 0)
+    fi
+
+    if [ "$disk_available_gb" -gt 0 ]; then
+        if [ "$disk_available_gb" -lt 10 ]; then
+            echo -e "  ${YELLOW}!${NC} Low disk space: ${disk_available_gb} GB free (10 GB recommended)"
+            warnings=$((warnings + 1))
+        else
+            echo -e "  ${GREEN}✓${NC} Disk space: ${disk_available_gb} GB free"
+        fi
+    fi
+
+    # 5. Port availability (only for new containers)
+    if ! container_exists; then
+        local ports_ok=true
+        for port_var in PORT_WEB PORT_MM PORT_FORGEJO; do
+            local port="${!port_var}"
+            local service_name=""
+            case "$port_var" in
+                PORT_WEB)     service_name="Web UI" ;;
+                PORT_MM)      service_name="Mattermost" ;;
+                PORT_FORGEJO) service_name="Forgejo" ;;
+            esac
+
+            if lsof -iTCP:"$port" -sTCP:LISTEN &> /dev/null; then
+                local blocker
+                blocker=$(lsof -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null | head -1)
+                echo -e "  ${RED}✗${NC} Port $port ($service_name) is already in use (PID: $blocker)"
+                ports_ok=false
+                errors=$((errors + 1))
+            fi
+        done
+        if [ "$ports_ok" = true ]; then
+            echo -e "  ${GREEN}✓${NC} Ports $PORT_WEB, $PORT_MM, $PORT_FORGEJO are available"
+        fi
+    fi
+
+    echo ""
+
+    # Summary
+    if [ "$errors" -gt 0 ]; then
+        print_error "Preflight failed: $errors issue(s) must be resolved before starting."
+        echo ""
+        echo "  Requirements:"
+        echo "    • Docker installed and running"
+        echo "    • MASON image built or pulled"
+        echo "    • 8 GB RAM available"
+        echo "    • 10 GB disk space free"
+        echo "    • Ports $PORT_WEB, $PORT_MM, $PORT_FORGEJO available"
+        echo ""
+        echo "  See: https://mason.build/getting-started/"
+        echo ""
+        exit 1
+    fi
+
+    if [ "$warnings" -gt 0 ]; then
+        print_warning "$warnings warning(s) — MASON may run slowly or have issues."
+        echo ""
+    fi
+}
+
 # Check if container exists
 container_exists() {
     docker container inspect "$CONTAINER_NAME" &> /dev/null
@@ -195,7 +324,7 @@ cmd_login() {
 
 # Start the container
 cmd_start() {
-    check_docker
+    preflight_check
     init_security
 
     if container_running; then
@@ -672,7 +801,8 @@ masonctl - MASON container management tool
 Usage: masonctl <command> [options]
 
 Commands:
-  start                 Start the MASON container
+                        --no-cache: rebuild without Docker cache
+  start                 Start the MASON container (runs preflight checks)
   stop                  Stop the MASON container
   restart               Restart the MASON container
   pull                  Pull the latest image from registry
@@ -694,7 +824,7 @@ Global Flags:
 
 Environment Variables:
   MASON_CONTAINER_NAME  Container name (default: mason)
-  MASON_IMAGE_NAME      Image name (default: masonteams/mason-teams:stable)
+  MASON_IMAGE_NAME      Image name (default: mason)
   MASON_DATA_VOLUME     Data volume name (default: mason-data)
   MASON_DIR             Security directory (default: ~/.mason)
   MASON_PORT_WEB        Web UI port (default: 8080)
