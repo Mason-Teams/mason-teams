@@ -151,25 +151,21 @@ MASON exposes several ports out of the box:
 
 Additional ports are available for advanced use — see [CONFIGURATION.md](CONFIGURATION.md#advanced-ports) for details.
 
-If your agents spin up additional services inside the container (a dev server, an API, etc.), you'll need to expose those ports. The easiest way is to use the [Docker Compose example](examples/docker-compose.yaml) — edit the `ports` section to add your custom mappings:
+If your agents spin up additional services inside the container (a dev server, an API, etc.), expose those ports with the `--port` flag:
 
-```yaml
-# In examples/docker-compose.yaml, add under ports:
-- "3001:3001"   # Agent dev server
+```bash
+./scripts/masonctl start --port 3001:3001
 ```
 
-Then run `docker compose up -d` from the `examples/` directory. See [examples/README.md](examples/README.md) for details.
+Multiple ports work too: `masonctl start -p 3001:3001 -p 4000:4000`
 
 ### Volume Mounts
 
-By default, MASON uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory into the container. The easiest way is to use the [Docker Compose example](examples/docker-compose.yaml) — add a volume mount under the `volumes` section:
+By default, MASON uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory with the `--volume` flag:
 
-```yaml
-# In examples/docker-compose.yaml, add under volumes:
-- /path/to/your/project:/workspace/project
+```bash
+./scripts/masonctl start --volume ~/my-project:/workspace/my-project
 ```
-
-Then run `docker compose up -d` from the `examples/` directory.
 
 Common things to mount:
 - **Your project code** — so agents can read and edit your files directly
@@ -233,16 +229,14 @@ MASON_MEMORY=24g MASON_CPUS=12 ./scripts/masonctl start
 
 ### Common Recipes
 
-**Mount a local project so agents can edit your code** (use [Docker Compose](examples/docker-compose.yaml)):
-```yaml
-# Add to the volumes section in examples/docker-compose.yaml:
-- ~/my-project:/workspace/my-project
+**Mount a local project so agents can edit your code:**
+```bash
+./scripts/masonctl start --volume ~/my-project:/workspace/my-project
 ```
 
-**Expose an agent's dev server to your browser** (use [Docker Compose](examples/docker-compose.yaml)):
-```yaml
-# Add to the ports section in examples/docker-compose.yaml:
-- "3001:3001"   # Agent dev server
+**Expose an agent's dev server to your browser:**
+```bash
+./scripts/masonctl start --port 3001:3001
 # Then open http://localhost:3001 in your browser
 ```
 

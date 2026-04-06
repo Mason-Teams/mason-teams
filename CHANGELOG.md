@@ -13,8 +13,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [1.4.1] - 2026-03-31
 
 ### Added
-- **Preflight checks on start** — `masonctl start` now validates Docker availability, port conflicts, disk space, and image accessibility before launching the container
-- **Custom ports and volumes documentation** — Docker Compose is the supported path for exposing additional ports or mounting host directories
+- **`--port` and `--volume` flags for `masonctl start`** — Expose additional ports and mount host directories without dropping to Docker Compose: `masonctl start -p 3001:3001 -v ~/proj:/workspace/proj`. Both flags are repeatable and validated (rejects values missing `HOST:CONTAINER` format).
+- **Preflight checks on start** — `masonctl start` now validates Docker availability, port conflicts (including extra ports), disk space, and image accessibility before launching the container
 - **Commented examples in docker-compose.yaml** — Ready-to-uncomment examples for custom port and volume mappings
 
 ### Fixed

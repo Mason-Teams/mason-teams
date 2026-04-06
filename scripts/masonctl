@@ -171,8 +171,28 @@ preflight_check() {
                 errors=$((errors + 1))
             fi
         done
+
+        # Check extra ports passed as arguments
+        local extra_port_val
+        for extra_port_val in "$@"; do
+            # Extract host port: strip /proto suffix, take second-to-last colon field
+            local host_port
+            host_port=$(echo "$extra_port_val" | sed 's|/.*||' | rev | cut -d: -f2 | rev)
+            if [ -n "$host_port" ] && lsof -iTCP:"$host_port" -sTCP:LISTEN &> /dev/null; then
+                local blocker
+                blocker=$(lsof -iTCP:"$host_port" -sTCP:LISTEN -t 2>/dev/null | head -1)
+                echo -e "  ${RED}✗${NC} Port $host_port (extra) is already in use (PID: $blocker)"
+                ports_ok=false
+                errors=$((errors + 1))
+            fi
+        done
+
         if [ "$ports_ok" = true ]; then
-            echo -e "  ${GREEN}✓${NC} Ports $PORT_WEB, $PORT_MM, $PORT_FORGEJO are available"
+            local port_list="$PORT_WEB, $PORT_MM, $PORT_FORGEJO"
+            if [ $# -gt 0 ]; then
+                port_list="$port_list (+ $# extra)"
+            fi
+            echo -e "  ${GREEN}✓${NC} Ports $port_list are available"
         fi
     fi
 
@@ -324,7 +344,37 @@ cmd_login() {
 
 # Start the container
 cmd_start() {
-    preflight_check
+    local extra_ports=()
+    local extra_volumes=()
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -p|--port)
+                if [ -z "$2" ] || [[ "$2" == -* ]]; then
+                    print_error "--port requires a value (e.g., --port 3001:3001)"
+                    exit 1
+                fi
+                if [[ "$2" != *:* ]]; then
+                    print_error "Invalid port mapping: '$2' — expected HOST:CONTAINER (e.g., 3001:3001)"
+                    exit 1
+                fi
+                extra_ports+=("$2"); shift 2 ;;
+            -v|--volume)
+                if [ -z "$2" ] || [[ "$2" == -* ]]; then
+                    print_error "--volume requires a value (e.g., --volume ~/project:/workspace/project)"
+                    exit 1
+                fi
+                if [[ "$2" != *:* ]]; then
+                    print_error "Invalid volume mount: '$2' — expected HOST:CONTAINER (e.g., ~/project:/workspace/project)"
+                    exit 1
+                fi
+                extra_volumes+=("$2"); shift 2 ;;
+            --yes|-y)    SKIP_CONFIRM=true; shift ;;
+            *)           shift ;;
+        esac
+    done
+
+    preflight_check "${extra_ports[@]}"
     init_security
 
     if container_running; then
@@ -333,9 +383,22 @@ cmd_start() {
     fi
 
     if container_exists; then
+        if [ ${#extra_ports[@]} -gt 0 ] || [ ${#extra_volumes[@]} -gt 0 ]; then
+            print_warning "Container already exists — --port and --volume flags only apply to new containers."
+            print_warning "Use 'masonctl rm' first to recreate with new port/volume mappings."
+        fi
         print_status "Starting existing container '$CONTAINER_NAME'..."
         docker start "$CONTAINER_NAME"
     else
+        local port_args=()
+        for p in "${extra_ports[@]}"; do
+            port_args+=("-p" "$p")
+        done
+        local vol_args=()
+        for v in "${extra_volumes[@]}"; do
+            vol_args+=("-v" "$v")
+        done
+
         print_status "Creating and starting container '$CONTAINER_NAME'..."
         docker run -d \
             --name "$CONTAINER_NAME" \
@@ -347,6 +410,8 @@ cmd_start() {
             -p "${PORT_FORGEJO}:3000" \
             -v "${DATA_VOLUME}:/data" \
             -v "${MASON_DIR}:/data/credentials/mason-security:ro" \
+            "${port_args[@]}" \
+            "${vol_args[@]}" \
             "$IMAGE_NAME"
     fi
 
@@ -802,7 +867,9 @@ Usage: masonctl <command> [options]
 
 Commands:
                         --no-cache: rebuild without Docker cache
-  start                 Start the MASON container (runs preflight checks)
+  start [options]       Start the MASON container (runs preflight checks)
+                        -p, --port HOST:CONTAINER   Extra port mapping (repeatable)
+                        -v, --volume HOST:CONTAINER  Extra volume mount (repeatable)
   stop                  Stop the MASON container
   restart               Restart the MASON container
   pull                  Pull the latest image from registry
@@ -833,6 +900,9 @@ Environment Variables:
 
 Examples:
   masonctl start                  # Start container
+  masonctl start -p 3001:3001    # Expose additional port
+  masonctl start -v ~/proj:/workspace/proj  # Mount host directory
+  masonctl start -p 3001:3001 -p 4000:4000 -v ~/data:/workspace/data
   masonctl logs -f                # Follow logs
   masonctl exec                   # Open shell in container
   masonctl exec mason status      # Run mason CLI inside container

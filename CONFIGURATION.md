@@ -58,9 +58,22 @@ These are internal to the container and **not exposed by `masonctl`**. The [Dock
 
 ### Custom Ports and Volumes
 
-`masonctl` maps the three standard ports (8080, 8065, 3000) and a single data volume. It does not currently support adding extra port mappings or volume mounts.
+You can expose additional ports and mount host directories using `--port` and `--volume` flags on `masonctl start`:
 
-If you need to expose additional ports (e.g., an agent's dev server) or mount host directories into the container (e.g., your project code), use the [Docker Compose example](examples/docker-compose.yaml) instead. The compose file includes commented-out examples for both — just uncomment and customize. See [examples/README.md](examples/README.md) for setup instructions.
+```bash
+# Expose an agent's dev server
+./scripts/masonctl start --port 3001:3001
+
+# Mount a local project directory
+./scripts/masonctl start --volume ~/my-project:/workspace/my-project
+
+# Both at once (flags are repeatable)
+./scripts/masonctl start -p 3001:3001 -p 4000:4000 -v ~/my-project:/workspace/my-project
+```
+
+These flags are passthrough to Docker — the syntax matches `docker run -p` and `docker run -v`. They only take effect when creating a new container. If the container already exists, `masonctl` will print a warning — use `masonctl rm` first, then start with the new flags.
+
+Alternatively, the [Docker Compose example](examples/docker-compose.yaml) includes commented-out examples for custom ports and volumes. See [examples/README.md](examples/README.md) for details.
 
 ## Data & Persistence
 
