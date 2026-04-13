@@ -10,6 +10,24 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2026-04-13
+
+### Added
+- feat: add preflight checks to masonctl start
+
+### Fixed
+- fix: proxy daemon SSE/API through web server for dashboard
+
+### Changed
+- Release v1.4.2: daemon SSE proxy, --port/--volume flags, permissions fix
+- Split versioning: VERSION (product) and CONTAINER_VERSION (image build)
+- Merge remote-tracking branch 'origin/main' into marcus-features
+- Add input validation for --port and --volume flags
+- Add --port and --volume flags to masonctl start (#534)
+- Fix file permissions on credential-containing files
+- Remove completed CI/CD release pipeline specs
+- Archive completed CI/CD release pipeline specs (removed next commit)
+
 ## [1.4.1] - 2026-03-31
 
 ### Added
