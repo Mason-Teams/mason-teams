@@ -75,7 +75,7 @@ MASON is built and maintained by a single developer, with AI agents doing much o
 
 **What's been tested:**
 
-- macOS on Apple Silicon (M4 Max MacBook Pro) with Docker Desktop
+- macOS (Apple Silicon) with Docker Desktop
 - That's the environment MASON was built in, and it's the only one I can confirm works
 
 **What hasn't been tested:**
