@@ -10,6 +10,11 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-04-15
+
+### Fixed
+- fix: WriteClaudeSettings uses merge instead of overwrite
+
 ## [1.5.0] - 2026-04-14
 
 ### Added
