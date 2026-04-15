@@ -10,6 +10,24 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-04-14
+
+### Added
+- feat: add --skip-existing flag to mason-render
+
+### Fixed
+- fix: eliminate data race in EventRouter.Run vs AddSource
+- fix: skip-existing should only apply to JSON files, not markdown
+- fix: atomic writes for setup-progress.json and config.json
+- fix: merge-on-exist for .claude.json, .mcp.json, and agent templates
+- fix: mason-render merges JSON configs instead of overwriting
+
+### Changed
+- refine: add bounded concurrency and panic recovery to parallel injection
+- perf: parallelize agent injection in event router
+- docs: add tool schema discovery directive for container agents
+- Persist Forgejo secrets to survive app.ini recreation
+
 ## [1.4.4] - 2026-04-13
 
 ### Fixed
