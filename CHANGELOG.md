@@ -10,6 +10,14 @@ All notable changes to MASON will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2026-04-18
+
+### Fixed
+- fix: patch daemon watch_channels after bootstrap creates channel config --jake
+
+### Changed
+- Add daemon-mason to release pipeline triggers --marcus
+
 ## [1.5.1] - 2026-04-15
 
 ### Fixed
