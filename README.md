@@ -12,6 +12,8 @@ MASON is a simulation platform that lets you spin up a team of AI agents — eac
 
 Think of it as spinning up a simulated startup team that coordinates, communicates, and solves problems together — all inside a single container.
 
+> **⚠️ Beta Software** — MASON is under active development. Expect breaking changes, rough edges, and evolving APIs. We're building in the open and shipping fast. If something breaks, [open an issue](https://github.com/Mason-Teams/mason-teams/issues). Questions? [Start a discussion](https://github.com/Mason-Teams/mason-teams/discussions).
+
 ## What You Get
 
 - **A concierge who gets it** — Connie interviews you about your project, then assembles the right team for the job
