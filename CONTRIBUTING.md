@@ -42,4 +42,4 @@ Be kind, be constructive, be patient. This is a small project and we're doing ou
 
 If you're not sure whether something is a bug or you need help getting set up, [open an issue](https://github.com/Mason-Teams/mason-teams/issues) anyway — we'd rather hear from you than have you stuck.
 
-You can also reach us at [info@masonteams.com](mailto:info@masonteams.com).
+You can also reach us at [info@masonteams.ai](mailto:info@masonteams.ai).

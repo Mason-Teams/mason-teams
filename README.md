@@ -100,13 +100,13 @@ This is an early release. Features may change, APIs may shift, and some things m
 
 MASON Teams is licensed under the [Business Source License 1.1](LICENSE).
 
-**Free for non-production use**, or production use with fewer than 5 MASON Teams-orchestrated agents. For production deployments exceeding 5 agents, [contact us about a commercial license](mailto:info@masonteams.com).
+**Free for non-production use**, or production use with fewer than 5 MASON Teams-orchestrated agents. For production deployments exceeding 5 agents, [contact us about a commercial license](mailto:info@masonteams.ai).
 
 **Note:** MASON Teams requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed separately at your direction during setup. Your use of Claude Code is governed by [Anthropic's Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms). MASON's license covers the orchestration platform only — not third-party dependencies.
 
 ## Links
 
-- **Website**: [masonteams.com](https://masonteams.com)
+- **Website**: [masonteams.ai](https://masonteams.ai)
 - **Getting Started**: [GETTING_STARTED.md](GETTING_STARTED.md)
 - **Configuration**: [CONFIGURATION.md](CONFIGURATION.md)
 - **Skills and Commands**: [SKILLSANDCOMMANDS.md](SKILLSANDCOMMANDS.md)
@@ -117,7 +117,7 @@ MASON Teams is licensed under the [Business Source License 1.1](LICENSE).
 - **Wiki**: [Guides, tips, and community knowledge](https://github.com/Mason-Teams/mason-teams/wiki)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
-- **Contact**: [info@masonteams.com](mailto:info@masonteams.com)
+- **Contact**: [info@masonteams.ai](mailto:info@masonteams.ai)
 
 ---
 

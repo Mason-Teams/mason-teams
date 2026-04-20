@@ -321,8 +321,8 @@ We know this isn't ideal, and building a proper upgrade path is on the roadmap. 
 **Something not working?** Ask Connie to run `/error-report` — she'll gather diagnostics and help you create a bug report you can file on GitHub.
 
 - **Issues**: [github.com/Mason-Teams/mason-teams/issues](https://github.com/Mason-Teams/mason-teams/issues)
-- **Email**: [info@masonteams.com](mailto:info@masonteams.com)
-- **Website**: [masonteams.com](https://masonteams.com)
+- **Email**: [info@masonteams.ai](mailto:info@masonteams.ai)
+- **Website**: [masonteams.ai](https://masonteams.ai)
 
 ## What's Next?
 

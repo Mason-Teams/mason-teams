@@ -170,4 +170,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ---
 
-*For the latest updates, visit [masonteams.com](https://masonteams.com).*
+*For the latest updates, visit [masonteams.ai](https://masonteams.ai).*

@@ -141,4 +141,4 @@ MASON Teams is designed for local development. If deploying in a shared or netwo
 
 ## Reporting Security Issues
 
-If you discover a security vulnerability, please email [security@masonteams.com](mailto:security@masonteams.com) rather than opening a public issue. We take security reports seriously and will respond promptly.
+If you discover a security vulnerability, please email [security@masonteams.ai](mailto:security@masonteams.ai) rather than opening a public issue. We take security reports seriously and will respond promptly.
