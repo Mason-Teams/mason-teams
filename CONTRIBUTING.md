@@ -4,9 +4,9 @@ Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
 
-# Contributing to MASON
+# Contributing to MASON Teams
 
-Thanks for your interest in making MASON better. Here's how you can help.
+Thanks for your interest in making MASON Teams better. Here's how you can help.
 
 ## Reporting Bugs
 

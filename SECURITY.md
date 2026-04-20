@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Security
 
-MASON is designed as a **single-user, localhost-only** development environment. Security controls protect against accidental exposure and unauthorized local access. The threat model assumes the host machine is trusted and the container runs on Docker Desktop.
+MASON Teams is designed as a **single-user, localhost-only** development environment. Security controls protect against accidental exposure and unauthorized local access. The threat model assumes the host machine is trusted and the container runs on Docker Desktop.
 
 ## Authentication
 
@@ -47,7 +47,7 @@ These bundled services use their own authentication:
 
 ## TLS
 
-MASON generates a self-signed TLS certificate on first start:
+MASON Teams generates a self-signed TLS certificate on first start:
 
 | Property | Value |
 |----------|-------|
@@ -60,13 +60,13 @@ MASON generates a self-signed TLS certificate on first start:
 
 Browsers will show a self-signed certificate warning on first visit — this is expected for localhost development.
 
-**Trusting the certificate:** To eliminate the browser warning permanently, add MASON's certificate to your system trust store:
+**Trusting the certificate:** To eliminate the browser warning permanently, add MASON Teams' certificate to your system trust store:
 
 ```bash
 ./scripts/masonctl trust-cert
 ```
 
-This works on macOS (adds to System Keychain) and Linux (Debian/Ubuntu + RHEL/Fedora system CA stores). You'll be prompted for your system password. Safe to re-run after regenerating certificates — any previous MASON cert is automatically replaced.
+This works on macOS (adds to System Keychain) and Linux (Debian/Ubuntu + RHEL/Fedora system CA stores). You'll be prompted for your system password. Safe to re-run after regenerating certificates — any previous MASON Teams cert is automatically replaced.
 
 To remove the certificate from your trust store:
 
@@ -74,9 +74,9 @@ To remove the certificate from your trust store:
 ./scripts/masonctl untrust-cert
 ```
 
-`untrust-cert` scans your system keychain for all MASON certificates and offers to remove them in one step. It works even if `~/.mason` has already been deleted — it scans the keychain directly rather than depending on the local certificate file.
+`untrust-cert` scans your system keychain for all MASON Teams certificates and offers to remove them in one step. It works even if `~/.mason` has already been deleted — it scans the keychain directly rather than depending on the local certificate file.
 
-> **Note:** You don't need to run `untrust-cert` separately before a full uninstall — `./scripts/masonctl rm --data` automatically checks for and removes any trusted MASON certificates from your keychain.
+> **Note:** You don't need to run `untrust-cert` separately before a full uninstall — `./scripts/masonctl rm --data` automatically checks for and removes any trusted MASON Teams certificates from your keychain.
 
 **Replacing with a custom certificate:** Place your own `mason.crt` and `mason.key` in `~/.mason/tls/` before starting the container.
 
@@ -98,7 +98,7 @@ All three services share the same self-signed TLS certificate. When TLS certific
 
 All other internal services bind to `127.0.0.1` inside the container and are **not accessible from the host**.
 
-> **Note:** If you're using `curl` against any MASON service with self-signed certs, add the `-k` flag to skip certificate verification: `curl -k https://localhost:8080/...`
+> **Note:** If you're using `curl` against any MASON Teams service with self-signed certs, add the `-k` flag to skip certificate verification: `curl -k https://localhost:8080/...`
 
 ## File Permissions
 
@@ -131,7 +131,7 @@ The `~/.mason/` directory is mounted **read-only** into the container, preventin
 
 ## Recommendations for Networked Environments
 
-MASON is designed for local development. If deploying in a shared or networked environment:
+MASON Teams is designed for local development. If deploying in a shared or networked environment:
 
 1. Replace the self-signed certificate with CA-signed certificates for all services
 2. Use a firewall to restrict port access

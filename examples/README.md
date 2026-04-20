@@ -6,15 +6,15 @@ included in the LICENSE file at the root of this repository.
 
 # Examples
 
-Optional reference files for users who want more control over their MASON setup.
+Optional reference files for users who want more control over their MASON Teams setup.
 
-**You probably don't need these.** The recommended way to run MASON is with `./scripts/masonctl start` — it handles everything for you. These files are here if you prefer Docker Compose workflows or want to see all the configurable settings in one place.
+**You probably don't need these.** The recommended way to run MASON Teams is with `./scripts/masonctl start` — it handles everything for you. These files are here if you prefer Docker Compose workflows or want to see all the configurable settings in one place.
 
 ## What's Here
 
 | File | What it's for |
 |------|--------------|
-| **docker-compose.yaml** | Run MASON via Docker Compose instead of masonctl |
+| **docker-compose.yaml** | Run MASON Teams via Docker Compose instead of masonctl |
 | **.env.example** | Reference for all configurable environment variables |
 
 ## Docker Compose
@@ -27,7 +27,7 @@ cp .env.example .env    # optional — edit to customize (note: .env.example is 
 docker compose up -d
 ```
 
-This starts the same single MASON container with the same defaults as masonctl. The compose file gives you a declarative way to manage it and also exposes the advanced ports (terminal, Qdrant, daemon) that masonctl does not.
+This starts the same single MASON Teams container with the same defaults as masonctl. The compose file gives you a declarative way to manage it and also exposes the advanced ports (terminal, Qdrant, daemon) that masonctl does not.
 
 > **Note:** The compose file mounts `~/.mason` for token and TLS credentials. Run `masonctl start` once first to generate these files, or create them manually.
 
@@ -37,6 +37,6 @@ The `.env.example` file documents every setting you can tweak — ports, resourc
 
 ## When to Use These
 
-- You already have a Docker Compose workflow and want MASON to fit into it
+- You already have a Docker Compose workflow and want MASON Teams to fit into it
 - You want to pin a specific image version or customize resource limits
 - You're curious what's configurable under the hood

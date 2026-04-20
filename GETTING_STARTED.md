@@ -4,7 +4,7 @@ Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
 
-# Getting Started with MASON
+# Getting Started with MASON Teams
 
 Let's get your team up and running. This guide walks you through setup, the wizard, and your first simulation — step by step.
 
@@ -18,10 +18,10 @@ You'll need:
 | **RAM** | 8GB | 16GB+ |
 | **Disk** | 10GB free | 20GB+ |
 
-> **Disk breakdown:** The MASON container image is ~4GB. Additional space is needed for agent workspaces, Git repos, chat history, and memory — this grows over time as your team works.
+> **Disk breakdown:** The MASON Teams container image is ~4GB. Additional space is needed for agent workspaces, Git repos, chat history, and memory — this grows over time as your team works.
 | **OS** | macOS, Linux, or Windows (WSL2) | macOS or Linux |
 
-You'll also need access to **Claude** — either an Anthropic API key or a Claude subscription. MASON agents are powered by Claude.
+You'll also need access to **Claude** — either an Anthropic API key or a Claude subscription. MASON Teams agents are powered by Claude.
 
 ## Step 1: Get the Code
 
@@ -30,16 +30,16 @@ git clone https://github.com/Mason-Teams/mason-teams.git
 cd mason-teams
 ```
 
-## Step 2: Start MASON
+## Step 2: Start MASON Teams
 
-MASON runs as a single container — agents, chat, code tools, everything inside one box.
+MASON Teams runs as a single container — agents, chat, code tools, everything inside one box.
 
 ```bash
 ./scripts/masonctl start
 ```
 
 On first run, `masonctl` will:
-- Pull the MASON container image
+- Pull the MASON Teams container image
 - Generate a self-signed TLS certificate for the dashboard
 - Create an authentication token for secure access
 
@@ -69,7 +69,7 @@ This prints the token and opens the dashboard in your browser.
 
 ### Alternative: Plain Docker (No TLS/Auth)
 
-If you prefer to run MASON directly with `docker run` instead of `masonctl`, the dashboard runs in HTTP mode with no authentication:
+If you prefer to run MASON Teams directly with `docker run` instead of `masonctl`, the dashboard runs in HTTP mode with no authentication:
 
 ```bash
 docker run -p 8080:8080 -p 8065:8065 -p 3000:3000 masonteams/mason-teams:stable
@@ -89,10 +89,10 @@ The wizard walks you through five steps. Your progress is saved automatically �
 
 ### Step 3a: Welcome
 
-A brief introduction to MASON, followed by the User Agreement. You'll be asked to confirm three acknowledgments:
+A brief introduction to MASON Teams, followed by the User Agreement. You'll be asked to confirm three acknowledgments:
 
-- **Simulation platform** — MASON is a simulation environment. Agent outputs are exploratory, not professional work product.
-- **No-harm commitment** — You agree not to use MASON for harmful, deceptive, or malicious purposes.
+- **Simulation platform** — MASON Teams is a simulation environment. Agent outputs are exploratory, not professional work product.
+- **No-harm commitment** — You agree not to use MASON Teams for harmful, deceptive, or malicious purposes.
 - **No professional advice** — Agent outputs are not legal, financial, medical, or other professional advice.
 
 All three must be confirmed to continue. This step cannot be skipped.
@@ -118,7 +118,7 @@ Three quick settings:
 
 ### Step 3d: Claude
 
-MASON agents are powered by [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code). It is **not bundled** in the container — the wizard installs it at your direction.
+MASON Teams agents are powered by [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code). It is **not bundled** in the container — the wizard installs it at your direction.
 
 You'll be asked to review and accept Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) before installation proceeds. The wizard then installs Claude Code and verifies that your credentials work by running a test authentication against Claude's API.
 
@@ -171,7 +171,7 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 
 ## ⚠️ Important: Protect Your Work
 
-**MASON agents run with full permissions inside the container.** They can create, modify, and delete any file without asking. This is by design — it lets them work autonomously — but it means mistakes can happen. A misunderstood instruction, a bad refactor, or an overeager cleanup can destroy work.
+**MASON Teams agents run with full permissions inside the container.** They can create, modify, and delete any file without asking. This is by design — it lets them work autonomously — but it means mistakes can happen. A misunderstood instruction, a bad refactor, or an overeager cleanup can destroy work.
 
 **Treat the container as volatile. Back up what matters.**
 
@@ -198,27 +198,27 @@ The simulation runs as long as the container is up. Agents keep working, collabo
 
 | Command | What it does |
 |---------|-------------|
-| `./scripts/masonctl start` | Start the MASON container |
-| `./scripts/masonctl stop` | Stop the container — prompts for confirmation (agents will need to be brought back — see [Restarting](#restarting-mason)) |
+| `./scripts/masonctl start` | Start the MASON Teams container |
+| `./scripts/masonctl stop` | Stop the container — prompts for confirmation (agents will need to be brought back — see [Restarting](#restarting-mason-teams)) |
 | `./scripts/masonctl restart` | Restart everything — prompts for confirmation (only Connie auto-resumes — tell her to bring the team back) |
 | `./scripts/masonctl status` | Check what's running |
 | `./scripts/masonctl token` | Print your dashboard auth token |
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
-| `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
+| `./scripts/masonctl pull` | Pull the latest MASON Teams image from the registry |
 | `./scripts/masonctl update` | Pull latest image and restart — prompts for confirmation |
 | `./scripts/masonctl rm` | Remove the container (keeps data) — prompts for confirmation |
 | `./scripts/masonctl rm --data` | Full uninstall — removes container, data volume, trusted certificates, and `~/.mason` directory. Prompts for confirmation. |
-| `./scripts/masonctl trust-cert` | Add MASON's TLS certificate to your system trust store (eliminates browser warnings) |
-| `./scripts/masonctl untrust-cert` | Remove MASON's TLS certificate from your system trust store |
+| `./scripts/masonctl trust-cert` | Add MASON Teams' TLS certificate to your system trust store (eliminates browser warnings) |
+| `./scripts/masonctl untrust-cert` | Remove MASON Teams' TLS certificate from your system trust store |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
 
 > **Scripting tip:** Destructive commands (stop, restart, update, rm) prompt for y/N confirmation. Pass `--yes` or `-y` to skip the prompt: `./scripts/masonctl stop --yes`
 
 For the full command reference, see [CONFIGURATION.md](CONFIGURATION.md#useful-commands).
 
-## Restarting MASON
+## Restarting MASON Teams
 
 **After a stop/start or restart, only Connie (your concierge) comes back online automatically.** Your other agents don't auto-resume — you need to tell Connie to bring them back.
 
@@ -228,13 +228,13 @@ Open Mattermost and message Connie:
 
 Connie will restart your existing team from where they left off. All agent workspaces, memory, and project state are preserved in the Docker volume — only the running sessions need to be restarted.
 
-> **Why doesn't the team auto-resume?** MASON preserves your data but doesn't automatically restart agent sessions. This gives you the choice to bring back the full team, a subset, or start fresh with a different team composition.
+> **Why doesn't the team auto-resume?** MASON Teams preserves your data but doesn't automatically restart agent sessions. This gives you the choice to bring back the full team, a subset, or start fresh with a different team composition.
 
 ## Troubleshooting
 
 ### Agents aren't responding
 
-**If you just started or restarted MASON**, remember that only Connie comes back automatically. Tell Connie to bring your team back online (see [Restarting MASON](#restarting-mason) above).
+**If you just started or restarted MASON Teams**, remember that only Connie comes back automatically. Tell Connie to bring your team back online (see [Restarting MASON Teams](#restarting-mason-teams) above).
 
 If Connie is online but agents aren't responding, give them 30-60 seconds. If still quiet:
 
@@ -259,11 +259,11 @@ Try increasing Docker's memory limit in Docker Desktop settings.
 
 ### Browser certificate warning
 
-When you first open the MASON dashboard, your browser will show a security warning about an untrusted or self-signed certificate. This is normal — MASON generates a self-signed TLS certificate on first start to encrypt traffic between your browser and the local dashboard. Since the certificate isn't issued by a public certificate authority, your browser flags it.
+When you first open the MASON Teams dashboard, your browser will show a security warning about an untrusted or self-signed certificate. This is normal — MASON Teams generates a self-signed TLS certificate on first start to encrypt traffic between your browser and the local dashboard. Since the certificate isn't issued by a public certificate authority, your browser flags it.
 
 **To proceed:** Click "Advanced" (or "Show Details" in Safari) and accept the certificate. You'll need to do this once per browser.
 
-**To fix permanently:** Add MASON's certificate to your system trust store so browsers stop showing the warning:
+**To fix permanently:** Add MASON Teams' certificate to your system trust store so browsers stop showing the warning:
 
 ```bash
 ./scripts/masonctl trust-cert
@@ -271,7 +271,7 @@ When you first open the MASON dashboard, your browser will show a security warni
 
 This is safe to re-run after regenerating certificates (new container, deleted `~/.mason`, etc.). To undo it later: `./scripts/masonctl untrust-cert`
 
-For full details on MASON's TLS setup and how to use your own certificate, see [SECURITY.md](SECURITY.md#tls).
+For full details on MASON Teams' TLS setup and how to use your own certificate, see [SECURITY.md](SECURITY.md#tls).
 
 ### Authentication errors
 
@@ -297,12 +297,12 @@ Check the [Changelog](CHANGELOG.md) for what's new before updating.
 
 ### What `masonctl update` Actually Does
 
-1. **Pulls the latest MASON image** from the registry (same as `masonctl pull`)
+1. **Pulls the latest MASON Teams image** from the registry (same as `masonctl pull`)
 2. **Restarts the container** with the new image (if it's running)
 
-The new image replaces MASON's internal components — the daemon, server, web UI, templates, Go binaries, and bundled tools. Your **data volume is preserved** — agent workspaces, Mattermost messages, Forgejo repos, and memory all carry forward untouched.
+The new image replaces MASON Teams' internal components — the daemon, server, web UI, templates, Go binaries, and bundled tools. Your **data volume is preserved** — agent workspaces, Mattermost messages, Forgejo repos, and memory all carry forward untouched.
 
-**The gap:** If a new version changes how MASON's components interact with the data (database schema, config formats, service versions), there's no automated migration step. The new code starts up against the old data. Within the v1.x line this should be fine. Between major versions, it may not be.
+**The gap:** If a new version changes how MASON Teams' components interact with the data (database schema, config formats, service versions), there's no automated migration step. The new code starts up against the old data. Within the v1.x line this should be fine. Between major versions, it may not be.
 
 ### A Note on Upgrades
 
@@ -311,7 +311,7 @@ The new image replaces MASON's internal components — the daemon, server, web U
 **What this means for you:**
 
 - **Your tools inside the container**: You're free to install or upgrade anything — npm packages, pip installs, CLI tools, whatever your agents need. That's your environment to customize.
-- **MASON's own components** (daemon, server, templates, masonctl internals): No migration tooling exists between versions. `masonctl update` replaces the image but can't migrate data if the new version expects a different format.
+- **MASON Teams' own components** (daemon, server, templates, masonctl internals): No migration tooling exists between versions. `masonctl update` replaces the image but can't migrate data if the new version expects a different format.
 - **Best practice**: Always snapshot before updating (`docker commit mason mason-pre-update`). Check the changelog for breaking changes. If something breaks, roll back to your snapshot.
 
 We know this isn't ideal, and building a proper upgrade path is on the roadmap. For now: snapshot first, changelog second, update third.
@@ -331,6 +331,6 @@ Once your simulation is running:
 1. **Explore the channels** — Each agent has their own space, plus shared project channels
 2. **Start small** — Get a feel for how agents collaborate before going big
 3. **Observe and participate** — Jump in when you have questions, or sit back and watch how the team works through problems together
-4. **Level up** — Check out the **[Workflows Guide](WORKFLOWS.md)** for tips on running projects, managing your team, and getting the most out of MASON's tools
+4. **Level up** — Check out the **[Workflows Guide](WORKFLOWS.md)** for tips on running projects, managing your team, and getting the most out of MASON Teams' tools
 
-Welcome to MASON. Let's see what your team can do.
+Welcome to MASON Teams. Let's see what your team can do.

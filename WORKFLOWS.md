@@ -4,9 +4,9 @@ Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
 
-# MASON Workflows
+# MASON Teams Workflows
 
-A guide to getting the most out of MASON — from your first conversation with Connie to running a full agent team like a seasoned operator.
+A guide to getting the most out of MASON Teams — from your first conversation with Connie to running a full agent team like a seasoned operator.
 
 ---
 
@@ -41,7 +41,7 @@ Once you confirm the team, Connie gets to work. Here's what happens:
 
 ### Using Forgejo
 
-Forgejo is a self-hosted Git forge (similar to GitHub) that runs inside the MASON container. It's where your agents track their work — and it's not just for show.
+Forgejo is a self-hosted Git forge (similar to GitHub) that runs inside the MASON Teams container. It's where your agents track their work — and it's not just for show.
 
 **What agents do with Forgejo:**
 - **Create repositories** for project code, documentation, and plans
@@ -93,7 +93,7 @@ As your team settles in, you'll want to establish some structure around how work
 
 ### How Agents Remember
 
-MASON agents have a layered memory system that works behind the scenes. You don't need to manage it — but understanding it helps you get more from your team:
+MASON Teams agents have a layered memory system that works behind the scenes. You don't need to manage it — but understanding it helps you get more from your team:
 
 - **Project memory** — Each agent keeps notes about your project's architecture, conventions, and decisions. This persists across sessions.
 - **Shared memory** — When one agent learns something useful (a gotcha, a workaround, a decision), it stores it where other agents can find it. Knowledge spreads across the team automatically.
@@ -111,7 +111,7 @@ Agents support a `/loop` command that runs any task on a timed interval. Tell an
 >
 > "Start a `/loop 10m` to run the test suite and report failures" — continuous integration
 
-The default interval is 10 minutes if you don't specify one. The agent keeps running the loop in the background, and the MASON daemon can still deliver new messages to the agent — so you can continue chatting, give new instructions, or redirect the agent without interrupting the loop.
+The default interval is 10 minutes if you don't specify one. The agent keeps running the loop in the background, and the MASON Teams daemon can still deliver new messages to the agent — so you can continue chatting, give new instructions, or redirect the agent without interrupting the loop.
 
 **Common uses:**
 - **Monitoring** — Periodically check a service, deployment, or build pipeline
@@ -122,7 +122,7 @@ To stop a loop, just tell the agent to stop it in Mattermost.
 
 ### Agent Directory
 
-MASON includes a built-in agent directory service that keeps track of every agent on the team. When Connie spawns an agent, it's automatically registered in the directory with its name, role, skills, status, and a unique identifier.
+MASON Teams includes a built-in agent directory service that keeps track of every agent on the team. When Connie spawns an agent, it's automatically registered in the directory with its name, role, skills, status, and a unique identifier.
 
 **What it's for:**
 - **Discovery** — Agents can look up who's on the team and what they do, which helps them route questions to the right person
@@ -137,11 +137,11 @@ You don't need to interact with the directory directly — it runs in the backgr
 
 ## 3. The Container and You
 
-*MASON runs in a single container. Here's how to customize it, connect it to your environment, and get things in and out.*
+*MASON Teams runs in a single container. Here's how to customize it, connect it to your environment, and get things in and out.*
 
 ### Default Ports
 
-MASON exposes several ports out of the box:
+MASON Teams exposes several ports out of the box:
 
 | Port | Service | Purpose |
 |------|---------|---------|
@@ -161,7 +161,7 @@ Multiple ports work too: `masonctl start -p 3001:3001 -p 4000:4000`
 
 ### Volume Mounts
 
-By default, MASON uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory with the `--volume` flag:
+By default, MASON Teams uses a Docker volume to persist data across container restarts. If you want agents to work on code that lives on your machine, mount your project directory with the `--volume` flag:
 
 ```bash
 ./scripts/masonctl start --volume ~/my-project:/workspace/my-project
@@ -209,7 +209,7 @@ docker run --rm -v mason_data:/data -v $(pwd):/backup alpine tar czf /backup/mas
 
 ### Resource Tuning
 
-MASON recommends 16GB+ RAM. Each agent runs a Claude Code session, and they add up. Signs you need more resources:
+MASON Teams recommends 16GB+ RAM. Each agent runs a Claude Code session, and they add up. Signs you need more resources:
 
 - Agents responding slowly or timing out
 - Mattermost or Forgejo becoming unresponsive
@@ -218,7 +218,7 @@ MASON recommends 16GB+ RAM. Each agent runs a Claude Code session, and they add 
 To adjust resource limits, set environment variables before starting:
 
 ```bash
-# Give MASON more memory and CPU
+# Give MASON Teams more memory and CPU
 MASON_MEMORY=24g MASON_CPUS=12 ./scripts/masonctl start
 ```
 
@@ -240,7 +240,7 @@ MASON_MEMORY=24g MASON_CPUS=12 ./scripts/masonctl start
 # Then open http://localhost:3001 in your browser
 ```
 
-**Run MASON with custom resource limits:**
+**Run MASON Teams with custom resource limits:**
 ```bash
 MASON_MEMORY=32g MASON_CPUS=12 ./scripts/masonctl start
 ```

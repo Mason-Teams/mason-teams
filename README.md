@@ -4,15 +4,15 @@ Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
 
-# MASON
+# MASON Teams
 
 **Your AI team, ready to collaborate.**
 
-MASON is a simulation platform that lets you spin up a team of AI agents — each with their own skills, personality, and role — and put them to work on a project together. Describe what you're building, and a concierge named Connie interviews you, assembles a custom team, and kicks things off.
+MASON Teams is a simulation platform that lets you spin up a team of AI agents — each with their own skills, personality, and role — and put them to work on a project together. Describe what you're building, and a concierge named Connie interviews you, assembles a custom team, and kicks things off.
 
 Think of it as spinning up a simulated startup team that coordinates, communicates, and solves problems together — all inside a single container.
 
-> **⚠️ Beta Software** — MASON is under active development. Expect breaking changes, rough edges, and evolving APIs. We're building in the open and shipping fast. If something breaks, [open an issue](https://github.com/Mason-Teams/mason-teams/issues). Questions? [Start a discussion](https://github.com/Mason-Teams/mason-teams/discussions).
+> **⚠️ Beta Software** — MASON Teams is under active development. Expect breaking changes, rough edges, and evolving APIs. We're building in the open and shipping fast. If something breaks, [open an issue](https://github.com/Mason-Teams/mason-teams/issues). Questions? [Start a discussion](https://github.com/Mason-Teams/mason-teams/discussions).
 
 ## What You Get
 
@@ -39,7 +39,7 @@ For the full walkthrough, see the **[Getting Started Guide](GETTING_STARTED.md)*
 
 ## How It Works
 
-MASON runs everything inside a single container — agents, chat, code tools, the works. Each agent has:
+MASON Teams runs everything inside a single container — agents, chat, code tools, the works. Each agent has:
 
 - A **role** (engineer, designer, PM, etc.)
 - A **personality** and communication style
@@ -48,11 +48,11 @@ MASON runs everything inside a single container — agents, chat, code tools, th
 
 You describe a project. Connie figures out what kind of team you need, spins them up, and they get to work. You observe and participate through the same chat channels they use.
 
-> **Note**: MASON is a simulation platform. Agent outputs are exploratory, not professional work product. See the User Agreement for details.
+> **Note**: MASON Teams is a simulation platform. Agent outputs are exploratory, not professional work product. See the User Agreement for details.
 
 ## Security
 
-MASON takes a secure-by-default approach to localhost development:
+MASON Teams takes a secure-by-default approach to localhost development:
 
 - **Token authentication** — Dashboard access requires a 32-character token generated on first start (`./scripts/masonctl token` to retrieve)
 - **TLS encrypted** — All services (Dashboard, Mattermost, Forgejo) serve HTTPS with a shared auto-generated certificate when started via `masonctl`
@@ -69,16 +69,16 @@ For the full security model, including token management, network details, and re
 - 8GB RAM minimum, 16GB+ recommended (agents need room to think)
 - An Anthropic API key or Claude subscription (agents are powered by Claude)
 
-MASON also requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed during the setup wizard. Claude Code is not bundled in the container — you install it at your direction, subject to Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
+MASON Teams also requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed during the setup wizard. Claude Code is not bundled in the container — you install it at your direction, subject to Anthropic's [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
 
 ## A Note on Quality and Compatibility
 
-MASON is built and maintained by a single developer, with AI agents doing much of the heavy lifting — writing code, reviewing each other's work, and shipping features. It's a small operation building something ambitious, and I want to set honest expectations.
+MASON Teams is built and maintained by a single developer, with AI agents doing much of the heavy lifting — writing code, reviewing each other's work, and shipping features. It's a small operation building something ambitious, and I want to set honest expectations.
 
 **What's been tested:**
 
 - macOS (Apple Silicon) with Docker Desktop
-- That's the environment MASON was built in, and it's the only one I can confirm works
+- That's the environment MASON Teams was built in, and it's the only one I can confirm works
 
 **What hasn't been tested:**
 
@@ -94,15 +94,15 @@ There will be bugs. Both manual and automated testing have been done, but a proj
 
 **On scope:**
 
-This is an early release. Features may change, APIs may shift, and some things might not work the way you expect yet. Your patience and feedback are genuinely appreciated — they make MASON better for everyone.
+This is an early release. Features may change, APIs may shift, and some things might not work the way you expect yet. Your patience and feedback are genuinely appreciated — they make MASON Teams better for everyone.
 
 ## License
 
-MASON is licensed under the [Business Source License 1.1](LICENSE).
+MASON Teams is licensed under the [Business Source License 1.1](LICENSE).
 
-**Free for non-production use**, or production use with fewer than 5 MASON-orchestrated agents. For production deployments exceeding 5 agents, [contact us about a commercial license](mailto:info@masonteams.com).
+**Free for non-production use**, or production use with fewer than 5 MASON Teams-orchestrated agents. For production deployments exceeding 5 agents, [contact us about a commercial license](mailto:info@masonteams.com).
 
-**Note:** MASON requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed separately at your direction during setup. Your use of Claude Code is governed by [Anthropic's Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms). MASON's license covers the orchestration platform only — not third-party dependencies.
+**Note:** MASON Teams requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic, which is installed separately at your direction during setup. Your use of Claude Code is governed by [Anthropic's Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms). MASON's license covers the orchestration platform only — not third-party dependencies.
 
 ## Links
 

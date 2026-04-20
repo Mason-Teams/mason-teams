@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Configuration
 
-MASON is designed to work out of the box — the setup wizard handles most configuration for you. This guide covers what you can customize and where things live.
+MASON Teams is designed to work out of the box — the setup wizard handles most configuration for you. This guide covers what you can customize and where things live.
 
 ## Environment Variables
 
@@ -19,7 +19,7 @@ Set these before running `./scripts/masonctl start` to override defaults. For a 
 | `MASON_IMAGE_NAME` | `masonteams/mason-teams:stable` | Docker image to run. |
 | `MASON_DATA_VOLUME` | `mason-data` | Docker volume name for persistent data. |
 | `MASON_DIR` | `~/.mason` | Host directory for security files (API token and TLS certificates). |
-| `MASON_PORT_WEB` | `8080` | Port for the MASON web UI (wizard and dashboard). |
+| `MASON_PORT_WEB` | `8080` | Port for the MASON Teams web UI (wizard and dashboard). |
 | `MASON_PORT_MM` | `8065` | Port for Mattermost (team chat). |
 | `MASON_PORT_FORGEJO` | `3000` | Port for Forgejo (Git forge). |
 | `MASON_MEMORY` | `16g` | Container memory limit. |
@@ -36,7 +36,7 @@ Then open `https://localhost:9080` for the setup wizard.
 
 ## Ports
 
-MASON exposes these ports from the container:
+MASON Teams exposes these ports from the container:
 
 | Port | Service | What it's for |
 |------|---------|---------------|
@@ -92,7 +92,7 @@ All persistent state lives in a single Docker volume mounted at `/data` inside t
 
 ### Backing Up
 
-To back up your MASON data:
+To back up your MASON Teams data:
 
 ```bash
 # Stop the container first
@@ -111,7 +111,7 @@ To reset everything and start over:
 ./scripts/masonctl start       # Fresh start with the setup wizard
 ```
 
-This is a full uninstall — it removes the container, the data volume (agent workspaces, repos, chat history), any MASON certificates from your system trust store, and the `~/.mason` directory (token and TLS files). Use `./scripts/masonctl rm` (without `--data`) to remove just the container while keeping everything else.
+This is a full uninstall — it removes the container, the data volume (agent workspaces, repos, chat history), any MASON Teams certificates from your system trust store, and the `~/.mason` directory (token and TLS files). Use `./scripts/masonctl rm` (without `--data`) to remove just the container while keeping everything else.
 
 ## Wizard Configuration
 
@@ -131,7 +131,7 @@ The setup wizard collects your preferences and stores them automatically. You do
 
 ## API Documentation
 
-MASON includes interactive API documentation via Swagger UI. Once the container is running, you can explore and test endpoints from your browser:
+MASON Teams includes interactive API documentation via Swagger UI. Once the container is running, you can explore and test endpoints from your browser:
 
 | Service | URL | Description |
 |---------|-----|-------------|
@@ -142,13 +142,13 @@ MASON includes interactive API documentation via Swagger UI. Once the container 
 
 ## Claude Code Version
 
-MASON ships with a certified version of Claude Code (currently **v2.1.77**) to ensure consistent behavior across installations. This version is installed automatically during the setup wizard.
+MASON Teams ships with a certified version of Claude Code (currently **v2.1.77**) to ensure consistent behavior across installations. This version is installed automatically during the setup wizard.
 
 If you decline the wizard install, the dashboard shows the certified version number with a manual install option. We recommend using the bundled version rather than installing the latest independently, as agent templates and commands are tested against the certified version.
 
 ## Agent Configuration
 
-MASON pre-configures Claude Code with sensible defaults for agent workloads:
+MASON Teams pre-configures Claude Code with sensible defaults for agent workloads:
 
 | Setting | Value | Description |
 |---------|-------|-------------|
@@ -168,7 +168,7 @@ Agents share the container's resources with Mattermost, Forgejo, and other servi
 
 ### Server Flags
 
-The MASON server binary accepts these flags (for advanced users running outside masonctl):
+The MASON Teams server binary accepts these flags (for advanced users running outside masonctl):
 
 | Flag | Default | Description |
 |------|---------|-------------|
@@ -196,27 +196,27 @@ The agent daemon manages agent lifecycles, message routing, and health monitorin
 
 | Command | What it does |
 |---------|-------------|
-| `./scripts/masonctl start` | Start MASON |
-| `./scripts/masonctl stop` | Stop MASON (prompts for confirmation) |
+| `./scripts/masonctl start` | Start MASON Teams |
+| `./scripts/masonctl stop` | Stop MASON Teams (prompts for confirmation) |
 | `./scripts/masonctl restart` | Restart everything (prompts for confirmation) |
 | `./scripts/masonctl status` | Check what's running |
 | `./scripts/masonctl token` | Print your dashboard auth token |
 | `./scripts/masonctl login` | Print token and open dashboard in browser |
 | `./scripts/masonctl logs` | View logs |
 | `./scripts/masonctl logs -f` | Follow logs in real time |
-| `./scripts/masonctl pull` | Pull the latest MASON image from the registry |
+| `./scripts/masonctl pull` | Pull the latest MASON Teams image from the registry |
 | `./scripts/masonctl update` | Pull latest image and restart (prompts for confirmation) |
 | `./scripts/masonctl rm` | Remove the container, keeps data (prompts for confirmation) |
 | `./scripts/masonctl rm --data` | Full uninstall — removes container, data volume, trusted certificates, and `~/.mason` directory (prompts for confirmation) |
-| `./scripts/masonctl trust-cert` | Add MASON's TLS certificate to your system trust store (eliminates browser warnings) |
-| `./scripts/masonctl untrust-cert` | Remove MASON's TLS certificate from your system trust store |
+| `./scripts/masonctl trust-cert` | Add MASON Teams' TLS certificate to your system trust store (eliminates browser warnings) |
+| `./scripts/masonctl untrust-cert` | Remove MASON Teams' TLS certificate from your system trust store |
 | `./scripts/masonctl verify` | Check file integrity inside the container |
 
 > **Scripting tip:** Pass `--yes` or `-y` to skip confirmation prompts: `./scripts/masonctl stop --yes`
 
 ## Third-Party Dependencies
 
-MASON requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic to function. Claude Code is **not bundled** in the container image — it is installed during the setup wizard at the user's direction. Use of Claude Code is subject to [Anthropic's Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
+MASON Teams requires [Claude Code](https://www.npmjs.com/package/@anthropic-ai/claude-code) by Anthropic to function. Claude Code is **not bundled** in the container image — it is installed during the setup wizard at the user's direction. Use of Claude Code is subject to [Anthropic's Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms).
 
 For a full list of bundled third-party software and their licenses, see the [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) file.
 

@@ -12,7 +12,7 @@ A clear description of what went wrong. Include any error messages you saw — e
 
 ## Steps to reproduce
 
-1. Start MASON with `./scripts/masonctl start`
+1. Start MASON Teams with `./scripts/masonctl start`
 2. ...
 3. ...
 4. See error
@@ -40,7 +40,7 @@ Please fill in all of these — issues often come down to environment difference
 - **Architecture**: (e.g., Apple Silicon / ARM64, Intel / x86_64)
 - **Docker version**: (run `docker --version`)
 - **Docker runtime**: (e.g., Docker Desktop, OrbStack, Podman, Rancher Desktop)
-- **MASON version**: (run `./scripts/masonctl status` or check the image tag)
+- **MASON Teams version**: (run `./scripts/masonctl status` or check the image tag)
 - **Browser** (if UI issue): (e.g., Chrome 120, Safari 18, Firefox 130)
 
 ## Logs

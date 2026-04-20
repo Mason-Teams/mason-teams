@@ -6,7 +6,7 @@ included in the LICENSE file at the root of this repository.
 
 # Skills and Commands
 
-MASON agents come pre-loaded with slash commands that handle everything from message checking to team orchestration. This guide covers what's available, who can use it, and what each command does.
+MASON Teams agents come pre-loaded with slash commands that handle everything from message checking to team orchestration. This guide covers what's available, who can use it, and what each command does.
 
 ## Agent Commands
 
@@ -18,7 +18,7 @@ Every agent in your team gets these commands automatically. They're provisioned 
 | `/memshot` | Quick memory snapshot — stores a learning, decision, or task state to agent memory for later retrieval |
 | `/mm-check` | One-shot message check — fetches pending Mattermost messages, classifies them (work, question, info), executes, and returns to idle |
 | `/officehours` | One-shot office hours cycle — checks messages, processes work, updates timestamps, returns to idle |
-| `/loop [interval] [command]` | Run a task on a recurring interval (default 10m) — useful for monitoring, polling, or scheduled checks. Built into Claude Code. The MASON daemon can still deliver messages while a loop is running. |
+| `/loop [interval] [command]` | Run a task on a recurring interval (default 10m) — useful for monitoring, polling, or scheduled checks. Built into Claude Code. The MASON Teams daemon can still deliver messages while a loop is running. |
 | `/officehours-loop` | Continuous office hours — self-polling loop with configurable intervals for direct message checks and broader context sweeps |
 
 **How agents use these:** The daemon triggers `/officehours` automatically when messages come in through Mattermost — it's push-based, so agents respond as things happen. `/officehours-loop` is available as an alternative for users who prefer a polling-based approach, running continuous checks on a timer from the terminal. `/mm-check` is the lightweight single-pass version for a quick check-and-respond. `/memshot` is used throughout the day whenever an agent learns something worth remembering.
@@ -52,11 +52,11 @@ Skills are structured guides that give agents deeper capabilities for specific t
 
 ## User Commands
 
-Commands you can run directly to manage and verify your MASON installation.
+Commands you can run directly to manage and verify your MASON Teams installation.
 
 | Command | Description |
 |---------|-------------|
-| `./scripts/masonctl verify` | Check that all MASON files in the container match their build-time checksums (SHA-256) |
+| `./scripts/masonctl verify` | Check that all MASON Teams files in the container match their build-time checksums (SHA-256) |
 
 ### `./scripts/masonctl verify`
 
@@ -73,7 +73,7 @@ Verifies the integrity of templates, commands, skills, scripts, and Go binaries 
 
 ## System Utilities
 
-These are the Go binaries and scripts that power the commands above. You won't run these directly — they're called internally by the slash commands and the MASON daemon.
+These are the Go binaries and scripts that power the commands above. You won't run these directly — they're called internally by the slash commands and the MASON Teams daemon.
 
 | Utility | Purpose |
 |---------|---------|
@@ -91,15 +91,15 @@ These are the Go binaries and scripts that power the commands above. You won't r
 
 ## How It All Fits Together
 
-When you start MASON and complete the setup wizard, here's what happens behind the scenes:
+When you start MASON Teams and complete the setup wizard, here's what happens behind the scenes:
 
 1. **Connie wakes up** — The concierge agent starts in a tmux session
 2. **Interview** — Connie asks you about your project and assembles a team
 3. **`/spawn-team`** — Connie provisions each agent: workspace, Mattermost account, tmux session, directory registration
-4. **Daemon starts** — The MASON daemon watches Mattermost for new messages and triggers `/officehours` on the right agent
+4. **Daemon starts** — The MASON Teams daemon watches Mattermost for new messages and triggers `/officehours` on the right agent
 5. **You collaborate** — Post in Mattermost, and agents pick up your messages automatically via the daemon, or you can run `/officehours-loop` from the terminal for polling-based checks
 
-All of this runs inside the single MASON container. The tmux sessions give each agent their own terminal, and the MASON daemon routes messages between them.
+All of this runs inside the single MASON Teams container. The tmux sessions give each agent their own terminal, and the MASON Teams daemon routes messages between them.
 
 ## Customization
 
