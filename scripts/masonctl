@@ -10,9 +10,14 @@
 set -e
 
 CONTAINER_NAME="${MASON_CONTAINER_NAME:-mason}"
-IMAGE_NAME="${MASON_IMAGE_NAME:-masonteams/mason-teams:stable}"
+IMAGE_BASE="${MASON_IMAGE_NAME:-masonteams/mason-teams}"
 DATA_VOLUME="${MASON_DATA_VOLUME:-mason-data}"
+AGENT_TYPE="${MASON_AGENT_TYPE:-claude}"
+IMAGE_NAME="${IMAGE_BASE}:${AGENT_TYPE}"
 MASON_DIR="${MASON_DIR:-$HOME/.mason}"
+
+# Supported agent types (extend as new types are added)
+SUPPORTED_AGENTS="claude codex goose pi"
 
 # Ports
 PORT_WEB="${MASON_PORT_WEB:-8080}"
@@ -100,7 +105,7 @@ preflight_check() {
     if ! container_exists; then
         if ! docker image inspect "$IMAGE_NAME" &> /dev/null; then
             echo -e "  ${RED}✗${NC} Docker image '$IMAGE_NAME' not found"
-            echo "    Or pull it with: masonctl pull"
+            echo "    Pull it with: masonctl pull"
             errors=$((errors + 1))
         else
             echo -e "  ${GREEN}✓${NC} Docker image '$IMAGE_NAME' found"
@@ -229,7 +234,6 @@ container_exists() {
 container_running() {
     [ "$(docker container inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null)" = "true" ]
 }
-
 
 # Initialize security: generate token and TLS certificates on first run
 init_security() {
@@ -369,10 +373,27 @@ cmd_start() {
                     exit 1
                 fi
                 extra_volumes+=("$2"); shift 2 ;;
+            -a|--agent)
+                if [ -z "$2" ] || [[ "$2" == -* ]]; then
+                    print_error "--agent requires a value (e.g., --agent claude)"
+                    exit 1
+                fi
+                AGENT_TYPE="$2"; IMAGE_NAME="${IMAGE_BASE}:${AGENT_TYPE}"; shift 2 ;;
             --yes|-y)    SKIP_CONFIRM=true; shift ;;
             *)           shift ;;
         esac
     done
+
+    # Validate agent type
+    if ! echo "$SUPPORTED_AGENTS" | grep -qw "$AGENT_TYPE"; then
+        print_error "Agent type '$AGENT_TYPE' is not available yet."
+        echo ""
+        echo "  Supported agent types: $SUPPORTED_AGENTS"
+        echo ""
+        echo "  More agent types are coming soon!"
+        echo ""
+        exit 1
+    fi
 
     preflight_check "${extra_ports[@]}"
     init_security
@@ -858,6 +879,18 @@ cmd_untrust_cert() {
     echo ""
 }
 
+# Show version
+cmd_version() {
+    local script_dir
+    script_dir="$(cd "$(dirname "$0")" && pwd)"
+    local version_file="${script_dir}/../VERSION"
+    if [ -f "$version_file" ]; then
+        echo "masonctl $(cat "$version_file")"
+    else
+        echo "masonctl (version unknown)"
+    fi
+}
+
 # Show help
 cmd_help() {
     cat <<EOF
@@ -866,9 +899,9 @@ masonctl - MASON container management tool
 Usage: masonctl <command> [options]
 
 Commands:
-                        --no-cache: rebuild without Docker cache
   start [options]       Start the MASON container (runs preflight checks)
-                        -p, --port HOST:CONTAINER   Extra port mapping (repeatable)
+                        -a, --agent TYPE             Agent type (default: claude)
+                        -p, --port HOST:CONTAINER    Extra port mapping (repeatable)
                         -v, --volume HOST:CONTAINER  Extra volume mount (repeatable)
   stop                  Stop the MASON container
   restart               Restart the MASON container
@@ -884,9 +917,11 @@ Commands:
   untrust-cert          Remove MASON's TLS cert from system trust store
   verify [flags...]     Verify integrity of MASON files in the container
   rm [--data]           Remove container (--data also removes volume)
+  version               Show version
   help                  Show this help message
 
 Global Flags:
+  --container IMAGE     Use a specific image:tag (e.g., mason:quantsim)
   --yes, -y             Skip confirmation prompts (for scripting)
 
 Environment Variables:
@@ -897,9 +932,12 @@ Environment Variables:
   MASON_PORT_WEB        Web UI port (default: 8080)
   MASON_PORT_MM         Mattermost port (default: 8065)
   MASON_PORT_FORGEJO    Forgejo port (default: 3000)
+  MASON_AGENT_TYPE      Agent type (default: claude)
 
 Examples:
-  masonctl start                  # Start container
+  masonctl start                  # Start container (default: claude agent)
+  masonctl start --agent claude   # Start with Claude agent (default)
+  masonctl start --agent codex    # Start with Codex agent (when available)
   masonctl start -p 3001:3001    # Expose additional port
   masonctl start -v ~/proj:/workspace/proj  # Mount host directory
   masonctl start -p 3001:3001 -p 4000:4000 -v ~/data:/workspace/data
@@ -916,7 +954,6 @@ Examples:
   masonctl verify                 # Verify integrity of MASON files
   masonctl verify --remote        # Verify with remote checks
   masonctl rm --data              # Remove container and all data
-
 EOF
 }
 
@@ -924,6 +961,12 @@ EOF
 while [ $# -gt 0 ]; do
     case "$1" in
         --yes|-y) SKIP_CONFIRM=true; shift ;;
+        --container)
+            # Override image name and container name from a single arg
+            # e.g., --container mason:quantsim → IMAGE_NAME=mason:quantsim, CONTAINER_NAME=quantsim
+            IMAGE_NAME="$2"
+            CONTAINER_NAME="${2##*:}"  # extract tag as container name
+            shift 2 ;;
         *) break ;;
     esac
 done
@@ -945,6 +988,8 @@ case "${1:-help}" in
     untrust-cert) shift; cmd_untrust_cert "$@" ;;
     verify)  shift; cmd_verify "$@" ;;
     rm)      shift; cmd_rm "$@" ;;
+    version) shift; cmd_version "$@" ;;
+    shell)   shift; cmd_exec "$@" ;;
     help|--help|-h) cmd_help ;;
     *)
         print_error "Unknown command: $1"

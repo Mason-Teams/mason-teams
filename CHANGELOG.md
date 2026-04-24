@@ -10,6 +10,18 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-04-24
+
+### Added
+- Multi-agent type support: `masonctl start --agent <type>` (claude, codex, goose, pi)
+- `--container` global flag for custom image:tag override
+- `masonctl version` command
+- Agent type validation with supported types list
+
+### Changed
+- Image tagging now uses agent type as tag (e.g., `masonteams/mason-teams:claude`)
+- Default agent type is `claude` (backward compatible)
+
 ## [1.5.2] - 2026-04-18
 
 ### Fixed
