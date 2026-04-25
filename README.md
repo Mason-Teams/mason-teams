@@ -35,6 +35,8 @@ On first run, the setup wizard opens at **https://localhost:8080**. Bring your o
 
 For the full walkthrough, see the **[Getting Started Guide](GETTING_STARTED.md)**.
 
+**Prefer video?** Watch the [Getting Started playlist](https://youtube.com/playlist?list=PLrpQmmVlbBiFhYO8Nnt6QSFjOK6tx6tbs) — four short videos covering install, setup, running your first team, and cleanup.
+
 > **Returning after setup?** Run `./scripts/masonctl login` to get your auth token and open the dashboard. See [Logging In](GETTING_STARTED.md#log-in-to-the-dashboard) for details.
 
 ## How It Works
@@ -114,7 +116,9 @@ MASON Teams is licensed under the [Business Source License 1.1](LICENSE).
 - **Security**: [SECURITY.md](SECURITY.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 - **Third-Party Notices**: [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES)
+- **Video Tutorials**: [Getting Started playlist on YouTube](https://youtube.com/playlist?list=PLrpQmmVlbBiFhYO8Nnt6QSFjOK6tx6tbs)
 - **Wiki**: [Guides, tips, and community knowledge](https://github.com/Mason-Teams/mason-teams/wiki)
+- **How It's Built**: [Curious about the Dockerfiles?](https://github.com/Mason-Teams/mason-teams/issues/43)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Issues**: [Report a bug or request a feature](https://github.com/Mason-Teams/mason-teams/issues)
 - **Contact**: [info@masonteams.ai](mailto:info@masonteams.ai)
