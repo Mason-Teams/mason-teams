@@ -10,6 +10,17 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-05-11
+
+### Added
+- feat: apply MASON Teams stacked branding to wizard splash and step 1 --jake
+
+### Changed
+- chore: bump certified Claude Code version to 2.1.126 (daemon-mason)
+- chore: bump certified Claude Code version to 2.1.126 (daemon-mason)
+- Rename product references from MASON to MASON Teams in user-facing content --kenji
+- Rename MASON Simulator to MASON Teams in license and user agreement --kenji
+
 ## [1.6.0] - 2026-04-24
 
 ### Added

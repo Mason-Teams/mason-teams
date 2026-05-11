@@ -3704,10 +3704,10 @@ URL: https://www.npmjs.com/package/@anthropic-ai/claude-code
 Terms: https://www.anthropic.com/legal/commercial-terms
 ================================================================================
 Claude Code is proprietary software by Anthropic PBC. It is not distributed as
-part of MASON. During the setup wizard, the user is informed that MASON requires
+part of MASON Teams. During the setup wizard, the user is informed that MASON Teams requires
 Claude Code and is given the option to install it via npm. Installation is
 performed by the user at their own direction and is subject to Anthropic's
 Commercial Terms of Service.
 
-MASON does not grant any license to Claude Code. Use of Claude Code is governed
+MASON Teams does not grant any license to Claude Code. Use of Claude Code is governed
 solely by Anthropic's terms.
