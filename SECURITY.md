@@ -8,6 +8,8 @@ included in the LICENSE file at the root of this repository.
 
 MASON Teams is designed as a **single-user, localhost-only** development environment. Security controls protect against accidental exposure and unauthorized local access. The threat model assumes the host machine is trusted and the container runs on Docker Desktop.
 
+For the *container's* contribution to the security model — non-root runtime, port exposure, SBOM/provenance attestations, integrity manifest — see [CONTAINER_PHILOSOPHY.md → Security boundaries](./CONTAINER_PHILOSOPHY.md#security-boundaries). A sanitized reference of the build itself is in [`Dockerfile.reference`](./Dockerfile.reference).
+
 ## Authentication
 
 ### Dashboard

@@ -1,0 +1,245 @@
+# Copyright (c) 2025-2026 Human Loop Ventures, LLC. All rights reserved.
+# Use of this source code is governed by the Business Source License 1.1
+# included in the LICENSE file at the root of this repository.
+
+# =============================================================================
+# MASON Teams — Reference Dockerfile
+# =============================================================================
+#
+# This file is a sanitized reference of the Dockerfile used to build the
+# official `masonteams/mason-teams` image on Docker Hub. It exists so users,
+# security reviewers, and operators can see what's inside the container
+# without having to inspect the running image.
+#
+# It is NOT a buildable artifact. The actual build pulls source from the
+# internal MASON Teams source repository, which is not public. Lines that
+# would copy proprietary binaries are collapsed into placeholder COPY blocks
+# annotated `[INTERNAL BUILD STAGE]`. If you want to build your own image,
+# substitute those stages with your own build pipeline and binaries.
+#
+# Anything you see in this file matches the runtime structure of the
+# published image. The build is multi-arch (linux/amd64, linux/arm64) and
+# every release includes SBOM + provenance attestations on Docker Hub.
+#
+# Last reviewed against internal Dockerfile: see image label
+#   `org.opencontainers.image.revision` on the published image for the
+#   exact source commit a given tag was built from.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Stage 1: Build Go binaries [INTERNAL BUILD STAGE]
+# -----------------------------------------------------------------------------
+# In the real build this stage compiles MASON's Go binaries (web server,
+# daemon, agent lifecycle tools, MCP servers, integrity helpers) from
+# proprietary source. Reproduced here only to show base image + invariants.
+
+FROM golang:1.26-alpine AS builder
+WORKDIR /build
+RUN apk add --no-cache git
+# COPY go.mod go.sum ./
+# RUN go mod download
+# COPY . .
+# RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags "-s -w \
+#       -X main.Version=$(cat VERSION) \
+#       -X main.Commit=$(git rev-parse --short HEAD) \
+#       -X main.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+#       -o /mason ./cmd/mason
+# (... additional binaries omitted; all built with the same flags ...)
+
+# -----------------------------------------------------------------------------
+# Stage 2: Build forgejo-mcp [COMMODITY]
+# -----------------------------------------------------------------------------
+# Forgejo's MCP server, built from public source. Provides agents a tool
+# interface to the bundled Forgejo instance.
+
+FROM golang:1.26-alpine AS forgejo-mcp-builder
+RUN apk add --no-cache git
+# RUN go install codeberg.org/<upstream>/forgejo-mcp@<pinned-version>
+
+# -----------------------------------------------------------------------------
+# Stage 3: Downloader [COMMODITY]
+# -----------------------------------------------------------------------------
+# Fetches the open-source services we bundle: Mattermost (chat), Forgejo
+# (git forge), ttyd (terminal-over-WebSocket), Qdrant (vector DB). Each is
+# pinned to a specific version; provenance is attested at publish time.
+
+FROM alpine:3.23 AS downloader
+RUN apk add --no-cache curl tar
+# Pin every artifact. Hashes are checked in the real build.
+# RUN curl -fsSL -o /opt/mattermost.tar.gz "https://.../mattermost-<version>-linux-<arch>.tar.gz"
+# RUN curl -fsSL -o /opt/forgejo        "https://.../forgejo-<version>-linux-<arch>"
+# RUN curl -fsSL -o /opt/ttyd           "https://.../ttyd.<arch>"
+# RUN curl -fsSL -o /opt/qdrant.tar.gz  "https://.../qdrant-<version>-<arch>-unknown-linux-musl.tar.gz"
+
+# -----------------------------------------------------------------------------
+# Stage 4: Runtime — what actually ships
+# -----------------------------------------------------------------------------
+# Debian slim with a pinned digest. Everything below this point is exactly
+# what's in the published image (modulo the proprietary COPY collapse).
+
+FROM debian:bookworm-slim@sha256:4724b8cc51e33e398f0e2e15e18d5ec2851ff0c2280647e1310bc1642182655d
+
+ARG BUILD_DATE
+ARG VCS_REF
+LABEL org.opencontainers.image.title="MASON Teams" \
+      org.opencontainers.image.description="Multi-Agent Simulation Orchestration Network" \
+      org.opencontainers.image.source="https://github.com/Mason-Teams/mason-teams" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}"
+
+# Runtime dependencies. Roughly grouped by purpose; comments explain why
+# each non-obvious package is in the image.
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+    bash curl git jq tmux tini ca-certificates tzdata \
+    postgresql postgresql-contrib \
+    ripgrep \
+    # Python — runs a memory MCP server used for agent memory.
+    python3 python3-pip python3-venv \
+    # Credential storage via libsecret. Used by Claude Code and MASON's
+    # own secret-management package for tokens that shouldn't sit in files.
+    libsecret-1-0 libsecret-tools gnome-keyring dbus \
+    # In-container log collection so health-check has a fallback.
+    busybox-syslogd \
+    # Font management for Nerd Font glyphs. Agents parse tmux output,
+    # which means terminal glyphs need to render correctly server-side.
+    fontconfig \
+    # Process inspection — agents introspect their own and others' state.
+    procps \
+    # Arithmetic in shell — used for things like jittered office-hours delays.
+    bc \
+    # Sudo for in-container package installs during interactive sessions.
+    # The mason user has NOPASSWD; the container is ephemeral, so risk is low.
+    sudo \
+    # Network diagnostics for agent troubleshooting.
+    iproute2 net-tools iputils-ping dnsutils lsof strace \
+    # General utilities.
+    less vim-tiny htop wget file unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Node.js 22 LTS. Debian's default Node 18 has stdio pipe-handling bugs
+# that cause MCP tool drops in Claude Code; Node 22+ resolves them.
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# MesloLGS Nerd Font — needed server-side for correct rendering of
+# Braille spinners, box-drawing, block elements, and Powerline glyphs
+# in agent-generated terminal output that downstream tools parse.
+RUN mkdir -p /usr/local/share/fonts/MesloLGSNF && \
+    curl -fsSL -o "/usr/local/share/fonts/MesloLGSNF/MesloLGS NF Regular.ttf" \
+      "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf" && \
+    fc-cache -fv
+
+# Memory MCP server. Installed from a private package index; the package
+# itself is internal and is referenced here as `<memory-mcp-package>` for
+# transparency. Pulls embedding models (ONNX via fastembed) and connects to
+# the bundled Qdrant via HTTP API. [INTERNAL DEPENDENCY]
+RUN pip3 install --break-system-packages --upgrade pip setuptools && \
+    pip3 install --break-system-packages \
+    --extra-index-url <internal-package-index> \
+    "<memory-mcp-package>" \
+    mkdocs-material
+
+# Non-root user with bash + passwordless sudo (see comment above).
+RUN useradd -m -u 1000 -s /bin/bash mason \
+    && echo "mason ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/mason \
+    && chmod 0440 /etc/sudoers.d/mason
+
+# Directory layout for stateful services and shared assets.
+RUN mkdir -p /data/mattermost /data/forgejo /data/agents /data/credentials \
+             /data/postgres /data/qdrant/storage /data/crontab \
+    && mkdir -p /opt/mattermost /opt/forgejo \
+    && mkdir -p /app/web \
+    && mkdir -p /run/postgresql /run/dbus \
+    && chown -R mason:mason /data /app /run/postgresql /run/dbus
+
+# MASON binaries (proprietary). The real build pulls ~15 statically-linked
+# Go binaries from the builder stage — the web server, agent lifecycle
+# tools, the daemon, MCP servers, and integrity helpers. All land in
+# /usr/local/bin and run as the `mason` user.
+# [INTERNAL BUILD STAGE]
+# COPY --from=builder /<binary> /usr/local/bin/<binary>   (×N)
+
+# Bundled open-source services.
+COPY --from=downloader /opt/mattermost /opt/mattermost
+RUN chown -R mason:mason /opt/mattermost
+COPY --from=downloader /opt/forgejo /usr/local/bin/forgejo
+RUN chmod +x /usr/local/bin/forgejo
+COPY --from=forgejo-mcp-builder /go/bin/forgejo-mcp /usr/local/bin/forgejo-mcp
+RUN chmod +x /usr/local/bin/forgejo-mcp
+COPY --from=downloader /opt/ttyd /usr/local/bin/ttyd
+COPY --from=downloader /opt/qdrant /usr/local/bin/qdrant
+
+# Web UI assets and persona/skill templates. See CONTAINER_PHILOSOPHY.md
+# for what these contain and why they ship inside the image.
+# [INTERNAL BUILD STAGE]
+# COPY --from=builder /build/web /app/web
+# COPY --from=builder /build/docs/personas /app/docs/personas
+# COPY --from=builder /build/scripts/claude-user-level/ /home/mason/.claude/
+# COPY --from=builder /build/scripts/claude-commands/   /home/mason/.claude/commands/
+RUN mkdir -p /home/mason/.claude/commands /app/templates /app/docs/personas \
+    && chown -R mason:mason /home/mason/.claude /app/templates /app/docs/personas
+
+# Documentation site (MkDocs). Built at image-build time so the running
+# container can serve it without pulling from the network.
+# COPY docs/ /app/docs-build/
+# RUN cd /app/docs-build && mkdocs build --site-dir /app/docs/site
+
+# Entrypoint and supporting scripts.
+# [INTERNAL BUILD STAGE — proprietary scripts]
+# COPY --chmod=755 scripts/entrypoint.sh         /usr/local/bin/entrypoint.sh
+# COPY --chmod=755 scripts/statusline-command.sh /usr/local/bin/statusline-command.sh
+# COPY --chmod=755 scripts/manifest-gen          /usr/local/bin/manifest-gen
+# COPY --chmod=755 scripts/mason-verify          /usr/local/bin/mason-verify
+
+# tmux configuration for 256-color/truecolor support. Without these
+# overrides, tmux defaults to `screen` (8 colors), which breaks the rich
+# terminal UIs that agents render and parse.
+RUN echo 'set-option -g default-terminal "tmux-256color"' > /etc/tmux.conf && \
+    echo 'set-option -ga terminal-overrides ",*256col*:RGB"' >> /etc/tmux.conf && \
+    echo 'set-option -ga terminal-overrides ",xterm-256color:Tc"' >> /etc/tmux.conf
+
+WORKDIR /app
+
+# Runtime environment.
+ENV MASON_CONTAINER=1
+ENV TERM=xterm-256color
+ENV COLORTERM=truecolor
+ENV LANG=C.UTF-8
+ENV PATH="/usr/local/bin:${PATH}"
+ENV PGDATA=/data/postgres
+ENV PGHOST=/run/postgresql
+ENV PGPORT=5432
+ENV MM_CONFIG=/data/mattermost/config.json
+ENV MM_DATA_DIR=/data/mattermost
+ENV FORGEJO_WORK_DIR=/data/forgejo
+ENV FORGEJO_CUSTOM=/data/forgejo/custom
+ENV FORGEJO_MCP_PATH=/usr/local/bin/forgejo-mcp
+# Memory MCP server connects to the bundled Qdrant via the internal HTTP API.
+ENV DIT_QDRANT_URL=http://localhost:6333
+
+# Build manifest used by `mason-verify` to catch tampering with shipped
+# binaries. Generated at the end of the build so it covers every COPY.
+# [INTERNAL BUILD STEP]
+# RUN GIT_COMMIT="${VCS_REF:-unknown}" manifest-gen --output /mason/manifest.json
+
+USER mason
+
+# Ports.
+# 8080 — MASON Teams web UI
+# 8065 — Mattermost
+# 3000 — Forgejo
+# Internal (not exposed by EXPOSE; reachable inside the container only):
+#   7681 — ttyd (proxied through the dashboard)
+#   6333 — Qdrant
+#   9090 — mason-daemon (localhost)
+EXPOSE 8080 8065 3000
+
+# Single persistent volume — everything stateful lives under /data.
+# See CONTAINER_PHILOSOPHY.md "Ephemeral container, persistent volumes."
+VOLUME ["/data"]
+
+# tini reaps zombies and forwards signals so the supervisor inside the
+# entrypoint can shut down its children cleanly on `docker stop`.
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/entrypoint.sh"]
+CMD ["mason", "server", "--data=/data"]
