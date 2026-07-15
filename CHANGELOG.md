@@ -10,6 +10,17 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2026-07-15
+
+### Fixed
+- fix(release): scope daemon-mason version guard + changelog to the 1.x tag line
+
+### Changed
+- chore(daemon-mason): auto-approve project MCP servers in user-level settings (#1289)
+- chore(daemon-mason): bump Claude Code to 2.1.202 + refresh bundled layers (#1287)
+- chore(changelog): dedupe subject lines (daemon-mason)
+- ci(release): dedupe identical subject lines in step_changelog
+
 ## [1.5.3] - 2026-05-11
 
 ### Added
