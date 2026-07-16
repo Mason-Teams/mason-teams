@@ -10,6 +10,18 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2026-07-16
+
+### Added
+- feat(security): bump Forgejo 15.0.5 + release v1.5.5 (#1302)
+
+### Fixed
+- fix(security): clear vim-tiny/setuptools/npm CVEs in v1 container (#1302)
+- fix(release): push HEAD:main in commit_public to survive worktree branch-state
+
+### Changed
+- chore(security): bump Mattermost 11.9.0 + forgejo-mcp v2.9.2 (#1302)
+
 ## [1.5.4] - 2026-07-15
 
 ### Fixed
