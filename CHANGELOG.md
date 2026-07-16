@@ -10,6 +10,14 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.6] - 2026-07-16
+
+### Fixed
+- fix(forgejo): grant masonadmin bootstrap token all scopes (#1305)
+
+### Changed
+- chore(release): bump v1.5.6 — ship masonadmin token-scope fix (#1305)
+
 ## [1.5.5] - 2026-07-16
 
 ### Added
