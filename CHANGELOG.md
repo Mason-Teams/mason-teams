@@ -10,6 +10,11 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.7] - 2026-07-16
+
+### Fixed
+- fix(setup): Claude Code wizard install leaves a broken launcher — pin npm + allow-scripts (#1314)
+
 ## [1.5.6] - 2026-07-16
 
 ### Fixed
