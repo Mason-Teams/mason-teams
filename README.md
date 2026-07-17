@@ -14,7 +14,7 @@ Think of it as spinning up a simulated startup team that coordinates, communicat
 
 > **⚠️ Beta Software** — MASON Teams is under active development. Expect breaking changes, rough edges, and evolving APIs. We're still building it and shipping fast. If something breaks, [open an issue](https://github.com/Mason-Teams/mason-teams/issues). Questions? [Start a discussion](https://github.com/Mason-Teams/mason-teams/discussions).
 
-> **📦 Latest release — [v1.5.4](https://github.com/Mason-Teams/mason-teams/releases/tag/v1.5.4)** (maintenance): Claude Code 2.1.202 + refreshed bundled layers (Mattermost, Forgejo, Qdrant, ttyd) and a cleaner container startup. Multi-arch. `docker pull masonteams/mason-teams:stable`
+> **📦 Latest release — [v1.5.7](https://github.com/Mason-Teams/mason-teams/releases/tag/v1.5.7)**: setup-wizard fix (*Install Claude Code* now installs a working launcher reliably), plus security hardening — 17 of 18 critical CVEs cleared (incl. a CVSS 10.0 in bundled Mattermost) and refreshed Mattermost/Forgejo/Qdrant. Multi-arch. `docker pull masonteams/mason-teams:stable`
 
 ## What You Get
 
