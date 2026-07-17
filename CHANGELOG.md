@@ -10,6 +10,14 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.8] - 2026-07-16
+
+### Fixed
+- fix(concierge): stampable sentinel for Last checked field, not instruction text (#1319)
+
+### Changed
+- chore(release): daemon-mason 1.5.8 — concierge template fix (#1319) --destiny
+
 ## [1.5.7] - 2026-07-16
 
 ### Fixed
