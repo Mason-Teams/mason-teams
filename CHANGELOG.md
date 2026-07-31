@@ -13,7 +13,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [1.5.11] - 2026-07-30
 
 ### Changed
-- Concierge now defaults to the Sonnet 5 model, with higher reasoning effort and extended thinking enabled.
+- All MASON agents now default to the Sonnet 5 model, with higher reasoning effort and extended thinking enabled.
 - Bundled Claude Code updated to 2.1.220.
 
 ## [1.5.8] - 2026-07-16
