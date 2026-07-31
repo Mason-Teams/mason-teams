@@ -10,6 +10,18 @@ All notable changes to MASON Teams will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.11] - 2026-07-30
+
+### Added
+- feat(concierge): default agent model to Sonnet 5 (model: "sonnet")
+- feat(ci-notify): Riley release-announce on publish success (T4)
+- feat(concierge): high effort + thinking on, bump certified Claude Code to 2.1.220
+
+### Fixed
+- fix(release): build tags v${VERSION}-rc only; bare tag + GitHub release move to publish
+- fix(ci-notify): rich status-card MM notifications; drop the username override
+- fix(ci-notify): brand the Mattermost notification (MASON CI identity + CI-message format)
+
 ## [1.5.8] - 2026-07-16
 
 ### Fixed
