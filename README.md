@@ -14,7 +14,7 @@ Think of it as spinning up a simulated startup team that coordinates, communicat
 
 > **⚠️ Beta Software** — MASON Teams is under active development. Expect breaking changes, rough edges, and evolving APIs. We're still building it and shipping fast. If something breaks, [open an issue](https://github.com/Mason-Teams/mason-teams/issues). Questions? [Start a discussion](https://github.com/Mason-Teams/mason-teams/discussions).
 
-> **📦 Latest release — [v1.5.11](https://github.com/Mason-Teams/mason-teams/releases/tag/v1.5.11)**: a smarter concierge — Connie now runs on Claude Sonnet 5 by default, with higher reasoning effort — plus updated Claude Code (2.1.220) and behind-the-scenes release-pipeline improvements. Multi-arch. `docker pull masonteams/mason-teams:stable`
+> **📦 Latest release — [v1.5.11](https://github.com/Mason-Teams/mason-teams/releases/tag/v1.5.11)**: all MASON agents now default to the **Claude Sonnet 5** model, with higher reasoning effort and extended thinking on, plus Claude Code updated to 2.1.220. Multi-arch. `docker pull masonteams/mason-teams:stable`
 
 ## What You Get
 
