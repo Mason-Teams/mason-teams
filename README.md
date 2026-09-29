@@ -4,6 +4,15 @@ Use of this source code is governed by the Business Source License 1.1
 included in the LICENSE file at the root of this repository.
 -->
 
+> # ⚠️ DEPRECATED
+> # 🙏 THANK YOU TO OUR USERS
+>
+> **MASON Teams v1 has been deprecated and is no longer supported.** Thank you to everyone who built with MASON Teams.
+>
+> The container image is no longer available to download, and `masonctl` now only prints this notice. An installation you already have keeps running as it is.
+>
+> The repository and its files are being left in place for archival purposes only.
+
 # MASON Teams
 
 **Your AI team, ready to collaborate.**
